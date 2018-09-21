@@ -15,3 +15,4 @@
 * 什么是channel，为什么它可以做到线程安全？
 * goroutine 如何调度?
 * Golang GC 时会发生什么?
+* Golang 中 goroutine 的调度.
