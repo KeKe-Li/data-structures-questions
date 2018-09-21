@@ -10,10 +10,10 @@
 #### 目录
 
 * [协议](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.01.md)
-* [数据结构](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.02.md)
-* [算法](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.03.md)
-* [数据库](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.04.md)
-* [Golang面试问题汇总](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.05.md)
+* [数据结构](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter02/golang.01.md)
+* [算法](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter03/golang.01.md)
+* [数据库](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter04/golang.01.md)
+* [Golang面试问题汇总](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter05/golang.01.md)
 
 
 
