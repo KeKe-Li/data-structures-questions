@@ -17,3 +17,5 @@
 * Golang GC 时会发生什么?
 * Golang 中 goroutine 的调度.
 * 并发编程概念是什么？
+
+概念汇总:
