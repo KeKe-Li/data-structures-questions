@@ -158,3 +158,9 @@ Sname, Sdept 和 Mname 都部分依赖于键码，当一个学生选修了多门
 | 学院-2 | 院长-2 |
 
 #### 并发一致性问题 
+
+1. 丢失修改
+T1 和 T2 两个事务都对一个数据进行修改，T1 先修改，T2 随后修改，T2 的修改覆盖了 T1 的修改。
+<p align="center">
+<img width="500" align="center" src="../images/6.jpg" />
+</p>
