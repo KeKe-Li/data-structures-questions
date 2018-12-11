@@ -5,7 +5,7 @@
 MySQL基础:
 
 [MySQL的多存储引擎架构](#MySQL的多存储引擎架构)
-
+[数据库的事务](#数据库的事务)
 
 #### MySQL的多存储引擎架构
 <p align="center">
@@ -14,3 +14,11 @@ MySQL基础:
 
 MySQL作为一个大型的网络程序、数据管理系统，架构非常复杂。
 
+#### 数据库的事务
+<p align="center">
+<img width="500" align="center" src="../images/3.jpg" />
+</p>
+
+数据库的事务指的是满足数据库的 ACID 特性的一组操作，可以通过 Commit 提交一个事务，也可以使用 Rollback 进行回滚。
+
+MySQL 中默认采用自动提交(AUTOCOMMIT)模式。如果不显式使用 START TRANSACTION 语句来开始一个事务，那么每个查询都会被当做一个事务自动提交。
