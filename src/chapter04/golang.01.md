@@ -75,11 +75,11 @@ MySQL 中默认采用自动提交(AUTOCOMMIT)模式。如果不显式使用 STAR
 <img width="500" align="center" src="../images/5.jpg" />
 </p>
 
-* 1. 第一范式 (1NF)
+1. 第一范式 (1NF)
 
 属性不可分。
 
-* 2. 第二范式 (2NF)
+2. 第二范式 (2NF)
 
 每个非主属性完全函数依赖于键码。
 
@@ -132,7 +132,7 @@ Sname, Sdept 和 Mname 都部分依赖于键码，当一个学生选修了多门
 
 - Sno, Cname -> Grade
 
-* 3. 第三范式 (3NF)
+3. 第三范式 (3NF)
 
 非主属性不传递函数依赖于键码。
 
