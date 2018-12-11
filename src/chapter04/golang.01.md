@@ -11,3 +11,6 @@ MySQL基础:
 <p align="center">
 <img width="500" align="center" src="../images/2.jpg" />
 </p>
+
+MySQL作为一个大型的网络程序、数据管理系统，架构非常复杂。
+
