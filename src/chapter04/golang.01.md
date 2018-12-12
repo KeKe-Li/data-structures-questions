@@ -45,7 +45,7 @@ FLOAT、DOUBLE 和 DECIMAL 都可以指定列宽，例如 DECIMAL(18, 9) 表示�
 
 3. 字符串
 
-MySQL中主要有 CHAR 和 VARCHAR 两种类型，一种是定长的，一种是变长的。
+MySQL中主要有 CHAR 和 VARCHAR 两种字符串类型，一种是定长的，一种是变长的。
 
 VARCHAR 这种变长类型能够节省空间，因为只需要存储必要的内容。但是在执行 UPDATE 时可能会使行变得比原来长，当超出一个页所能容纳的大小时，就要执行额外的操作。MyISAM 会将行拆成不同的片段存储，而 InnoDB 则需要分裂页来使行放进页内。
 
