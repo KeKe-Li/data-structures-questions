@@ -118,3 +118,7 @@ Golang面试问题汇总:
     | 请求管道化                      | 多路复用（或连接共享） | 极低的等待时延（相比于TCP的三次握手）        |
     | 增加缓存处理（新的字段如cache-control） | 头部压缩        | QUIC为 传输层 协议 ，成为更多应用层的高性能选择 |
     | 增加Host字段、支持断点传输等（把文件分成几部分） | 服务器推送       |                             |
+
+
+#### Golang面试参考
+ [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
