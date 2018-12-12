@@ -43,9 +43,7 @@ FLOAT 和 DOUBLE 为浮点类型，DECIMAL 为高精度小数类型。CPU 原生
 
 FLOAT、DOUBLE 和 DECIMAL 都可以指定列宽，例如 DECIMAL(18, 9) 表示总共 18 位，取 9 位存储小数部分，剩下 9 位存储整数部分。
 
-
-
-### 3. 字符串
+3. 字符串
 
 主要有 CHAR 和 VARCHAR 两种类型，一种是定长的，一种是变长的。
 
