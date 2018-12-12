@@ -39,8 +39,6 @@ TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT 分别使用 8, 16, 24, 32, 64 位存�
 
 INT(11) 中的数字只是规定了交互工具显示字符的个数，对于存储和计算来说是没有意义的。
 
-
-
 ### 2. 浮点数
 
 FLOAT 和 DOUBLE 为浮点类型，DECIMAL 为高精度小数类型。CPU 原生支持浮点运算，但是不支持 DECIMAl 类型的计算，因此 DECIMAL 的计算比浮点类型需要更高的代价。
