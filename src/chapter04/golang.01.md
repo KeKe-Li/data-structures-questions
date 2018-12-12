@@ -53,7 +53,7 @@ VARCHAR 会保留字符串末尾的空格，而 CHAR 会删除。
 
 4. 时间和日期
 
-MySQL 提供了两种相似的日期时间类型：DATATIME 和 TIMESTAMP。
+MySQL中提供了两种相似的日期时间类型：DATATIME 和 TIMESTAMP。
 
 * DATATIME
 
