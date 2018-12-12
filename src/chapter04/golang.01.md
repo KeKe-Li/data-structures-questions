@@ -474,29 +474,29 @@ MySQL 5.5 及之后版本的默认存储引擎
 
 **两者比较**
 
-- 系统表空间：无法简单的收缩大小（这很恐怖，会导致 ibdata1 一直增大，即使删除了数据也不会变小）
-- 独立表空间：可以通过 optimize table 命令收缩系统文件
-- 系统表空间：会产生I/O瓶颈（因为只有一个文件）
-- 独立表空间：可以向多个文件刷新数据
+* 系统表空间：无法简单的收缩大小（这很恐怖，会导致 ibdata1 一直增大，即使删除了数据也不会变小）
+* 独立表空间：可以通过 optimize table 命令收缩系统文件
+* 系统表空间：会产生I/O瓶颈（因为只有一个文件）
+* 独立表空间：可以向多个文件刷新数据
 
 **总结**
 强烈建议：对Innodb引擎使用独立表空间（mysql5.6版本以后默认是独立表空间）
 
 **系统表转移为独立表的步骤（非常繁琐）**
 
-- 使用 mysqldump 导出所有数据库表数据
-- 停止 mysql 服务，修改参数，并且删除Innodb相关文件
-- 重启 mysql 服务，重建mysql系统表空间
-- 重新导入数据
+* 使用 mysqldump 导出所有数据库表数据
+* 停止 mysql 服务，修改参数，并且删除Innodb相关文件
+* 重启 mysql 服务，重建mysql系统表空间
+* 重新导入数据
 
 * 问：如何选择存储引擎
 
 **参考条件：**  
 
-- 是否需要事务
-- 是否可以热备份
-- 崩溃恢复
-- 存储引擎的特有特性  
+* 是否需要事务
+* 是否可以热备份
+* 崩溃恢复
+* 存储引擎的特有特性  
 
 
 **重要一点：** 不要混合使用存储引擎
@@ -506,18 +506,18 @@ MySQL 5.5 及之后版本的默认存储引擎
 
 **区别：**
 
-- MyISAM 不支持外键，而 InnoDB 支持
-- MyISAM 是非事务安全型的，而 InnoDB 是事务安全型的。
-- MyISAM 锁的粒度是表级，而 InnoDB 支持行级锁定。
-- MyISAM 支持全文类型索引，而 InnoDB 不支持全文索引。
-- MyISAM 相对简单，所以在效率上要优于 InnoDB，小型应用可以考虑使用 MyISAM。
-- MyISAM 表是保存成文件的形式，在跨平台的数据转移中使用 MyISAM 存储会省去不少的麻烦。
-- InnoDB 表比 MyISAM 表更安全，可以在保证数据不会丢失的情况下，切换非事务表到事务表（alter table tablename type=innodb）。
+* MyISAM 不支持外键，而 InnoDB 支持
+* MyISAM 是非事务安全型的，而 InnoDB 是事务安全型的。
+* MyISAM 锁的粒度是表级，而 InnoDB 支持行级锁定。
+* MyISAM 支持全文类型索引，而 InnoDB 不支持全文索引。
+* MyISAM 相对简单，所以在效率上要优于 InnoDB，小型应用可以考虑使用 MyISAM。
+* MyISAM 表是保存成文件的形式，在跨平台的数据转移中使用 MyISAM 存储会省去不少的麻烦。
+* InnoDB 表比 MyISAM 表更安全，可以在保证数据不会丢失的情况下，切换非事务表到事务表（alter table tablename type=innodb）。
 
 **应用场景：**
 
-- MyISAM 管理非事务表。它提供高速存储和检索，以及全文搜索能力。如果应用中需要执行大量的 SELECT 查询，那么 MyISAM 是更好的选择。
-- InnoDB 用于事务处理应用程序，具有众多特性，包括 ACID 事务支持。如果应用中需要执行大量的 INSERT
+* MyISAM 管理非事务表。它提供高速存储和检索，以及全文搜索能力。如果应用中需要执行大量的 SELECT 查询，那么 MyISAM 是更好的选择。
+* InnoDB 用于事务处理应用程序，具有众多特性，包括 ACID 事务支持。如果应用中需要执行大量的 INSERT
    或 UPDATE 操作，则应该使用 InnoDB，这样可以提高多用户并发操作的性能。
 
 #### MySQL的索引
@@ -678,20 +678,31 @@ MyISAM 存储引擎支持空间数据索引，可以用于地理数据存储。�
 
 * 如果条件中有or，即使其中有条件带索引也不会使用
 
-select * from table_name where key1='a' or key2='b';如果在key1上有索引而在key2上没有索引，则该查询也不会走索引
+使用or的查询语句，如果在key1上有索引而在key2上没有索引，则该查询也不会走索引。
 
+```sql
+> select * from table_name where key1='a' or key2='b'
+```
 * 复合索引，如果索引列不是复合索引的第一部分，则不使用索引（即不符合最左前缀）
 
-复合索引为(key1,key2),则查询select * from table_name where key2='b';将不会使用索引
+复合索引为(key1,key2),则查询而且不会使用索引。
 
+```sql
+> select * from table_name where key2='b'
+```
 * 如果like是以 % 开始的，则该列上的索引不会被使用。
 
-select * from table_name where key1 like '%a'；该查询即使key1上存在索引，也不会被使用如果列类型是字符串，那一定要在条件中使用引号引起来，否则不会使用索引
+使用like的查询语句，即使key1上存在索引，也不会被使用如果列类型是字符串，那一定要在条件中使用引号引起来，否则不会使用索引。
+```sql
+> select * from table_name where key1 like '%a'
+```
 
 * 如果列为字符串，则where条件中必须将字符常量值加引号，否则即使该列上存在索引，也不会被使用。
 
-select * from table_name where key1=1;如果key1列保存的是字符串，即使key1上有索引，也不会被使用。
-
+使用where的查询语句,key1列保存的是字符串，即使key1上有索引，也不会被使用。
+```sql
+select * from table_name where key1=1;
+```
 * 如果使用MEMORY/HEAP表，并且where条件中不使用“=”进行索引列，那么不会用到索引，head表只有在“=”的条件下才会使用索引
 
 #### 适合建立索引的情况
