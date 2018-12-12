@@ -122,11 +122,11 @@ goconvey,vegeta
 
 1.go的调度
 
-[[译]Go 调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
+* [Go 调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
-[Go语言实战笔记（十二）| Go goroutine](http://www.flysnow.org/2017/04/11/go-in-action-go-goroutine.html)
+* [Go语言实战笔记（十二）| Go goroutine](http://www.flysnow.org/2017/04/11/go-in-action-go-goroutine.html)
 
-[Golang调度器源码分析](http://ga0.github.io/golang/2015/09/20/golang-runtime-scheduler.html)
+* [Golang调度器源码分析](http://ga0.github.io/golang/2015/09/20/golang-runtime-scheduler.html)
 
 2. go struct能不能比较
 
@@ -160,33 +160,33 @@ func main() {
 
 3. go defer（for defer）
 
-[Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
+* [Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
 
 4. select可以用于什么
 
 Go的select主要是处理多个channel的操作
 
-[Go语言并发模型：使用 select](https://segmentfault.com/a/1190000006815341)
+* [Go语言并发模型：使用 select](https://segmentfault.com/a/1190000006815341)
 
 5. context包的用途
 
 godoc: https://golang.org/pkg/context/
 
-[Go Context的踩坑经历](https://zhuanlan.zhihu.com/p/34417106)
+* [Go Context的踩坑经历](https://zhuanlan.zhihu.com/p/34417106)
 
-[Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
+* [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
 
 6. client如何实现长连接
 
-[TCP协议的KeepAlive机制与HeartBeat心跳包](http://www.nowamagic.net/academy/detail/23350382#)
+* [TCP协议的KeepAlive机制与HeartBeat心跳包](http://www.nowamagic.net/academy/detail/23350382#)
 
-[HTTP Keep-Alive是什么？如何工作？](http://www.nowamagic.net/academy/detail/23350305)
+* [HTTP Keep-Alive是什么？如何工作？](http://www.nowamagic.net/academy/detail/23350305)
 
 7. 主协程如何等其余协程完再操作
 
-[Go并发：利用sync.WaitGroup实现协程同步](https://blog.csdn.net/u011304970/article/details/72722044)
+* [Go并发：利用sync.WaitGroup实现协程同步](https://blog.csdn.net/u011304970/article/details/72722044)
 
-[Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
+* [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
 
 8. slice，len，cap，共享，扩容
 
@@ -196,7 +196,7 @@ godoc: https://golang.org/pkg/context/
 
 可以通过sort中的排序包进行对map中的key进行排序
 
-[golang: 使用 sort 来排序](https://www.jianshu.com/p/6e52bad56e06)
+* [golang: 使用 sort 来排序](https://www.jianshu.com/p/6e52bad56e06)
 
 ```go
 package main
@@ -228,17 +228,17 @@ func main() {
 
 根据go中map的keys的无序性和唯一性，可以将其作为set
 
-[golang实现set集合,变相实现切片去重](https://studygolang.com/articles/3291)
+* [golang实现set集合,变相实现切片去重](https://studygolang.com/articles/3291)
 
 11.实现消息队列（多生产者，多消费者）
 
 根据Goroutine和channel的读写可以实现消息队列，
 
-[golang channel多生产者和多消费者实例](https://blog.csdn.net/phpduang/article/details/80143626)
+* [golang channel多生产者和多消费者实例](https://blog.csdn.net/phpduang/article/details/80143626)
 
 12.大文件排序
 
-[【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
+* [【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
 
 #### 13.基本排序，哪些是稳定的
 
@@ -246,7 +246,7 @@ func main() {
 
 冒泡排序、插入排序、归并排序和基数排序是稳定的排序算法
 
-[稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
+* [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
 14.http get跟head
 
@@ -254,7 +254,7 @@ get:获取由Request-URI标识的任何信息(以实体的形式)，如果Reques
 
 head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同。用来获取暗示实体的元信息，而不需要传输实体本身。常用于测试超文本链接的有效性、可用性和最近的修改。
 
-[Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
+* [Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
 
 15.http 401,403
 
@@ -264,7 +264,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 总的来说，**401 Unauthorized**响应应该用来表示缺失或错误的认证；**403 Forbidden**响应应该在这之后用，当用户被认证后，但用户没有被授权在特定资源上执行操作。
 
- [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
+* [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
 16.http keep-alive
 
@@ -298,15 +298,15 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 在对可靠性要求较高的情况下，可以使用 TCP，即不考虑 UDP 的时候，都可以选择 TCP。
 
-[iOS 面试题 TCP UDP 有什么区别？TCP 为什么要三次握手，四次挥手？](https://mp.weixin.qq.com/s/jLkhjM7wOpZuWgJdAXis1A) 
+* [iOS 面试题 TCP UDP 有什么区别？TCP 为什么要三次握手，四次挥手？](https://mp.weixin.qq.com/s/jLkhjM7wOpZuWgJdAXis1A) 
 
 19.time-wait的作用
 
-[TCP/IP状态图的TIME_WAIT作用](https://www.iteblog.com/archives/169.html)
+* [TCP/IP状态图的TIME_WAIT作用](https://www.iteblog.com/archives/169.html)
 
 20.数据库如何建索引
 
-[正确合理的建立MySQL数据库索引](https://blog.csdn.net/nanaMasuda/article/details/52358114)
+* [正确合理的建立MySQL数据库索引](https://blog.csdn.net/nanaMasuda/article/details/52358114)
 
 21.孤儿进程，僵尸进程
 
@@ -324,4 +324,4 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 
 #### Golang面试参考
- [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
+* [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
