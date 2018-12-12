@@ -86,9 +86,7 @@ Golang面试问题汇总:
 
 41. 常用测试工具，压测工具，方法
 
-   **goconvey** 
-
-   **vegeta**
+goconvey,vegeta
 
 42. 复杂的单元测试怎么测试，比如有外部接口mysql接口的情况
 
