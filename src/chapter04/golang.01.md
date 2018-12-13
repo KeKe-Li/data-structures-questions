@@ -18,6 +18,7 @@ MySQL基础:
 * [聚集索引与非聚集索引](#聚集索引与非聚集索引)
 * [数据库中的分页查询](#数据库中的分页查询)
 * [数据库中最大的连接数参数意义](#数据库中最大的连接数参数意义)
+* [Redis数据库](#Redis数据库)
 
 #### MySQL的多存储引擎架构
 <p align="center">
@@ -889,3 +890,24 @@ SELECT * FROM `video` ORDER BY `createTime`  desc LIMIT  10;
 ```sql
 db.SetConnMaxLifetime(time.Second * 500) //设置连接超时500秒
 ```
+
+#### Redis数据库
+
+Redis是一个速度非常快的key-value非关系型数据库，可以存储键(key)与5种不同类型的值（value）之间的映射，可以将存储在内存中的键值对数据持久化到硬盘中。和 Memcached 类似，它支持存储的 value 类型相对更多，包括string(字符串)、list(链表)、set(集合)、zset(sorted set --有序集合)和 hash（哈希类型）。这些数据类型都支持 push/pop、add/remove 及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。
+
+Redis数据库与 Memcached 相比的不同:
+
+* 两者都可用于存储键值映射，彼此性能也相差无几 
+* Redis 能够自动以两种不同的方式将数据写入硬盘 
+* Redis 除了能存储普通的字符串键之外，还可以存储其他4种数据结构，memcached 只能存储字符串键 
+* Redis 既能用作主数据库，由可以作为其他存储系统的辅助数据库 
+
+Redis应用场景:
+
+* 缓存、任务队列、应用排行榜、网站访问统计、数据过期处理、分布式集群架构中的session分离
+* Redis特点
+* 高并发读写,读的速度是 110000次/s（11 W次/s）,写的速度是81000次/s（8.1W 次/s）
+* 海量数据的高效存储和访问
+* 高可扩展性和高可用性
+
+* [Redis命令大全](#http://redisdoc.com/)
