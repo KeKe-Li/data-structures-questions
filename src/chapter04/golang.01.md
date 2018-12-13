@@ -864,3 +864,9 @@ NOT IN操作不会使用索引将进行全表扫描。NOT IN可以用NOT EXISTS�
   - SELECT * FROM table LIMIT [offset,] rows | rows OFFSET offset 
   - LIMIT 接受一个或两个数字参数。参数必须是一个整数常量。如果给定两个参数，第一个参数指定第一个返回记录行的偏移量，第二个参数指定返回记录行的最大数目。初始记录行的偏移量是 0(而不是 1) 
 - 最基本的分页方式：SELECT ... FROM ... WHERE ... ORDER BY ... LIMIT ...  
+
+应用示例:
+```sql
+SELECT * FROM `video` ORDER BY `createTime`  desc LIMIT  10;
+```
+根据时间查询最近的10条数据.（降序排列。
