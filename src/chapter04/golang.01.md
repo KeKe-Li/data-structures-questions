@@ -746,3 +746,28 @@ B 树和红黑树之间的区别:
 * 数据量少的字段不需要加索引
 * 如果 where 条件中是OR关系，加索引不起作用
 * 符合最左原则
+
+3. 创建索引
+
+在执行 CREATE TABLE 语句时可以创建索引，也可以单独用 CREATE INDEX 或 ALTER TABLE 来为表增加索引。
+
+* ALTER TABLE
+
+ALTER TABLE 用来创建普通索引、UNIQUE 索引或 PRIMARY KEY 索引。
+
+```sql
+ ALTER TABLE table_name ADD INDEX index_name (column_list)
+ ALTER TABLE table_name ADD UNIQUE (column_list)
+ ALTER TABLE table_name ADD PRIMARY KEY (column_list)
+```
+其中 table_name 是要增加索引的表名，column_list 指出对哪些列进行索引，多列时各列之间用逗号分隔。索引名 index_name 可选，缺省时，MySQL将根据第一个索引列赋一个名称。另外，ALTER TABLE 允许在单个语句中更改多个表，因此可以在同时创建多个索引。
+
+* CREATE INDEX
+
+CREATE INDEX 可对表增加普通索引或 UNIQUE 索引。
+
+```sql
+ CREATE INDEX index_name ON table_name (column_list)
+ CREATE UNIQUE INDEX index_name ON table_name (column_list)
+```
+table_name、index_name 和 column_list 具有与 ALTER TABLE 语句中相同的含义，索引名不可选。另外，不能用 CREATE INDEX 语句创建 PRIMARY KEY 索引。
