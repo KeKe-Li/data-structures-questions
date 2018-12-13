@@ -773,3 +773,10 @@ CREATE INDEX 可对表增加普通索引或 UNIQUE 索引。
 table_name、index_name 和 column_list 具有与 ALTER TABLE 语句中相同的含义，索引名不可选。另外，不能用 CREATE INDEX 语句创建 PRIMARY KEY 索引。
 
 4. 索引类型
+
+在创建索引时，可以规定索引能否包含重复值。如果不包含，则索引应该创建为 PRIMARY KEY 或 UNIQUE 索引。对于单列惟一性索引，这保证单列不包含重复的值。对于多列惟一性索引，保证多个值的组合不重复。 PRIMARY KEY 索引和 UNIQUE 索引非常类似。
+
+事实上，PRIMARY KEY 索引仅是一个具有名称 PRIMARY 的 UNIQUE 索引。这表示一个表只能包含一个 PRIMARY KEY，因为一个表中不可能具有两个同名的索引。 下面的SQL语句对 students 表在 sid 上添加 PRIMARY KEY 索引。 ​ ALTER TABLE students ADD PRIMARY KEY (sid)。
+
+5. 删除索引
+
