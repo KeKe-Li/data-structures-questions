@@ -780,3 +780,27 @@ table_name、index_name 和 column_list 具有与 ALTER TABLE 语句中相同的
 
 5. 删除索引
 
+可以利用 ALTER TABLE 或 DROP INDEX 语句来删除索引。类似于 CREATE INDEX 语句，DROP INDEX 可以在 ALTER TABLE 内部作为一条语句处理。
+```sql
+ DROP INDEX index_name ON talbe_name
+ ALTER TABLE table_name DROP INDEX index_name
+ ALTER TABLE table_name DROP PRIMARY KEY
+```
+其中，前两条语句是等价的，删除掉 table_name 中的索引 index_name。
+
+第3条语句只在删除 PRIMARY KEY 索引时使用，因为一个表只可能有一个 PRIMARY KEY 索引，因此不需要指定索引名。如果没有创建 PRIMARY KEY 索引，但表具有一个或多个 UNIQUE 索引，则 MySQL 将删除第一个 UNIQUE 索引。
+
+如果从表中删除了某列，则索引会受到影响。对于多列组合的索引，如果删除其中的某列，则该列也会从索引中删除。如果删除组成索引的所有列，则整个索引将被删除。
+
+6. 在什么情况下使用索引
+
+* 通常为了快速查找匹配WHERE条件的行。
+* 通常为了从考虑的条件中消除行。
+* 如果表有一个multiple-column索引，任何一个索引的最左前缀可以通过使用优化器来查找行。
+* 查询中与其它表关联的字，字段常常建立了外键关系
+* 查询中统计或分组统计的字段
+
+```sql
+select max(hbs_bh) from zl_yhjbqk
+select qc_bh,count(*) from zl_yhjbqk group by qc_bh
+```
