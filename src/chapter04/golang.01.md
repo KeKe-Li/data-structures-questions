@@ -771,3 +771,5 @@ CREATE INDEX 可对表增加普通索引或 UNIQUE 索引。
  CREATE UNIQUE INDEX index_name ON table_name (column_list)
 ```
 table_name、index_name 和 column_list 具有与 ALTER TABLE 语句中相同的含义，索引名不可选。另外，不能用 CREATE INDEX 语句创建 PRIMARY KEY 索引。
+
+4. 索引类型
