@@ -913,3 +913,16 @@ Redis特点：
 * 高可扩展性和高可用性
 
 * [Redis命令大全](#http://redisdoc.com/)
+
+Redis的数据结构：
+
+* STRING：可以是字符串、整数或者浮点数
+* LIST：一个链表，链表上的每个节点都包含了一个字符串
+* SET：包含字符串的无序收集器（unordered collection），并且被包含的每个字符串都是独一无二、各不相同的
+* HAST：包含键值对的无序散列表
+* ZSET：字符串成员（member）与浮点数分值（score）之间的有序映射，元素的排列顺序由分值的大小决定
+
+<p align="center">
+<img width="500" align="center" src="../images/15.jpg" />
+</p>
+
