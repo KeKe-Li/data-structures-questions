@@ -1023,5 +1023,5 @@ ID 唯一性：
 * SQL 线程 ：负责读取中继日志并重放其中的 SQL 语句。
 
 <p align="center">
-<img width="500" align="center" src="../images/18.jpg" />
+<img width="600" align="center" src="../images/18.jpg" />
 </p>
