@@ -1043,3 +1043,7 @@ MySQL 读写分离能提高性能的原因在于：
 <p align="center">
 <img width="600" align="center" src="../images/19.jpg" />
 </p>
+
+####  查询性能优化
+
+使用 Explain 进行分析
