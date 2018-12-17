@@ -1054,3 +1054,21 @@ Explain 用来分析 SELECT 查询语句，开发人员可以通过分析 Explai
 * select_type : 查询类型，有简单查询、联合查询、子查询等
 * key : 使用的索引
 * rows : 扫描的行数
+
+```go
+mysql> explain select * from user_info where id = 3\G
+*************************** 1. row ***************************
+           id: 3
+  select_type: SIMPLE
+        table: user_info
+   partitions: NULL
+         type: const
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 8
+          ref: const
+         rows: 1
+     filtered: 100.00
+        Extra: NULL
+1 row in set, 1 warning (0.00 sec)
+```
