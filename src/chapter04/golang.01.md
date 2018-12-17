@@ -1072,3 +1072,12 @@ possible_keys: PRIMARY
         Extra: NULL
 1 row in set, 1 warning (0.00 sec)
 ```
+2. 优化数据访问
+
+减少请求的数据量:
+
+* 只返回必要的列
+
+最好不要使用 SELECT * 语句。
+
+* 只返回必要的行
