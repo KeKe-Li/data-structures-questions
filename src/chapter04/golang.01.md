@@ -1101,3 +1101,10 @@ possible_keys: PRIMARY
 ```sql
 DELEFT FROM info WHERE create < DATE_SUB(NOW(), INTERVAL 3 MONTH);
 ```
+```sql
+rows_affected = 0
+do {
+    rows_affected = do_query(
+    "DELETE FROM info WHERE create  < DATE_SUB(NOW(), INTERVAL 3 MONTH) LIMIT 10000")
+} while rows_affected > 0
+```
