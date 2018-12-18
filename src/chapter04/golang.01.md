@@ -1116,3 +1116,13 @@ do {
 * 减少锁竞争；
 * 在应用层进行连接，可以更容易对数据库进行拆分，从而更容易做到高性能和可扩展。
 * 查询本身效率也可能会有所提升。例如下面的例子中，使用 IN() 代替连接查询，可以让 MySQL 按照 ID 顺序进行查询，这可能比随机的连接要更高效。
+
+```sql
+SELECT * FROM vido
+JOIN video_post ON video_post.video_id=video.id
+JOIN post ON video_post.post_id=post.id
+WHERE video.video='mysql';
+SELECT * FROM video WHERE video='mysql';
+SELECT * FROM video_post WHERE video_id=1234;
+SELECT * FROM post WHERE post.id IN (123,456,567,9098,8904);
+```
