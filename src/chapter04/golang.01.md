@@ -1146,3 +1146,20 @@ SHOW ENGINES
 * 乐观锁
 
 通过数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。什么是数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version字段的值一同读出，数据每更新一次，对此version值加1。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。
+
+应用示例:
+
+1. 数据库表设计
+
+```sql
+select id,value,version from TABLE where id=#{id}
+```
+
+2. 每次更新表中的value字段时，为了防止发生冲突，需要这样操作
+```sql
+update TABLE
+set value=2,version=version+1
+where id=#{id} and version=#{version};
+```
+
+
