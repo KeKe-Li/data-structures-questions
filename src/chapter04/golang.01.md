@@ -1138,3 +1138,9 @@ MySQL的引擎InnoDB的加锁问题，一直是一个面试中常问的话题。
 select version();
 ```
 * 存储引擎查看
+
+MySQL 给开发者提供了查询存储引擎的功能,可以通过下面的命令查看：
+```sql
+SHOW ENGINES
+```
+
