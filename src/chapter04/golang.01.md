@@ -1198,3 +1198,10 @@ commit;/commit work;
 共享锁又称读锁（read lock），是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。
 
 如果事务 T 对数据 A 加上共享锁后，则其他事务只能对 A 再加共享锁，不能加排他锁。获得共享锁的事务只能读数据，不能修改数据。
+
+```sql
+#三者选一就可以
+begin; / begin work; / start transaction;
+
+SELECT * from TABLE where id = 1  lock in share mode;
+```
