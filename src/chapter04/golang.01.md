@@ -1127,3 +1127,4 @@ SELECT * FROM video WHERE video='mysql';
 SELECT * FROM video_post WHERE video_id=1234;
 SELECT * FROM post WHERE post.id IN (123,456,567,9098,8904);
 ```
+#### 锁类型
