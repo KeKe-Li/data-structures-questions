@@ -1161,5 +1161,35 @@ update TABLE
 set value=2,version=version+1
 where id=#{id} and version=#{version};
 ```
+* 悲观锁
 
+与乐观锁相对应的就是悲观锁了。悲观锁就是在操作数据时，认为此操作会出现数据冲突，所以在进行每次操作时都要通过获取锁才能进行对相同数据的操作，这点跟 Java 中的 synchronized 很相似，所以悲观锁需要耗费较多的时间。另外与乐观锁相对应的，悲观锁是由数据库自己实现了的，要用的时候，我们直接调用数据库的相关语句就可以了。
 
+说到这里，由悲观锁涉及到的另外两个锁概念就出来了，它们就是共享锁与排它锁。共享锁和排它锁是悲观锁的不同的实现，它俩都属于悲观锁的范畴。
+
+应用示例:
+
+排它锁:
+
+要使用悲观锁，我们必须关闭 mysql 数据库的自动提交属性，因为 MySQL 默认使用 autocommit 模式，也就是说，当你执行一个更新操作后，MySQL 会立刻将结果进行提交。
+
+我们可以使用命令设置 MySQL 为非 autocommit 模式：
+```sql
+set autocommit=0;
+# 设置完autocommit后，我们就可以执行我们的正常业务了。具体如下：
+
+# 1. 开始事务 (三者选一就可以)
+begin; / begin work; / start transaction;
+
+# 2. 查询表信息
+select status from TABLE where id=1 for update;
+
+# 3. 插入一条数据
+insert into TABLE (id,value) values (2,2);
+
+# 4. 修改数据为
+update TABLE set value=2 where id=1;
+
+# 5. 提交事务
+commit;/commit work;
+```
