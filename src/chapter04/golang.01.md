@@ -1253,3 +1253,7 @@ SELECT * from TABLE where id = "1"  lock in share mode;
 排他锁：
 
 若某个事物对某一行加上了排他锁，只能这个事务对其进行读写，在此事务结束之前，其他事务不能对其进行加任何锁，其他进程可以读取，不能进行写操作，需等待其释放。
+```sql
+select status from TABLE where id=1 for update;
+```
+由于对于表中 id 字段为主键，就也相当于索引。执行加锁时，会将 id 这个索引为 1 的记录加上锁，那么这个锁就是行锁。
