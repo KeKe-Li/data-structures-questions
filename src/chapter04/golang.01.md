@@ -1205,3 +1205,8 @@ begin; / begin work; / start transaction;
 
 SELECT * from TABLE where id = 1  lock in share mode;
 ```
+然后在另一个查询窗口中，对 id 为 1 的数据进行更新：
+```sql
+update TABLE set name="https://www.youtube.com" where id =1;
+
+```
