@@ -1214,3 +1214,17 @@ update TABLE set name="https://www.youtube.com" where id =1;
 [SQL]update  test_one set name="https://www.youtube.com" where id =1;
 [Err] 1205 - Lock wait timeout exceeded; try restarting transaction
 ```
+加上共享锁后，也提示错误信息:
+```sql
+update test_one set name="www.souyunku.com" where id =1 lock in share mode;
+[SQL]update  test_one set name="https://www.youtube.com" where id =1 lock in share mode;
+[Err] 1064 - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'lock in share mode' at line 1
+```
+
+在查询语句后面增加 `lock in share mode，MySQL` 会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。
+
+加上共享锁后，对于 `update,insert,delete` 语句会自动加排它锁。
+
+* 排它锁
+
+排他锁 exclusive lock（也叫 writer lock）又称写锁。
