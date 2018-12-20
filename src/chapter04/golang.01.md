@@ -1246,4 +1246,10 @@ update test_one set name="www.souyunku.com" where id =1 lock in share mode;
 共享锁：
 
 共享锁又叫做读锁，所有的事务只能对其进行读操作不能写操作，加上共享锁后在事务结束之前其他事务只能再加共享锁，除此之外其他任何类型的锁都不能再加了。
+```sql
+#结果集的数据都会加共享锁
+SELECT * from TABLE where id = "1"  lock in share mode;
+```
+排他锁：
 
+若某个事物对某一行加上了排他锁，只能这个事务对其进行读写，在此事务结束之前，其他事务不能对其进行加任何锁，其他进程可以读取，不能进行写操作，需等待其释放。
