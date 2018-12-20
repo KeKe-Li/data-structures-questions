@@ -1257,3 +1257,11 @@ SELECT * from TABLE where id = "1"  lock in share mode;
 select status from TABLE where id=1 for update;
 ```
 由于对于表中 id 字段为主键，就也相当于索引。执行加锁时，会将 id 这个索引为 1 的记录加上锁，那么这个锁就是行锁。
+
+* 表锁
+
+如何加表锁?
+
+通常在引擎innodb下的行锁是在有索引的情况下,没有索引的表是锁定全表的。
+
+innodb中的行锁与表锁：
