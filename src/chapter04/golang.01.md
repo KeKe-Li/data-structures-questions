@@ -1227,4 +1227,12 @@ update test_one set name="www.souyunku.com" where id =1 lock in share mode;
 
 * 排它锁
 
-排他锁 exclusive lock（也叫 writer lock）又称写锁。
+排他锁(exclusive lock)也叫又称写锁(writer lock)。
+
+排它锁是悲观锁的一种实现，在上面悲观锁也介绍过。
+
+若在一个事务上对数据对象 A 加上 X 锁，该事务可以读 A 也可以修改 A，其他事务不能再对 A 加任何锁，直到该事物释放 A 上的锁。这保证了其他事务在该事物 释放 A 上的锁之前不能再读取和修改 A。排它锁会阻塞所有的排它锁和共享锁。
+
+读取为什么要加读锁呢：防止数据在被读取的时候被别的线程加上写锁
+
+使用方式：在需要执行的语句后面加上 `for update` 就可以了
