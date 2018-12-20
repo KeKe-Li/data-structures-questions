@@ -1208,5 +1208,9 @@ SELECT * from TABLE where id = 1  lock in share mode;
 然后在另一个查询窗口中，对 id 为 1 的数据进行更新：
 ```sql
 update TABLE set name="https://www.youtube.com" where id =1;
-
+```
+此时，操作界面进入了卡顿状态，过了超时间，提示错误信息。如果在超时前，执行 commit，此更新语句就会成功。
+```sql
+[SQL]update  test_one set name="https://www.youtube.com" where id =1;
+[Err] 1205 - Lock wait timeout exceeded; try restarting transaction
 ```
