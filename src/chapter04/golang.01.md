@@ -1288,3 +1288,7 @@ show OPEN TABLES where In_use > 0;
 ```sql
 show processlist
 ```
+3. 杀死进程id（就是上面命令的id列）
+```sql
+kill id
+```
