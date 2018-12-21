@@ -1284,3 +1284,7 @@ Innodb中的行锁与表锁：
 ```sql
 show OPEN TABLES where In_use > 0;
 ```
+2. 查询进程（如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程）
+```sql
+show processlist
+```
