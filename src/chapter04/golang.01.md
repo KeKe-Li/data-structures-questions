@@ -1292,3 +1292,10 @@ show processlist
 ```sql
 kill id
 ```
+
+第二种：
+
+1. 查看当前的事务
+```sql
+SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
+```
