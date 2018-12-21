@@ -1299,3 +1299,25 @@ kill id
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
 ```
+2. 查看当前锁定的事务
+```sql
+SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCKS;
+```
+3. 查看当前等锁的事务
+```sql
+SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
+```
+杀死进程
+```sql
+kill PID
+```
+如果系统资源充足，进程的资源请求都能够得到满足，死锁出现的可能性就很低，否则就会因争夺有限的资源而陷入死锁。其次，进程运行推进顺序与速度不同，也可能产生死锁。 产生死锁的四个必要条件：
+
+* 互斥条件：一个资源每次只能被一个进程使用。
+
+* 请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。
+
+* 不剥夺条件：进程已获得的资源，在末使用完之前，不能强行剥夺。
+
+* 循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。
+
