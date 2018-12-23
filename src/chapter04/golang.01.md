@@ -25,6 +25,7 @@ MySQL基础:
 * [锁类型](#锁类型)
 
 #### MySQL的多存储引擎架构
+
 <p align="center">
 <img width="700" align="center" src="../images/2.jpg" />
 </p>
