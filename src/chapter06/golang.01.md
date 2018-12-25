@@ -68,3 +68,6 @@
 #### 系统调用
 
 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
+<p align="center">
+<img width="600" align="center" src="../images/21.jpg" />
+</p>
