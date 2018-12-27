@@ -164,3 +164,9 @@ int* a = (int *)malloc(sizeof(int) * N);  // go on a heap
 **进程是资源分配的基本单位**，用来管理资源（例如：内存，文件，网络等资源）
 
 进程控制块 (Process Control Block, PCB) 描述进程的基本信息和运行状态，所谓的创建进程和撤销进程，都是指对 PCB 的操作。**（PCB是描述进程的数据结构）**
+
+<p align="center">
+<img width="600" align="center" src="../images/25.jpg" />
+</p>
+
+上面是4 个程序创建了 4 个进程，这 4 个进程可以并发地执行。
