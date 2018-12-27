@@ -11,6 +11,7 @@
   * [大内核和微内核](#大内核和微内核)
   * [中断分类](#中断分类)
 * [进程管理](#进程管理)
+  * [进程与线程](#进程与线程)
 
 #### 操作系统基本特征
 
@@ -153,6 +154,7 @@ int* a = (int *)malloc(sizeof(int) * N);  // go on a heap
 
 #### 进程管理
 
+#### 进程与线程
 <p align="center">
 <img width="600" align="center" src="../images/24.jpg" />
 </p>
