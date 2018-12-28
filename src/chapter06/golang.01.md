@@ -167,9 +167,6 @@ int* a = (int *)malloc(sizeof(int) * N);  // go on a heap
 <p align="center">
 <img width="600" align="center" src="../images/25.jpg" />
 </p>
-<p align="center">
-<img width="600" align="center" src="../images/25.jpg" />
-</p>
 
 上面是4 个程序创建了 4 个进程，这 4 个进程可以并发地执行。
 
