@@ -316,3 +316,43 @@ void P2() {
     up(&mutex);
 }
 ```
+* 使用信号量实现生产者-消费者问题
+
+通常，使用一个缓冲区来保存数据，只有缓冲区没有满，生产者才可以放入数据；只有缓冲区不为空，消费者才可以拿走数据。
+
+因为缓冲区属于临界资源，因此需要使用一个互斥量 mutex 来控制对缓冲区的互斥访问。
+
+为了同步生产者和消费者的行为，需要记录缓冲区中数据的数量。数量可以使用信号量来进行统计，这里需要使用两个信号量：empty 记录空缓冲区的数量，full 记录满缓冲区的数量。其中，empty 信号量是在生产者进程中使用，当 empty 不为 0 时，生产者才可以放入数据；full 信号量是在消费者进程中使用，当 full 信号量不为 0 时，消费者才可以取走数据。
+
+这里需要注意，不能先对缓冲区进行加锁，再测试信号量。也就是说，不能先执行 down(mutex) 再执行 down(empty)。如果这么做了，那么可能会出现这种情况：生产者对缓冲区加锁后，执行 down(empty) 操作，发现 empty = 0，此时生产者睡眠。消费者不能进入临界区，因为生产者对缓冲区加锁了，也就无法执行 up(empty) 操作，empty 永远都为 0，那么生产者和消费者就会一直等待下去，造成死锁。
+
+```c
+#define N 100
+typedef int semaphore;
+semaphore mutex = 1;
+semaphore empty = N;
+semaphore full = 0;
+
+void producer() {
+    while(TRUE){
+        int item = produce_item(); // 生产一个产品
+        // down(&empty) 和 down(&mutex) 不能交换位置，否则造成死锁
+        down(&empty); // 记录空缓冲区的数量，这里减少一个产品空间
+        down(&mutex); // 互斥锁
+        insert_item(item);
+        up(&mutex); // 互斥锁
+        up(&full); // 记录满缓冲区的数量，这里增加一个产品
+    }
+}
+
+void consumer() {
+    while(TRUE){
+        down(&full); // 记录满缓冲区的数量，减少一个产品
+        down(&mutex); // 互斥锁
+        int item = remove_item();
+        up(&mutex); // 互斥锁
+        up(&empty); // 记录空缓冲区的数量，这里增加一个产品空间
+        consume_item(item);
+    }
+}
+```
