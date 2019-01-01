@@ -364,3 +364,20 @@ void consumer() {
 管程是为了解决信号量在临界区的 PV 操作上的配对的麻烦，把配对的 PV 操作集中在一起，生成的一种并发编程方法。其中使用了条件变量这种同步机制。
 
 c 语言不支持管程，下面的示例代码使用了类 Pascal 语言来描述管程。示例代码的管程提供了 insert() 和 remove() 方法，客户端代码通过调用这两个方法来解决生产者-消费者问题。
+
+```c
+monitor ProducerConsumer
+    integer i;
+    condition c;
+
+    procedure insert();
+    begin
+        // ...
+    end;
+
+    procedure remove();
+    begin
+        // ...
+    end;
+end monitor;
+```
