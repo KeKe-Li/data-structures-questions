@@ -396,3 +396,35 @@ Rcount：读操作的进程数量（Rcount=0）
 CountMutex：对于Rcount进行加锁（CountMutex=1）
 
 WriteMutex：互斥量对于写操作的加锁（WriteMutex=1）
+```c
+Rcount = 0;
+semaphore CountMutex = 1;
+semaphore WriteMutex = 1;
+
+void writer(){
+    while(true){
+        sem_wait(WriteMutex);
+        // TO DO write();
+        sem_post(WriteMutex);
+    }
+}
+
+// 读者优先策略
+void reader(){
+    while(true){
+        sem_wait(CountMutex);
+        if(Rcount == 0)
+            sem_wait(WriteMutex);
+        Rcount++;
+        sem_post(CountMutex);
+        
+        // TO DO read();
+        
+        sem_wait(CountMutex);
+        Rcount--;
+        if(Rcount == 0)
+            sem_post(WriteMutex);
+        sem_post(CountMutex);
+	}
+}
+```
