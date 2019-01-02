@@ -490,3 +490,77 @@ while(1)  // 去拿两把叉子
 	}
 }
 ```
+第四种方案:
+
+互斥访问。正确，但每次只允许一人进餐
+```c
+semaphore mutex	   // 互斥信号量，初值1
+void philosopher(int i)  // 哲学家编号i：0－4	
+{
+	while(TRUE){
+	    think();			// 哲学家在思考
+	    P(mutex);			// 进入临界区
+	    take_fork(i);			// 去拿左边的叉子
+	    take_fork((i + 1) % N);	// 去拿右边的叉子
+	    eat();				// 吃面条中….
+	    put_fork(i);			// 放下左边的叉子
+	    put_fork((i + 1) % N);	// 放下右边的叉子
+	    V(mutex);			// 退出临界区
+	}
+}
+```
+正确方案如下：
+
+为了防止死锁的发生，可以设置两个条件（临界资源）：
+
+* 必须同时拿起左右两根筷子；
+* 只有在两个邻居都没有进餐的情况下才允许进餐。
+```c
+//1. 必须由一个数据结构，来描述每个哲学家当前的状态
+#define N 5
+#define LEFT i // 左邻居
+#define RIGHT (i + 1) % N    // 右邻居
+#define THINKING 0
+#define HUNGRY   1
+#define EATING   2
+typedef int semaphore;
+int state[N];                // 跟踪每个哲学家的状态
+
+//2. 该状态是一个临界资源，对它的访问应该互斥地进行
+semaphore mutex = 1;         // 临界区的互斥
+
+//3. 一个哲学家吃饱后，可能要唤醒邻居，存在着同步关系
+semaphore s[N];              // 每个哲学家一个信号量
+
+void philosopher(int i) {
+    while(TRUE) {
+        think();
+        take_two(i);
+        eat();
+        put_tow(i);
+    }
+}
+
+void take_two(int i) {
+    P(&mutex);  // 进入临界区
+    state[i] = HUNGRY; // 我饿了
+    test(i); // 试图拿两把叉子
+    V(&mutex); // 退出临界区
+    P(&s[i]); // 没有叉子便阻塞
+}
+
+void put_tow(i) {
+    P(&mutex);
+    state[i] = THINKING;
+    test(LEFT);
+    test(RIGHT);
+    V(&mutex);
+}
+
+void test(i) {         // 尝试拿起两把筷子
+    if(state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] !=EATING) {
+        state[i] = EATING;
+        V(&s[i]); // 通知第i个人可以吃饭了
+    }
+}
+```
