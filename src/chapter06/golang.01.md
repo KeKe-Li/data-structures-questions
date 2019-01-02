@@ -386,3 +386,13 @@ end monitor;
 管程引入了 条件变量 以及相关的操作：wait() 和 signal() 来实现同步操作。对条件变量执行 wait() 操作会导致调用进程阻塞，把管程让出来给另一个进程持有。signal() 操作用于唤醒被阻塞的进程。
 
 #### 经典同步问题
+
+1. 读-写问题
+
+允许多个进程同时对数据进行读操作，但是不允许读和写以及写和写操作同时发生。
+
+Rcount：读操作的进程数量（Rcount=0）
+
+CountMutex：对于Rcount进行加锁（CountMutex=1）
+
+WriteMutex：互斥量对于写操作的加锁（WriteMutex=1）
