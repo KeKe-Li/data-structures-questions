@@ -277,9 +277,9 @@ QQ 和浏览器是两个进程，浏览器进程里面有很多线程，例如 H
 
 为了互斥访问临界资源，每个进程在进入临界区之前，需要先进行检查。
 ```markdown
-// entry section
-// critical section;
-// exit section
+ entry section
+ critical section;
+ exit section
 ```
 * 同步与互斥
 
