@@ -597,3 +597,7 @@ Receive(Sender,message);//接收Sender进程发送的消息message
 * 管道
 
 管道是通过调用 pipe 函数创建的，fd[0] 用于读，fd[1] 用于写。
+```c
+#include <unistd.h>
+int pipe(int fd[2]);
+```
