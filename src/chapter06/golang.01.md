@@ -608,3 +608,18 @@ int pipe(int fd[2]);
 <p align="center">
 <img width="500" align="center" src="../images/31.jpg" />
 </p>
+
+* 命名管道
+
+命名管道的作用是，管道只能在父子进程中使用的限制。
+```c
+#include <sys/stat.h>
+int mkfifo(const char *path, mode_t mode);
+int mkfifoat(int fd, const char *path, mode_t mode);
+```
+FIFO 常用于客户-服务器应用程序中，FIFO 用作汇聚点，在客户进程和服务器进程之间传递数据。
+
+<p align="center">
+<img width="500" align="center" src="../images/32.jpg" />
+</p>
+
