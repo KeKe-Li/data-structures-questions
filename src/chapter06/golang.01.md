@@ -601,3 +601,10 @@ Receive(Sender,message);//接收Sender进程发送的消息message
 #include <unistd.h>
 int pipe(int fd[2]);
 ```
+它具有以下限制：
+* 只支持半双工通信（单向传输）
+* 只能在父子进程中使用
+
+<p align="center">
+<img width="500" align="center" src="../images/31.jpg" />
+</p>
