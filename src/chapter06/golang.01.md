@@ -623,3 +623,4 @@ FIFO 常用于客户-服务器应用程序中，FIFO 用作汇聚点，在客户
 <img width="500" align="center" src="../images/32.jpg" />
 </p>
 
+* 消息队列
