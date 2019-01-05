@@ -722,3 +722,32 @@ fork() 函数不需要参数，返回值是一个进程标识符 (PID)。对于�
 3. 如果创建出错，则 fork() 函数返回 -1。
 
 fork() 函数会创建一个新的进程，并从内核中为此进程分配一个新的可用的进程标识符 (PID)，之后，为这个新进程分配进程空间，并将父进程的进程空间中的内容复制到子进程的进程空间中，包括父进程的数据段和堆栈段，并且和父进程共享代码段（写时复制）。这时候，系统中又多了一个进程，这个进程和父进程一模一样，两个进程都要接受系统的调度。
+
+<p align="center">
+<img width="500" align="center" src="../images/33.jpg" />
+</p>
+
+下面给出的示例程序用来创建一个子进程，该程序在父进程和子进程中分别输出不同的内容。
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+int main(void)
+{
+	pid_t pid; // 保存进程ID
+	pid = fork(); // 创建一个新进程
+	if(pid < 0){ // fork出错
+		printf("fail to fork\n");
+		exit(1);
+	}
+    else if(pid == 0){	// 子进程
+        // 打印子进程的进程ID
+		printf("this is child, pid is : %u\n", getpid()); 
+	}
+    else{
+        // 打印父进程和其子进程的进程ID
+		printf("this is parent, pid is : %u, child-pid is : %u\n", getpid(), pid);	
+	}
+	return 0;
+}
+```
