@@ -748,3 +748,9 @@ int main(void){
 	return 0;
 }
 ```
+运行 :
+```c
+> $ ./fork 
+Parent, PID: 2598, Sub-process PID: 2599
+Sub-process, PID: 2599, PPID: 2598
+```
