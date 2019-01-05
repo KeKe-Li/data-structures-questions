@@ -757,3 +757,52 @@ Sub-process, PID: 2599, PPID: 2598
 由于创建的新进程和父进程在系统看来是地位平等的两个进程，所以运行机会也是一样的，我们不能够对其执行先后顺序进行假设，先执行哪一个进程取决于系统的调度算法。如果想要指定运行的顺序，则需要执行额外的操作。正因为如此，程序在运行时并不能保证输出顺序和上面所描述的一致。
 
 getpid() 是获得当前进程的pid，而 getppid() 则是获得父进程的 id。
+
+* 父子进程的共享资源
+
+子进程完全复制了父进程的地址空间的内容，包括堆栈段和数据段的内容。子进程并没有复制代码段，而是和父进程共用代码段。这样做是存在其合理依据的，因为子进程可能执行不同的流程，那么就会改变数据段和堆栈段，因此需要分开存储父子进程各自的数据段和堆栈段。但是代码段是只读的，不存在被修改的问题，因此这一个段可以让父子进程共享，以节省存储空间.
+
+<p align="center">
+<img width="500" align="center" src="../images/34.jpg" />
+</p>
+
+该程序定义了一个全局变量 global、一个局部变量 stack 和一个指针 heap。该指针用来指向一块动态分配的内存区域。之后，该程序创建一个子进程，在子进程中修改 global、stack 和动态分配的内存中变量的值。然后在父子进程中分别打印出这些变量的值。由于父子进程的运行顺序是不确定的，因此我们先让父进程额外休眠2秒，以保证子进程先运行。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+// 全局变量，在数据段中
+int global; 
+int main(){
+	pid_t pid;
+	int stack = 1; // 局部变量，在栈中
+	int * heap;
+	heap = (int *)malloc(sizeof(int)); // 动态分配的内存，在堆中
+	*heap = 2;
+	pid = fork(); // 创建一个子进程
+	if(pid < 0){ // 创建子进程失败
+		printf("fail to fork\n");
+		exit(1);	
+	}else if(pid == 0){ // 子进程，改变各变量的值
+		global++; // 修改栈、堆和数据段
+		stack++;
+		(*heap)++;
+		printf("the child, data : %d, stack : %d, heap : %d\n", global, stack, *heap);
+		exit(0); // 子进程运行结束
+	}
+       // 父进程休眠2秒钟，保证子进程先运行
+	sleep(2); 
+       // 输出结果
+	printf("the parent, data : %d, stack : %d, heap : %d\n", global, stack, *heap);
+	return 0;
+}
+```
+
+程序运行效果如下：
+```c
+> $ ./fork 
+In sub-process, global: 2, stack: 2, heap: 3
+In parent-process, global: 1, stack: 1, heap: 2
+```
+由于父进程休眠了2秒钟，子进程先于父进程运行，因此会先在子进程中修改数据段和堆栈段中的内容。因此不难看出，子进程对这些数据段和堆栈段中内容的修改并不会影响到父进程的进程环境。
