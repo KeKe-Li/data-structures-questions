@@ -732,19 +732,16 @@ fork() 函数会创建一个新的进程，并从内核中为此进程分配一�
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-int main(void)
-{
+int main(void){
 	pid_t pid; // 保存进程ID
 	pid = fork(); // 创建一个新进程
 	if(pid < 0){ // fork出错
 		printf("fail to fork\n");
 		exit(1);
-	}
-    else if(pid == 0){	// 子进程
+	}else if(pid == 0){	// 子进程
         // 打印子进程的进程ID
 		printf("this is child, pid is : %u\n", getpid()); 
-	}
-    else{
+	}else{
         // 打印父进程和其子进程的进程ID
 		printf("this is parent, pid is : %u, child-pid is : %u\n", getpid(), pid);	
 	}
