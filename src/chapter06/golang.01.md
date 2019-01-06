@@ -820,3 +820,12 @@ In parent-process, global: 1, stack: 1, heap: 2
 <p align="center">
 <img width="500" align="center" src="../images/35.jpg" />
 </p>
+
+```c
+#include <unistd.h>
+int main(){
+	while(1)
+		fork(); /* 不断地创建子进程，使系统中进程溢满 */
+	return 0;
+}
+```
