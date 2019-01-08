@@ -885,3 +885,9 @@ int main(void){
     return 0;
 }
 ```
+运行
+```c
+> $ ./vfork 
+In sub-process, global: 999, stack: 888, heap: 777
+In parent-process, global: 999, stack: 888, heap: 777
+```
