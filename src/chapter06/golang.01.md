@@ -847,3 +847,47 @@ vfork() 和 fork() 函数的区别如下：
 
 在子进程中，我们先让其休眠 2 秒以释放 CPU 控制权，在前面的 fork() 示例代码中我们已经知道这样会导致其他线程先运行，也就是说如果休眠后父进程先运行的话，则第 1 点则为假；否则为真。第 2 点为真，则会先执行子进程，那么全局变量便会被修改，如果第 1 点为真，那么后执行的父进程也会输出与子进程相同的内容。
 
+```c
+//@file vfork.c
+//@brief vfork() usage
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int global = 1;
+
+int main(void)
+{
+    pid_t pid;
+    int   stack = 1;
+    int  *heap;
+
+    heap = (int *)malloc(sizeof(int));
+    *heap = 1;
+
+    pid = vfork();
+    if (pid < 0)
+    {
+        perror("fail to vfork");
+        exit(-1);
+    }
+    else if (pid == 0)
+    {
+        //sub-process, change values
+        sleep(2);//release cpu controlling
+        global = 999;
+        stack  = 888;
+        *heap  = 777;
+        //print all values
+        printf("In sub-process, global: %d, stack: %d, heap: %d\n",global,stack,*heap);
+        exit(0);
+    }
+    else
+    {
+        //parent-process
+        printf("In parent-process, global: %d, stack: %d, heap: %d\n",global,stack,*heap);
+    }
+
+    return 0;
+}
+```
