@@ -866,13 +866,10 @@ int main(void)
     *heap = 1;
 
     pid = vfork();
-    if (pid < 0)
-    {
+    if (pid < 0){
         perror("fail to vfork");
         exit(-1);
-    }
-    else if (pid == 0)
-    {
+    }else if (pid == 0) {
         //sub-process, change values
         sleep(2);//release cpu controlling
         global = 999;
