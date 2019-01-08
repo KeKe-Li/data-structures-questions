@@ -856,8 +856,7 @@ vfork() 和 fork() 函数的区别如下：
 
 int global = 1;
 
-int main(void)
-{
+int main(void){
     pid_t pid;
     int   stack = 1;
     int  *heap;
@@ -878,9 +877,7 @@ int main(void)
         //print all values
         printf("In sub-process, global: %d, stack: %d, heap: %d\n",global,stack,*heap);
         exit(0);
-    }
-    else
-    {
+    }else{
         //parent-process
         printf("In parent-process, global: %d, stack: %d, heap: %d\n",global,stack,*heap);
     }
