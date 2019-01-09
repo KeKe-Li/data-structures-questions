@@ -891,3 +891,6 @@ int main(void){
 In sub-process, global: 999, stack: 888, heap: 777
 In parent-process, global: 999, stack: 888, heap: 777
 ```
+* 在函数内部调用vfork
+
+在使用 vfork() 函数时应该注意不要在任何函数中调用 vfork() 函数。下面的示例是在一个非 main 函数中调用了 vfork() 函数。该程序定义了一个函数 f1()，该函数内部调用了 vfork() 函数。之后，又定义了一个函数 f2()，这个函数没有实际的意义，只是用来覆盖函数 f1() 调用时的栈帧。main 函数中先调用 f1() 函数，接着调用 f2() 函数。
