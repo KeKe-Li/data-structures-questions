@@ -937,4 +937,13 @@ Segmentation fault (core dumped)
 
 * 退出进程
 
+当一个进程需要退出时，需要调用退出函数。Linux 环境下使用 exit() 函数退出进程，其函数原型如下：
+```c
+#include <stdlib.h>
+void exit(int status);
+```
+exit() 函数的参数表示进程的退出状态，这个状态的值是一个整型，保存在全局变量 $ ? 中，在 shell 中可以通过 echo $? 来检查退出状态值。
+
+注意：这个退出函数会深入内核注销掉进程的内核数据结构，并且释放掉进程的资源。
+
 
