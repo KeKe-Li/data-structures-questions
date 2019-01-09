@@ -518,6 +518,7 @@ void philosopher(int i)  // 哲学家编号i：0－4
 
 * 必须同时拿起左右两根筷子；
 * 只有在两个邻居都没有进餐的情况下才允许进餐。
+
 ```c
 //1. 必须由一个数据结构，来描述每个哲学家当前的状态
 #define N 5
@@ -750,7 +751,7 @@ int main(void){
 ```
 运行 :
 ```c
-> $ ./fork 
+> ./fork 
 Parent, PID: 2598, Sub-process PID: 2599
 Sub-process, PID: 2599, PPID: 2598
 ```
@@ -925,3 +926,8 @@ int main(void){
 3
 Segmentation fault (core dumped)
 ```
+通过运行结果可以看出，一个进程运行正常，打印出了预期结果，而另一个进程似乎出了问题，发生了段错误。出现这种情况的原因可以用下图来分析一下：
+
+<p align="center">
+<img width="500" align="center" src="../images/35.jpg" />
+</p>
