@@ -801,7 +801,7 @@ int main(){
 
 程序运行效果如下：
 ```c
-> $ ./fork 
+> ./fork 
 In sub-process, global: 2, stack: 2, heap: 3
 In parent-process, global: 1, stack: 1, heap: 2
 ```
@@ -887,7 +887,7 @@ int main(void){
 ```
 运行
 ```c
-> $ ./vfork 
+> ./vfork 
 In sub-process, global: 999, stack: 888, heap: 777
 In parent-process, global: 999, stack: 888, heap: 777
 ```
@@ -918,4 +918,10 @@ int main(void){
 
     return 0;
 }
+```
+运行:
+```c
+> ./vfork 
+3
+Segmentation fault (core dumped)
 ```
