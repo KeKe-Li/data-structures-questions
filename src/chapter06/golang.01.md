@@ -1014,3 +1014,44 @@ Unix 提供了一种机制可以保证只要父进程想知道子进程结束时
 
 任何一个子进程（init除外）在exit() 之后，并非马上就消失掉，而是留下一个称为僵尸进程 (Zombie) 的数据结构，等待父进程处理。这是每个子进程在结束时都要经过的阶段。如果子进程在exit()之后，父进程没有来得及处理，这时用 ps 命令就能看到子进程的状态是 Z。如果父进程能及时处理，可能用 ps 命令就来不及看到子进程的僵尸状态，但这并不等于子进程不经过僵尸状态。如果父进程在子进程结束之前退出，则子进程将由 init 接管。 init 将会以父进程的身份对僵尸状态的子进程进行处理。
 
+僵尸进程影响场景：
+
+例如有个进程，它定期的产生一个子进程，这个子进程需要做的事情很少，做完它该做的事情之后就退出了，因此这个子进程的生命周期很短，但是，父进程只管生成新的子进程，至于子进程退出之后的事情，则一概不闻不问，这样，系统运行上一段时间之后，系统中就会存在很多的僵死进程，倘若用 ps 命令查看的话，就会看到很多状态为 Z 的进程。 严格地来说，僵死进程并不是问题的根源，最有危害的是产生出大量僵死进程的那个父进程。因此，当我们寻求如何消灭系统中大量的僵死进程时，答案就是把产生大 量僵死进程的那个元凶枪毙掉（也就是通过 kill 发送 SIGTERM 或者 SIGKILL 信号啦）。kill了真正元凶进程之后，它产生的僵死进程就变成了孤儿进程，这些孤儿进程会被 init 进程接管，init 进程会 wait() 这些孤儿进程，释放它们占用的系统进程表中的资源，这样，这些已经僵死的孤儿进程就能瞑目而去了。
+
+* 孤儿进程应用示例
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
+
+int main(){
+    pid_t pid;
+    //创建一个进程
+    pid = fork();
+    //创建失败
+    if (pid < 0){
+        perror("fork error:");
+        exit(1);
+    }
+    
+    //子进程
+    if (pid == 0){
+        printf("I am the child process.\n");
+        //输出进程ID和父进程ID
+        printf("pid: %d\tppid:%d\n",getpid(),getppid());
+        printf("I will sleep five seconds.\n");
+        //睡眠5s，保证父进程先退出
+        sleep(5);
+        printf("pid: %d\tppid:%d\n",getpid(),getppid());
+        printf("child process is exited.\n");
+    }else{
+    	//父进程
+        printf("I am father process.\n");
+        //父进程睡眠1s，保证子进程输出进程id
+        sleep(1);
+        printf("father process is  exited.");
+    }
+    return 0;
+}
+```
