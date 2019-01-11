@@ -989,3 +989,11 @@ int main(void){
 }
 ```
 运行:
+```c
+> ./setuid
+the uid is : 0
+the euid is : 0
+after changing
+the uid is : 8000
+the euid is : 8000
+```
