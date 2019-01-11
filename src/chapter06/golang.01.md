@@ -1063,5 +1063,37 @@ I am the child process.
 pid:3906  ppid:3905
 I will sleep five seconds.
 father process is exited.
+```
+
+* 僵尸进程应用示例：
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdlib.h>
+
+int main(){
+    pid_t pid;
+    pid = fork();
+    if (pid < 0){
+        perror("fork error:");
+        exit(1);
+    }else if (pid == 0){
+        printf("I am child process.I am exiting.\n");
+        exit(0);
+    }
+    printf("I am father process.I will sleep two seconds\n");
+    //等待子进程先退出
+    
+    sleep(2);
+    //输出进程信息
+    
+    system("ps -o pid,ppid,state,tty,command");
+    printf("father process is exiting.\n");
+    return 0;
+}
+```
+运行:
+```c
 
 ```
