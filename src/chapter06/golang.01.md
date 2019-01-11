@@ -1095,5 +1095,14 @@ int main(){
 ```
 运行:
 ```c
+> ./test
+I am father process.I will sleep five seconds.
+I am child process.I am exiting.
+PID   PPID   S   TT  	   COMMAND
+3344  3343   S   PTS/1    -bash
+4061  3344   S   PTS/1    ./test
+4062  4061   Z   PTS/1    [test] <default> 
+4063  4061   R   PTS/1    ps -o pid,ppid,state,tty,command
+father process is exiting.
 
 ```
