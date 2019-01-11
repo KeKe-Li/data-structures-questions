@@ -1055,3 +1055,13 @@ int main(){
     return 0;
 }
 ```
+运行:
+```c
+> ./test
+I am father process.
+I am the child process.
+pid:3906  ppid:3905
+I will sleep five seconds.
+father process is exited.
+
+```
