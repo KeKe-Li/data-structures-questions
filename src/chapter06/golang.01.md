@@ -1147,3 +1147,9 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 <p align="center">
 <img width="500" align="center" src="../images/37.jpg" />
 </p>
+
+#### 死锁
+
+造成死锁的原因主要是有两种：
+1. 可重用资源引起的
+2. 消耗资源过多引起的
