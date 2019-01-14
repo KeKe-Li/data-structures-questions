@@ -33,7 +33,7 @@
 
 操作系统通过引入进程和线程，使得程序能够并发运行。
 <p align="center">
-<img width="500" align="center" src="../images/20.jpg" />
+<img width="600" align="center" src="../images/20.jpg" />
 </p>
 
 2. 共享
