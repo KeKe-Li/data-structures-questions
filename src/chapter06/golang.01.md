@@ -447,8 +447,7 @@ void reader(){
 下面是一种错误的解法，考虑到如果所有哲学家同时拿起左手边的筷子，那么就无法拿起右手边的筷子，造成死锁。
 ```c
 #define N 5		   // 哲学家个数
-void philosopher(int i)    // 哲学家编号：0 － 4
-{
+void philosopher(int i)   {// 哲学家编号：0 － 4
     while(TRUE)
     {
         think();			// 哲学家在思考
@@ -466,8 +465,7 @@ void philosopher(int i)    // 哲学家编号：0 － 4
 对拿叉子的过程进行了改进，但仍不正确.
 ```c
 #define N 5	 // 哲学家个数
-while(1)  // 去拿两把叉子
-{       
+while(1){       
     take_fork(i);			// 去拿左边的叉子
     if(fork((i+1)%N)) {		// 右边叉子还在吗
     	take_fork((i + 1) % N);// 去拿右边的叉子
@@ -484,8 +482,7 @@ while(1)  // 去拿两把叉子
 等待时间随机变化。可行，但非万全之策.
 ```c
 #define N 5	 // 哲学家个数
-while(1)  // 去拿两把叉子
-{       
+while(1) {       
 	take_fork(i);			// 去拿左边的叉子
 	if(fork((i+1)%N)) {		// 右边叉子还在吗
 	    take_fork((i + 1) % N);// 去拿右边的叉子
@@ -1240,5 +1237,5 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 * 利用回滚恢复
 * 通过杀死进程恢复
 
-
+死锁预防
 
