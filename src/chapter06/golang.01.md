@@ -1291,3 +1291,9 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 </p>
 
 图中c 为不安全状态，因此算法会拒绝之前的请求，从而避免进入图 c 中的状态。
+
+(三) 多个资源的银行家算法
+
+<p align="center">
+<img width="500" align="center" src="../images/43.jpg" />
+</p>
