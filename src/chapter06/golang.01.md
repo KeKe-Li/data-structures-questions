@@ -1329,3 +1329,6 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 <p align="center">
 <img width="500" align="center" src="../images/44.jpg" />
 </p>
+
+2. 分页系统地址映射
+
