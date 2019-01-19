@@ -1368,3 +1368,7 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 
 因为每次访问都需要更新链表，因此这种方式实现的 LRU 代价很高。
 
+
+<p align="center">
+<img width="500" align="center" src="../images/46.jpg" />
+</p>
