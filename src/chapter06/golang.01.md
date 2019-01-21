@@ -1372,3 +1372,7 @@ Linux Daemon（守护进程）是运行在后台的一种特殊进程。它独�
 <p align="center">
 <img width="500" align="center" src="../images/46.jpg" />
 </p>
+
+* Not Recently Used(NRU)
+
+每个页面都有两个状态位：R 与 M，当页面被访问时设置页面的 R=1，当页面被修改时设置 M=1。其中 R 位会定时被清零。可以将页面分成以下四类：
