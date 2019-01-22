@@ -1389,3 +1389,4 @@ NRU 优先换出已经被修改的脏页面（R=0，M=1），而不是被频繁�
 
 * First In First Out(FIFO)
 
+
