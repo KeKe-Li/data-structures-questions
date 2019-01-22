@@ -1387,7 +1387,7 @@ R=1，M=1
 
 NRU 优先换出已经被修改的脏页面（R=0，M=1），而不是被频繁使用的干净页面（R=1，M=0）。
 
-* First In First Out(FIFO)
+4. First In First Out(FIFO)
 
 选择换出的页面是最先进入的页面。
 
