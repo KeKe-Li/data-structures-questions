@@ -1407,20 +1407,28 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 
 第二次机会算法需要在链表中移动页面，降低了效率。时钟算法使用环形链表将页面链接起来，再使用一个指针指向最老的页面。
 
+<p align="center">
+<img width="500" align="center" src="../images/48.jpg" />
+</p>
+
+
 * 分段
 
 虚拟内存采用的是分页技术，也就是将地址空间划分成固定大小的页，每一页再与内存进行映射。
 
 下图为一个编译器在编译过程中建立的多个表，有 4 个表是动态增长的，如果使用分页系统的一维地址空间，动态增长的特点会导致覆盖问题的出现。
-
-<p align="center">
-<img width="500" align="center" src="../images/48.jpg" />
-</p>
-
-分段的做法是把每个表分成段，一个段构成一个独立的地址空间。每个段的长度可以不同，并且可以动态增长。
 <p align="center">
 <img width="500" align="center" src="../images/49.jpg" />
 </p>
+
+
+分段的做法是把每个表分成段，一个段构成一个独立的地址空间。每个段的长度可以不同，并且可以动态增长。
+
+
+<p align="center">
+<img width="500" align="center" src="../images/50.jpg" />
+</p>
+
 
 * 段页式
 
@@ -1443,10 +1451,6 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 * 磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）；
 * 制动手臂（Actuator arm）：用于在磁道之间移动磁头；
 * 主轴（Spindle）：使整个盘面转动。
-
-<p align="center">
-<img width="500" align="center" src="../images/50.jpg" />
-</p>
 
 <p align="center">
 <img width="500" align="center" src="../images/51.jpg" />
