@@ -1456,6 +1456,10 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 <img width="500" align="center" src="../images/51.jpg" />
 </p>
 
+<p align="center">
+<img width="500" align="center" src="../images/52.jpg" />
+</p>
+
 磁盘调度算法:
 
 读写一个磁盘块的时间的影响因素有：
@@ -1473,5 +1477,5 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 * 优点是公平和简单。缺点也很明显，因为未对寻道做任何优化，使平均寻道时间可能较长。
 
 <p align="center">
-<img width="500" align="center" src="../images/52.jpg" />
+<img width="500" align="center" src="../images/53.jpg" />
 </p>
