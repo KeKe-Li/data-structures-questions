@@ -1447,3 +1447,7 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 <p align="center">
 <img width="500" align="center" src="../images/50.jpg" />
 </p>
+
+<p align="center">
+<img width="500" align="center" src="../images/51.jpg" />
+</p>
