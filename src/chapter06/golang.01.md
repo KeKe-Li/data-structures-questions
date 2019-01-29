@@ -1479,3 +1479,5 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 <p align="center">
 <img width="500" align="center" src="../images/53.jpg" />
 </p>
+
+2. 最短寻道时间优先(Shortest Seek Time First,简称SSTF)
