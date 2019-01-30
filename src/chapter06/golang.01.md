@@ -1535,3 +1535,11 @@ gcc -o main main.c
 ```go
 > gcc -S main.i -o main.s
 ```
+* 汇编阶段 (Assembly phase)
+
+编译器（as）将 main.s 翻译成机器语言指令，把这些指令打包成一种叫做可重定位目标程序（relocatable object program）的格式，并将结果保存在目标文件 main.o 中。
+```go
+>  as main.s -o main.o
+```
+
+
