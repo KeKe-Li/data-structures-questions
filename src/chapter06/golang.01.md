@@ -1519,6 +1519,15 @@ int main(){
 gcc -o main main.c
 ```
 整个运行过程:
+
 <p align="center">
 <img width="500" align="center" src="../images/56.jpg" />
 </p>
+
+* 预处理阶段 (Preprocessing phase)
+
+预处理（cpp）根据以字符 # 开头的命令，修改原始的 C 程序，生成扩展名为 .i 的文件。
+```go
+> gcc -E main.c -o main.i
+```
+
