@@ -1504,3 +1504,17 @@ FIFO 算法可能会把经常使用的页面置换出去，为了避免这一问
 </p>
 
 #### 系统处理过程
+
+1. 编译系统
+以下是一个 main.c 程序：
+```c
+#include <stdio.h>
+int main(){
+    printf("Golang is Best Language\n");
+    return 0;
+}
+```
+在 Unix 系统上，由编译器把源文件转换为目标文件。
+```c
+gcc -o main main.c
+```
