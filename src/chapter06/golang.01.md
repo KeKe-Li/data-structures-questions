@@ -1530,4 +1530,8 @@ gcc -o main main.c
 ```go
 > gcc -E main.c -o main.i
 ```
-
+* 编译阶段 (Compilation phase)
+编译器（cc1）将文本文件 main.i 翻译成文本文件 main.s，它包含一个汇编语言程序。
+```go
+> gcc -S main.i -o main.s
+```
