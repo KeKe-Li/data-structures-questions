@@ -120,7 +120,7 @@ goconvey,vegeta
 
 #### 面试总结
 
-1.go的调度
+1. go的调度
 
 * [Go 调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
@@ -190,8 +190,6 @@ godoc: https://golang.org/pkg/context/
 
 8. slice，len，cap，共享，扩容
 
-
-
 9. map如何顺序读取
 
 可以通过sort中的排序包进行对map中的key进行排序
@@ -230,13 +228,13 @@ func main() {
 
 * [golang实现set集合,变相实现切片去重](https://studygolang.com/articles/3291)
 
-11.实现消息队列（多生产者，多消费者）
+11. 实现消息队列（多生产者，多消费者）
 
 根据Goroutine和channel的读写可以实现消息队列，
 
 * [golang channel多生产者和多消费者实例](https://blog.csdn.net/phpduang/article/details/80143626)
 
-12.大文件排序
+12. 大文件排序
 
 * [【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
 
@@ -248,7 +246,7 @@ func main() {
 
 * [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
-14.http get跟head
+14. Http get跟head
 
 get:获取由Request-URI标识的任何信息(以实体的形式)，如果Request-URI引用某个数据处理过程，则应该以它产生的数据作为在响应中的实体，而不是该过程的源代码文本，除非该过程碰巧输出该文本。
 
@@ -256,7 +254,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
 
-15.http 401,403
+15. Http 401,403
 
 **401 Unauthorized**： 该HTTP状态码表示认证错误，它是为了认证设计的，而不是为了授权设计的。收到401响应，**表示请求没有被认证—压根没有认证或者认证不正确—但是请重新认证和重试。**（一般在响应头部包含一个*WWW-Authenticate*来描述如何认证）。通常由web服务器返回，而不是web应用。从性质上来说是临时的东西。（服务器要求客户端重试）
 
@@ -266,23 +264,23 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
-16.http keep-alive
+16.Http keep-alive
+
+
+17. Http能不能一次连接多次请求，不等后端返回
 
 
 
-17.http能不能一次连接多次请求，不等后端返回
+18. TCP 和 UDP 有什么区别,适用场景
+
+* TCP 是面向连接的，UDP 是面向无连接的；故 TCP 需要建立连接和断开连接，UDP 不需要。
+
+* TCP 是流协议，UDP 是数据包协议；故 TCP 数据没有大小限制，UDP 数据报有大小限制（UDP 协议本身限制、数据链路层的 MTU、缓存区大小）。
+
+* TCP 是可靠协议，UDP 是不可靠协议；故 TCP 会处理数据丢包重发以及乱序等情况，UDP 则不会处理。
 
 
-
-18.tcp与udp区别，udp优点，适用场景
-
-1.TCP 是面向连接的，UDP 是面向无连接的；故 TCP 需要建立连接和断开连接，UDP 不需要。
-
-2.TCP 是流协议，UDP 是数据包协议；故 TCP 数据没有大小限制，UDP 数据报有大小限制（UDP 协议本身限制、数据链路层的 MTU、缓存区大小）。
-
-3.TCP 是可靠协议，UDP 是不可靠协议；故 TCP 会处理数据丢包重发以及乱序等情况，UDP 则不会处理。
-
-**UDP 的特点及使用场景**
+`UDP 的特点及使用场景`:
 
 UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服务，随时都可以发送数据，处理简单且高效，经常用于以下场景：
 
@@ -292,7 +290,7 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 广播通信
 
-**TCP 的特点及使用场景**
+`TCP 的特点及使用场景`:
 
 相对于 UDP，TCP 实现了数据传输过程中的各种控制，可以进行丢包时的重发控制，还可以对次序乱掉的分包进行顺序控制。
 
@@ -300,28 +298,49 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 * [iOS 面试题 TCP UDP 有什么区别？TCP 为什么要三次握手，四次挥手？](https://mp.weixin.qq.com/s/jLkhjM7wOpZuWgJdAXis1A) 
 
-19.time-wait的作用
+19. time-wait的作用
 
 * [TCP/IP状态图的TIME_WAIT作用](https://www.iteblog.com/archives/169.html)
 
-20.数据库如何建索引
+20. 数据库如何建索引
 
 * [正确合理的建立MySQL数据库索引](https://blog.csdn.net/nanaMasuda/article/details/52358114)
 
-21.孤儿进程，僵尸进程
+21. 孤儿进程，僵尸进程
 
 * 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们完成状态收集工作。
 
 * 僵尸进程：一个进程使用fork创建子进程，如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵死进程。
 
-22.死锁条件，如何避免
+22. 死锁条件，如何避免
 
-23.linux命令，查看端口占用，cpu负载，内存占用，如何发送信号给一个进程
+23. linux命令，查看端口占用，cpu负载，内存占用，如何发送信号给一个进程
 
+24. git文件版本，使用顺序，merge跟rebase
 
+25. 通常一般会用到哪些数据结构?
 
-24.git文件版本，使用顺序，merge跟rebase
+26. 链表和数组相比, 有什么优缺点?
 
+27. 如何判断两个无环单链表有没有交叉点?
+
+28. 如何判断一个单链表有没有环, 并找出入环点?
+
+29. 描述一下 TCP 四次挥手的过程中
+
+30. TCP 有哪些状态?
+
+31. TCP 的 LISTEN 状态是什么?
+
+32. TCP 的 CLOSE_WAIT 状态是什么?
+
+33. 建立一个 socket 连接要经过哪些步骤?
+34. 常见的 HTTP 状态码有哪些?
+35. 301和302有什么区别?
+36. 504和500有什么区别?
+37. HTTPS 和 HTTP 有什么区别?
+38. 写一个算法题: 手写快排
 
 #### Golang面试参考
+
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
