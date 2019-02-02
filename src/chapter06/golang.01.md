@@ -154,7 +154,6 @@ Linux 的系统调用主要有以下这些：
 int a[N];   // go on a stack
 int* a = (int *)malloc(sizeof(int) * N);  // go on a heap
 ```
-
 <p align="center">
 <img width="600" align="center" src="../images/23.jpg" />
 </p>
