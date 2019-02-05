@@ -9,7 +9,6 @@
 算法和程序结构一直是在面试过程中不断被问的问题，但是很多的时候，我们很多都是只是在应用，而没有深入的去研究这些，所以自己也在不断的思考和探索，然后分析，学习，总结自己学习的过程，希望可以和大家一起学习和交流下算法！
 
 #### 目录
-
 * [协议](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.01.md)
 * [数据结构](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter02/golang.01.md)
 * [算法](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter03/golang.01.md)
