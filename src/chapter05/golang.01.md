@@ -17,9 +17,50 @@ ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步
 
 3. go语言的并发机制以及它所使用的CSP并发模型．
 
-CSP模型是上个世纪七十年代提出的，用于描述两个独立的并发实体通过共享的通讯 channel(管道)进行通信的并发模型。 CSP中channel是第一类对象，它不关注发送消息的实体，而关注与发送消息时使用的channel。
+CSP模型是上个世纪七十年代提出的,不同于传统的多线程通过共享内存来通信，CSP讲究的是“以通信的方式来共享内存”。用于描述两个独立的并发实体通过共享的通讯 channel(管道)进行通信的并发模型。 CSP中channel是第一类对象，它不关注发送消息的实体，而关注与发送消息时使用的channel。
 
 Golang中channel 是被单独创建并且可以在进程之间传递，它的通信模式类似于 boss-worker 模式的，一个实体通过将消息发送到channel 中，然后又监听这个 channel 的实体处理，两个实体之间是匿名的，这个就实现实体中间的解耦，其中 channel 是同步的一个消息被发送到 channel 中，最终是一定要被另外的实体消费掉的，在实现原理上其实类似一个阻塞的消息队列。
+
+Goroutine 是Golang实际并发执行的实体，它底层是使用协程(coroutine)实现并发，coroutine是一种运行在用户态的用户线程，类似于 greenthread，go底层选择使用coroutine的出发点是因为，它具有以下特点：
+
+* 用户空间 避免了内核态和用户态的切换导致的成本
+* 可以由语言和框架层进行调度
+* 更小的栈空间允许创建大量的实例
+
+Golang中的Goroutine的特性:
+
+Golang内部有三个对象： P对象(processor) 代表上下文（或者可以认为是cpu），M(work thread)代表工作线程，G对象（goroutine）.
+
+正常情况下一个cpu对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。所有有时候线程对象会比处理器对象多很多
+
+我们用如下图分别表示P、M、G:
+
+<p align="center">
+<img width="300" align="center" src="../59.jpg" />
+</p>
+
+在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。一个Goroutine运行完自己的时间片后，让出上下文，自己回到runqueue中（如下图所示）。
+
+当正在运行的G0阻塞的时候（可以需要IO），会再创建一个线程（M1），P转到新的线程中去运行。
+
+<p align="center">
+<img width="300" align="center" src="../60.jpg" />
+</p>
+
+当M0返回时，它会尝试从其他线程中“偷”一个上下文过来，如果没有偷到，会把Goroutine放到Global runqueue中去，然后把自己放入线程缓存中。上下文会定时检查Global runqueue。
+
+Golang是为并发而生的语言，Go语言是为数不多的在语言层面实现并发的语言；也正是Go语言的并发特性，吸引了全球无数的开发者。
+
+Golang的CSP并发模型，是通过Goroutine和Channel来实现的。
+
+Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。
+Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通常Channel，是各个Goroutine之间通信的”管道“，有点类似于Linux中的管道。
+
+通信机制channel也很方便，传数据用channel <- data，取数据用<-channel。
+
+在通信过程中，传数据channel <- data和取数据<-channel必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。
+
+而且不管传还是取，必阻塞，直到另外的goroutine传或者取为止。
 
 4. golang 中常用的并发模式？
 
