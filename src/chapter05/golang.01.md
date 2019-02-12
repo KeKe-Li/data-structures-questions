@@ -6,6 +6,8 @@ Golang面试问题汇总:
 
 1. 除了 Mutex 以外还有那些方式安全读写共享变量？
 
+ Goroutine 通过 Channel 进行安全读写共享变量.
+
 2. 无缓冲 Chan 的发送和接收是否同步?
 
 ```go
