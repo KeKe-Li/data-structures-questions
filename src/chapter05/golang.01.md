@@ -4,9 +4,9 @@
 
 Golang面试问题汇总:
 
-1. 除了 mutex 以外还有哪些方式安全读写共享变量？
+1. 除了 Mutex 以外还有那些方式安全读写共享变量？
 
-2. 无缓冲 chan 的发送和接收是否同步?
+2. 无缓冲 Chan 的发送和接收是否同步?
 
 ```go
 ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需要同步
@@ -29,73 +29,76 @@ Golang中channel 是被单独创建并且可以在进程之间传递，它的通
 
 7. 互斥锁，读写锁，死锁问题是怎么解决。
 
-8. golang的内存模型，为什么小对象多了会造成gc压力。
+8. Golang的内存模型，为什么小对象多了会造成gc压力。
 
 9. Data Race问题怎么解决？能不能不加锁解决这个问题？
 
 10. 什么是channel，为什么它可以做到线程安全？
 
-11. goroutine 如何调度?
+11. Goroutine 如何调度?
 
 12. Golang GC 时会发生什么?
 
-13. Golang 中 goroutine 的调度.
+13. Golang 中 Goroutine 的调度.
 
 14. 并发编程概念是什么？
 
 15. 负载均衡原理是什么
 
-16. lvs相关
+16. LVS相关
 
-17. 微服务架构是什么样子的
+17. 微服务架构是什么样子的?
 
 18. 分布式锁实现原理，用过吗？
 
-19. etcd和redis怎么实现分布式锁
+19. Etcd和Redis怎么实现分布式锁?
 
-20. redis的数据结构有哪些，以及实现场景
+20. Redis的数据结构有哪些，以及实现场景?
 
-21. mysql高可用方案有哪些
+21. Mysql高可用方案有哪些?
 
-22. 说下go的并发模型
+22. 说下Go的并发模型.
 
-23. goroutine和channel的作用分别是什么
+23. Goroutine和Channel的作用分别是什么?
 
-24. 怎么查看goroutine的数量
+24. 怎么查看Goroutine的数量.
 
-25. 说下go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁
+25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
 
-26. 读写锁或者互斥锁读的时候能写吗
+26. 读写锁或者互斥锁读的时候能写吗?
 
-27. 怎么限制goroutine的数量
+27. 怎么限制Goroutine的数量.
 
-28. channel是同步的还是异步的
+28. Channel是同步的还是异步的
 
-29. 说一下异步和非阻塞的区别
+29. 说一下异步和非阻塞的区别?
 
-30. log包线程安全吗？
+30. Log包线程安全吗？
 
-31. goroutine和线程的区别
+31. Goroutine和线程的区别?
 
-32. 滑动窗口的概念以及应用
+32. 滑动窗口的概念以及应用?
 
-33. 怎么做弹性扩缩容，原理是什么
+33. 怎么做弹性扩缩容，原理是什么?
 
-34. 让你设计一个web框架，你要怎么设计，说一下步骤
+34. 让你设计一个web框架，你要怎么设计，说一下步骤.
 
-35. 说一下中间件原理
+35. 说一下中间件原理.
 
-36. 怎么设计orm，让你写你要怎么写
+36. 怎么设计orm，让你写,你会怎么写?
 
-37. epoll原理
+37. Epoll原理.
 
 38. 用过原生的http包吗？
 
-39. 一个非常大的数组，让其中两个数想加等于1000怎么算
+39. 一个非常大的数组，让其中两个数想加等于1000怎么算.
 
-40. 各个系统出问题怎么监控报警
+40. 各个系统出问题怎么监控报警.
 
-41. 常用测试工具，压测工具，方法
+41. 常用测试工具，压测工具，方法?
+
+
+
 ```go
 goconvey,vegeta
 ```
@@ -350,7 +353,82 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 35. 301和302有什么区别?
 36. 504和500有什么区别?
 37. HTTPS 和 HTTP 有什么区别?
-38. 写一个算法题: 手写快排
+38. 算法题: 手写一个快速排序
+```go
+func main() {
+	var arr = []int{19,8,16,15,23,34,6,3,1,0,2,9,7}
+	quickAscendingSort(arr, 0, len(arr)-1)
+	fmt.Println("quickAscendingSort:",arr)
+
+	quickDescendingSort(arr, 0, len(arr)-1)
+	fmt.Println("quickDescendingSort:",arr)
+}
+
+//升序
+func quickAscendingSort(arr []int, start, end int) {
+	if (start < end) {
+		i, j := start, end
+		key := arr[(start + end)/2]
+		for i <= j {
+			for arr[i] < key {
+				i++
+			}
+			for arr[j] > key {
+				j--
+			}
+			if i <= j {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+				j--
+			}
+		}
+
+		if start < j {
+			quickAscendingSort(arr, start, j)
+		}
+		if end > i {
+			quickAscendingSort(arr, i, end)
+		}
+	}
+}
+
+//降序
+func quickDescendingSort(arr []int, start, end int) {
+	if (start < end) {
+		i, j := start, end
+		key := arr[(start + end)/2]
+		for i <= j {
+			for arr[i] > key {
+				i++
+			}
+			for arr[j] < key {
+				j--
+			}
+			if i <= j {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+				j--
+			}
+		}
+
+		if start < j {
+			quickDescendingSort(arr, start, j)
+		}
+		if end > i {
+			quickDescendingSort(arr, i, end)
+		}
+	}
+}
+```
+39. Golang 里的逃逸分析是什么？怎么避免内存逃逸？
+
+40. 配置中心如何保证一致性？
+
+41. Golang 的GC触发时机是什么?
+
+42. Redis 里数据结构的实现熟悉吗?
+
+43. Goroutine 是怎么调度的？
 
 #### Golang面试参考
 
