@@ -215,6 +215,24 @@ Context 对象是线程安全的，你可以把一个 Context 对象传递给任
 
 5. JSON 标准库对 nil slice 和 空 slice 的处理是一致的吗？　
 
+首先JSON 标准库对 nil slice 和 空 slice 的处理是不一致.
+
+通常错误的用法，会报数组越界的错误，因为只是声明了slice，却没有给实例化的对象。
+```go
+var slice []int
+slice[1] = 0
+```
+此时slice的值是nil，这种情况可以用于需要返回slice的函数，当函数出现异常的时候，保证函数依然会有nil的返回值。
+
+empty slice 是指slice不为nil，但是slice没有值，slice的底层的空间是空的，此时的定义如下：
+```go
+slice := make([]int,0）
+slice := []int{}
+```
+当我们查询或者处理一个空的列表的时候，这非常有用，它会告诉我们返回的是一个列表，但是列表内没有任何值。
+
+总之，nil slice 和 empty slice是不同的东西,需要我们加以区分的.
+
 6. 协程，线程，进程的区别。
 
 7. 互斥锁，读写锁，死锁问题是怎么解决。
