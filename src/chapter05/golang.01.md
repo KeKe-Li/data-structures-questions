@@ -255,11 +255,11 @@ slice := []int{}
 
 10. 什么是channel，为什么它可以做到线程安全？
 
-11. Goroutine 如何调度?
+11. Epoll原理.
 
 12. Golang GC 时会发生什么?
 
-13. Golang 中 Goroutine 的调度.
+13. Golang 中 Goroutine 如何调度?
 
 14. 并发编程概念是什么？
 
@@ -307,42 +307,38 @@ slice := []int{}
 
 36. 怎么设计orm，让你写,你会怎么写?
 
-37. Epoll原理.
+37. 用过原生的http包吗？
 
-38. 用过原生的http包吗？
+38. 一个非常大的数组，让其中两个数想加等于1000怎么算.
 
-39. 一个非常大的数组，让其中两个数想加等于1000怎么算.
+39. 各个系统出问题怎么监控报警.
 
-40. 各个系统出问题怎么监控报警.
-
-41. 常用测试工具，压测工具，方法?
-
-
+40.  常用测试工具，压测工具，方法?
 
 ```go
 goconvey,vegeta
 ```
-42. 复杂的单元测试怎么测试，比如有外部接口mysql接口的情况
+41. 复杂的单元测试怎么测试，比如有外部接口mysql接口的情况
 
-43. redis集群，哨兵，持久化，事务
+42. redis集群，哨兵，持久化，事务
 
-44. mysql和redis区别
+43. mysql和redis区别
 
-45. 高可用软件是什么
+44. 高可用软件是什么
 
-46. 怎么搞一个并发服务程序
+45. 怎么搞一个并发服务程序
 
-47. 讲解一下你做过的项目，然后找问题问实现细节
+46. 讲解一下你做过的项目，然后找问题问实现细节
 
-48. mysql事务说一下
+47. mysql事务说下.
 
-49. 怎么做一个自动化配置平台系统
+48. 怎么做一个自动化配置平台系统
 
-50. grpc遵循什么协议
+49. grpc遵循什么协议
 
-51. grpc内部原理是什么
+50. grpc内部原理是什么
 
-52. http2的特点是什么，与http1.1的对比
+51. http2的特点是什么，与http1.1的对比
 
     | HTTP1.1                    | HTTP2       | QUIC                        |
     | -------------------------- | ----------- | --------------------------- |
@@ -351,10 +347,7 @@ goconvey,vegeta
     | 增加缓存处理（新的字段如cache-control） | 头部压缩        | QUIC为 传输层 协议 ，成为更多应用层的高性能选择 |
     | 增加Host字段、支持断点传输等（把文件分成几部分） | 服务器推送       |                             |
 
-
-#### 面试总结
-
-1. go的调度
+52. go的调度
 
 * [Go 调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
@@ -362,7 +355,7 @@ goconvey,vegeta
 
 * [Golang调度器源码分析](http://ga0.github.io/golang/2015/09/20/golang-runtime-scheduler.html)
 
-2. go struct能不能比较
+53. go struct能不能比较
 
 * 相同struct类型的可以比较
 
@@ -392,17 +385,17 @@ func main() {
 // ./.go:14:7: invalid operation: a == b (mismatched types A and B) 
 ```
 
-3. go defer（for defer）
+54. go defer（for defer）
 
 * [Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
 
-4. select可以用于什么
+55. select可以用于什么
 
 Go的select主要是处理多个channel的操作
 
 * [Go语言并发模型：使用 select](https://segmentfault.com/a/1190000006815341)
 
-5. context包的用途
+56. context包的用途
 
 godoc: https://golang.org/pkg/context/
 
@@ -410,21 +403,21 @@ godoc: https://golang.org/pkg/context/
 
 * [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
 
-6. client如何实现长连接
+57. client如何实现长连接
 
 * [TCP协议的KeepAlive机制与HeartBeat心跳包](http://www.nowamagic.net/academy/detail/23350382#)
 
 * [HTTP Keep-Alive是什么？如何工作？](http://www.nowamagic.net/academy/detail/23350305)
 
-7. 主协程如何等其余协程完再操作
+58. 主协程如何等其余协程完再操作
 
 * [Go并发：利用sync.WaitGroup实现协程同步](https://blog.csdn.net/u011304970/article/details/72722044)
 
 * [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
 
-8. slice，len，cap，共享，扩容
+59. slice，len，cap，共享，扩容
 
-9. map如何顺序读取
+60. map如何顺序读取
 
 可以通过sort中的排序包进行对map中的key进行排序
 
@@ -456,23 +449,23 @@ func main() {
 }
 ```
 
-10. 实现set
+61. 实现set
 
 根据go中map的keys的无序性和唯一性，可以将其作为set
 
 * [golang实现set集合,变相实现切片去重](https://studygolang.com/articles/3291)
 
-11. 实现消息队列（多生产者，多消费者）
+62. 实现消息队列（多生产者，多消费者）
 
 根据Goroutine和channel的读写可以实现消息队列，
 
 * [golang channel多生产者和多消费者实例](https://blog.csdn.net/phpduang/article/details/80143626)
 
-12. 大文件排序
+63. 大文件排序
 
 * [【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
 
-#### 13.基本排序，哪些是稳定的
+64.基本排序，哪些是稳定的
 
 选择排序、快速排序、希尔排序、堆排序不是稳定的排序算法，
 
@@ -480,7 +473,7 @@ func main() {
 
 * [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
-14. Http get跟head
+65. Http get跟head
 
 get:获取由Request-URI标识的任何信息(以实体的形式)，如果Request-URI引用某个数据处理过程，则应该以它产生的数据作为在响应中的实体，而不是该过程的源代码文本，除非该过程碰巧输出该文本。
 
@@ -488,7 +481,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
 
-15. Http 401,403
+66. Http 401,403
 
 **401 Unauthorized**： 该HTTP状态码表示认证错误，它是为了认证设计的，而不是为了授权设计的。收到401响应，**表示请求没有被认证—压根没有认证或者认证不正确—但是请重新认证和重试。**（一般在响应头部包含一个*WWW-Authenticate*来描述如何认证）。通常由web服务器返回，而不是web应用。从性质上来说是临时的东西。（服务器要求客户端重试）
 
@@ -498,14 +491,14 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
-16.Http keep-alive
+67.Http keep-alive
 
 
-17. Http能不能一次连接多次请求，不等后端返回
+68. Http能不能一次连接多次请求，不等后端返回
 
 
 
-18. TCP 和 UDP 有什么区别,适用场景
+69. TCP 和 UDP 有什么区别,适用场景
 
 * TCP 是面向连接的，UDP 是面向无连接的；故 TCP 需要建立连接和断开连接，UDP 不需要。
 
@@ -532,48 +525,48 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 * [iOS 面试题 TCP UDP 有什么区别？TCP 为什么要三次握手，四次挥手？](https://mp.weixin.qq.com/s/jLkhjM7wOpZuWgJdAXis1A) 
 
-19. time-wait的作用
+70. time-wait的作用
 
 * [TCP/IP状态图的TIME_WAIT作用](https://www.iteblog.com/archives/169.html)
 
-20. 数据库如何建索引
+71. 数据库如何建索引
 
 * [正确合理的建立MySQL数据库索引](https://blog.csdn.net/nanaMasuda/article/details/52358114)
 
-21. 孤儿进程，僵尸进程
+72. 孤儿进程，僵尸进程
 
 * 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们完成状态收集工作。
 
 * 僵尸进程：一个进程使用fork创建子进程，如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵死进程。
 
-22. 死锁条件，如何避免
+73. 死锁条件，如何避免
 
-23. linux命令，查看端口占用，cpu负载，内存占用，如何发送信号给一个进程
+74. linux命令，查看端口占用，cpu负载，内存占用，如何发送信号给一个进程
 
-24. git文件版本，使用顺序，merge跟rebase
+75. git文件版本，使用顺序，merge跟rebase
 
-25. 通常一般会用到哪些数据结构?
+76. 通常一般会用到哪些数据结构?
 
-26. 链表和数组相比, 有什么优缺点?
+77. 链表和数组相比, 有什么优缺点?
 
-27. 如何判断两个无环单链表有没有交叉点?
+78. 如何判断两个无环单链表有没有交叉点?
 
-28. 如何判断一个单链表有没有环, 并找出入环点?
+79. 如何判断一个单链表有没有环, 并找出入环点?
 
-29. 描述一下 TCP 四次挥手的过程中
+80. 描述一下 TCP 四次挥手的过程中
 
-30. TCP 有哪些状态?
+81. TCP 有哪些状态?
 
-31. TCP 的 LISTEN 状态是什么?
+82. TCP 的 LISTEN 状态是什么?
 
-32. TCP 的 CLOSE_WAIT 状态是什么?
+83. TCP 的 CLOSE_WAIT 状态是什么?
 
-33. 建立一个 socket 连接要经过哪些步骤?
-34. 常见的 HTTP 状态码有哪些?
-35. 301和302有什么区别?
-36. 504和500有什么区别?
-37. HTTPS 和 HTTP 有什么区别?
-38. 算法题: 手写一个快速排序
+84. 建立一个 socket 连接要经过哪些步骤?
+85. 常见的 HTTP 状态码有哪些?
+86. 301和302有什么区别?
+87. 504和500有什么区别?
+88. HTTPS 和 HTTP 有什么区别?
+89. 算法题: 手写一个快速排序
 ```go
 func main() {
 	var arr = []int{19,8,16,15,23,34,6,3,1,0,2,9,7}
@@ -640,15 +633,14 @@ func quickDescendingSort(arr []int, start, end int) {
 	}
 }
 ```
-39. Golang 里的逃逸分析是什么？怎么避免内存逃逸？
+90. Golang 里的逃逸分析是什么？怎么避免内存逃逸？
 
-40. 配置中心如何保证一致性？
+91. 配置中心如何保证一致性？
 
-41. Golang 的GC触发时机是什么?
+92. Golang 的GC触发时机是什么?
 
-42. Redis 里数据结构的实现熟悉吗?
+93. Redis 里数据结构的实现熟悉吗?
 
-43. Goroutine 是怎么调度的？
 
 #### Golang面试参考
 
