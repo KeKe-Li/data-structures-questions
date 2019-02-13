@@ -264,7 +264,6 @@ slice := []int{}
 
 注意：写独占，读共享，写锁优先级高
 
-
 * 死锁
 
 一般情况下，如果同一个线程先后两次调用lock，在第二次调用时，由于锁已经被占用，该线程会挂起等待别的线程释放锁，然而锁正是被自己占用着的，该线程又被挂起而没有机会释放锁，因此就永远处于挂起等待状态了，这叫做死锁（Deadlock）。
@@ -314,7 +313,14 @@ f. 撤消进程
 同步访问共享数据是处理数据竞争的一种有效的方法.golang在1.1之后引入了竞争检测机制，可以使用 go run -race 或者 go build -race来进行静态检测。 
 其在内部的实现是,开启多个协程执行同一个命令， 并且记录下每个变量的状态.
 
-可以使用互斥锁sync.Mutex,解决 数据竞争(data race),也可以使用管道解决.
+也可以使用命令检查数据竞争.
+```go
+$ go test -race     // test the package
+$ go run -race main.go  // compile and run the program
+$ go build -race    // build the command
+$ go install -race  // install the package
+```
+要想解决数据竞争的问题可以使用互斥锁sync.Mutex,解决数据竞争(data race),也可以使用管道解决.
 
 10. 什么是channel，为什么它可以做到线程安全？
 
