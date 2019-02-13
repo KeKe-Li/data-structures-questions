@@ -308,19 +308,21 @@ f. 撤消进程
 
 通常小对象过多会导致GC三色法消耗过多的GPU。优化思路是，减少对象分配.
 
-9. data Race问题怎么解决？能不能不加锁解决这个问题？
+9. Data Race问题怎么解决？能不能不加锁解决这个问题？
 
 同步访问共享数据是处理数据竞争的一种有效的方法.golang在1.1之后引入了竞争检测机制，可以使用 go run -race 或者 go build -race来进行静态检测。 
 其在内部的实现是,开启多个协程执行同一个命令， 并且记录下每个变量的状态.
 
-也可以使用命令检查数据竞争.
+竞争检测器基于C/C++的ThreadSanitizer 运行时库，该库在Google内部代码基地和Chromium找到许多错误。这个技术在2012年九月集成到Go中，从那时开始，它已经在标准库中检测到42个竞争条件。现在，它已经是我们持续构建过程的一部分，当竞争条件出现时，它会继续捕捉到这些错误。
+
+竞争检测器已经完全集成到Go工具链中，仅仅添加-race标志到命令行就使用了检测器。
 ```go
-$ go test -race     // test the package
-$ go run -race main.go  // compile and run the program
-$ go build -race    // build the command
-$ go install -race  // install the package
+$ go test -race mypkg    // 测试包
+$ go run -race mysrc.go  // 编译和运行程序
+$ go build -race mycmd   // 构建程序
+$ go install -race mypkg // 安装程序
 ```
-要想解决数据竞争的问题可以使用互斥锁sync.Mutex,解决数据竞争(data race),也可以使用管道解决.
+要想解决数据竞争的问题可以使用互斥锁sync.Mutex,解决数据竞争(Data race),也可以使用管道解决,使用管道的效率要比互斥锁高.
 
 10. 什么是channel，为什么它可以做到线程安全？
 
