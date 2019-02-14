@@ -159,10 +159,9 @@ sync.(*WaitGroup).Wait(0xc000094010)
 main.main()
         /home/keke/go/Test/wait.go:17 +0xab
 exit status 2
-
 ```
-
 它提示所有的 goroutine 都已经睡眠了，出现了死锁。这是因为 wg 给拷贝传递到了  goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。
+
 因此 Wait 就死锁了。
 
 这个第一个修改方式:将匿名函数中 wg 的传入类型改为 *sync.WaitGrou,这样就能引用到正确的WaitGroup了。
@@ -523,9 +522,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 负载均衡是建立在现有网络结构之上，它提供了一种廉价有效透明的方法扩展网络设备和服务器的带宽、增加吞吐量、加强网络数据处理能力、提高网络的灵活性和可用性。
 
-
-
-通过例子详细介绍:
+通过一个例子详细介绍:
 
 * 没有负载均衡 web 架构
 
@@ -579,7 +576,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 16. LVS相关了解.
 
-LVS是 Linux Virtual Server 的简称，也就是Linux虚拟服务器。这是一个由章文嵩博士发起的一个开源项目，它的官方网站是 http://www.linuxvirtualserver.org 现在 LVS 已经是 Linux 内核标准的一部分。使用 LVS 可以达到的技术目标是：通过 LVS 达到的负载均衡技术和 Linux 操作系统实现一个高性能高可用的 Linux 服务器集群，它具有良好的可靠性、可扩展性和可操作性。
+LVS是 Linux Virtual Server 的简称，也就是Linux虚拟服务器。这是一个由章文嵩博士发起的一个开源项目，它的官方网站是[LinuxVirtualServer](http://www.linuxvirtualserver.org)现在 LVS 已经是 Linux 内核标准的一部分。使用 LVS 可以达到的技术目标是：通过 LVS 达到的负载均衡技术和 Linux 操作系统实现一个高性能高可用的 Linux 服务器集群，它具有良好的可靠性、可扩展性和可操作性。
 从而以低廉的成本实现最优的性能。LVS 是一个实现负载均衡集群的开源软件项目，LVS架构从逻辑上可分为调度层、Server集群层和共享存储。
 
 LVS的基本工作原理:
@@ -600,7 +597,6 @@ LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。
 1. ipvs(ip virtual server)：一段代码工作在内核空间，叫ipvs，是真正生效实现调度的代码。
 2. ipvsadm：另外一段是工作在用户空间，叫ipvsadm，负责为ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
 
-
 详细的LVS的介绍可以参考[LVS详解](https://www.cnblogs.com/liqing1009/p/8763045.html).
 
 17. 微服务架构是什么样子的?
@@ -613,9 +609,7 @@ LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。
 微服务架构是一种思想对微服务架构我们没有一个明确的定义，但简单来说微服务架构是：
 
 采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。
-          
-
-
+        
 Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例子,可以参考学习.
 
 微服务架构设计包括：
@@ -636,7 +630,6 @@ Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例�
 微服务架构介绍详细的可以参考:
 
 * [Microservice Architectures](http://www.pst.ifi.lmu.de/Lehre/wise-14-15/mse/microservice-architectures.pdf)
-
 
 18. 分布式锁实现原理，用过吗？
 
