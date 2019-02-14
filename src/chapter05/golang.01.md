@@ -616,7 +616,7 @@ LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。
           
 
 
-Golang的微服务框架[kit](https://github.com/go-kit/kit)中有详细的微服务的例子,可以参考学习.
+Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例子,可以参考学习.
 
 微服务架构设计包括：
 
