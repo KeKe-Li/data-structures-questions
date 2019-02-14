@@ -709,13 +709,15 @@ goconvey,vegeta
     | 增加缓存处理（新的字段如cache-control） | 头部压缩        | QUIC为 传输层 协议 ，成为更多应用层的高性能选择 |
     | 增加Host字段、支持断点传输等（把文件分成几部分） | 服务器推送       |                             |
 
-52. go的调度
+52. Go的调度原理.
 
-* [Go 调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
+* [Go调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
 * [Go语言实战笔记（十二）| Go goroutine](http://www.flysnow.org/2017/04/11/go-in-action-go-goroutine.html)
 
 * [Golang调度器源码分析](http://ga0.github.io/golang/2015/09/20/golang-runtime-scheduler.html)
+
+* [Goroutine调度过程](https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/chapter10/01.0.md)
 
 53. go struct能不能比较
 
@@ -751,13 +753,13 @@ func main() {
 
 * [Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
 
-55. select可以用于什么
+55. select可以用于什么?
 
-Go的select主要是处理多个channel的操作
+Go的select主要是处理多个channel的操作.
 
 * [Go语言并发模型：使用 select](https://segmentfault.com/a/1190000006815341)
 
-56. context包的用途
+56. context包的用途是什么?
 
 godoc: https://golang.org/pkg/context/
 
@@ -765,25 +767,25 @@ godoc: https://golang.org/pkg/context/
 
 * [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
 
-57. client如何实现长连接
+57. client如何实现长连接?
 
 * [TCP协议的KeepAlive机制与HeartBeat心跳包](http://www.nowamagic.net/academy/detail/23350382#)
 
 * [HTTP Keep-Alive是什么？如何工作？](http://www.nowamagic.net/academy/detail/23350305)
 
-58. 主协程如何等其余协程完再操作
+58. 主协程如何等其余协程完再操作?
 
 * [Go并发：利用sync.WaitGroup实现协程同步](https://blog.csdn.net/u011304970/article/details/72722044)
 
 * [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
 
-59. slice，len，cap，共享，扩容
+59. slice，len，cap，共享，扩容.
 
-60. map如何顺序读取
+60. map如何顺序读取?
 
 可以通过sort中的排序包进行对map中的key进行排序
 
-* [golang: 使用 sort 来排序](https://www.jianshu.com/p/6e52bad56e06)
+* [golang:使用 sort 来排序](https://www.jianshu.com/p/6e52bad56e06)
 
 ```go
 package main
