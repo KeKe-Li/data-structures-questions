@@ -530,7 +530,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 * 没有负载均衡 web 架构
 
 <p align="center">
-<img width="500" align="center" src="../images/66.jpg" />
+<img width="300" align="center" src="../images/66.jpg" />
 </p>
 
 在这里用户是直连到 web 服务器，如果这个服务器宕机了，那么用户自然也就没办法访问了。
@@ -541,9 +541,8 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 * 有负载均衡 web 架构
 
-
 <p align="center">
-<img width="500" align="center" src="../images/67.jpg" />
+<img width="300" align="center" src="../images/67.jpg" />
 </p>
 
 用户访问负载均衡器，再由负载均衡器将请求转发给后端服务器。在这种情况下，单点故障现在转移到负载均衡器上了。
@@ -578,8 +577,31 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 除此之外，想要解决负载均衡器的单点故障问题，可以将第二个负载均衡器连接到第一个上，从而形成一个集群。
 
-
 16. LVS相关了解.
+
+LVS是 Linux Virtual Server 的简称，也就是Linux虚拟服务器。这是一个由章文嵩博士发起的一个开源项目，它的官方网站是 http://www.linuxvirtualserver.org 现在 LVS 已经是 Linux 内核标准的一部分。使用 LVS 可以达到的技术目标是：通过 LVS 达到的负载均衡技术和 Linux 操作系统实现一个高性能高可用的 Linux 服务器集群，它具有良好的可靠性、可扩展性和可操作性。
+从而以低廉的成本实现最优的性能。LVS 是一个实现负载均衡集群的开源软件项目，LVS架构从逻辑上可分为调度层、Server集群层和共享存储。
+
+LVS的基本工作原理:
+
+<p align="center">
+<img width="300" align="center" src="../images/68.jpg" />
+</p>
+
+1. 当用户向负载均衡调度器（Director Server）发起请求，调度器将请求发往至内核空间
+2. PREROUTING链首先会接收到用户请求，判断目标IP确定是本机IP，将数据包发往INPUT链
+3. IPVS是工作在INPUT链上的，当用户请求到达INPUT时，IPVS会将用户请求和自己已定义好的集群服务进行比对，如果用户请求的就是定义的集群服务，那么此时IPVS会强行修改数据包里的目标IP地址及端口，并将新的数据包发往POSTROUTING链
+4. POSTROUTING链接收数据包后发现目标IP地址刚好是自己的后端服务器，那么此时通过选路，将数据包最终发送给后端的服务器
+
+LVS的组成:
+
+LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。
+
+1. ipvs(ip virtual server)：一段代码工作在内核空间，叫ipvs，是真正生效实现调度的代码。
+2. ipvsadm：另外一段是工作在用户空间，叫ipvsadm，负责为ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
+
+
+详细的LVS的介绍可以参考[LVS详解](https://www.cnblogs.com/liqing1009/p/8763045.html).
 
 17. 微服务架构是什么样子的?
 
