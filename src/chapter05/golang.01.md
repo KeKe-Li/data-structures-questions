@@ -159,10 +159,9 @@ sync.(*WaitGroup).Wait(0xc000094010)
 main.main()
         /home/keke/go/Test/wait.go:17 +0xab
 exit status 2
-
 ```
-
 它提示所有的 goroutine 都已经睡眠了，出现了死锁。这是因为 wg 给拷贝传递到了  goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。
+
 因此 Wait 就死锁了。
 
 这个第一个修改方式:将匿名函数中 wg 的传入类型改为 *sync.WaitGrou,这样就能引用到正确的WaitGroup了。
@@ -523,14 +522,12 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 负载均衡是建立在现有网络结构之上，它提供了一种廉价有效透明的方法扩展网络设备和服务器的带宽、增加吞吐量、加强网络数据处理能力、提高网络的灵活性和可用性。
 
-
-
-通过例子详细介绍:
+通过一个例子详细介绍:
 
 * 没有负载均衡 web 架构
 
 <p align="center">
-<img width="500" align="center" src="../images/66.jpg" />
+<img width="300" align="center" src="../images/66.jpg" />
 </p>
 
 在这里用户是直连到 web 服务器，如果这个服务器宕机了，那么用户自然也就没办法访问了。
@@ -541,9 +538,8 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 * 有负载均衡 web 架构
 
-
 <p align="center">
-<img width="500" align="center" src="../images/67.jpg" />
+<img width="300" align="center" src="../images/67.jpg" />
 </p>
 
 用户访问负载均衡器，再由负载均衡器将请求转发给后端服务器。在这种情况下，单点故障现在转移到负载均衡器上了。
@@ -578,10 +574,62 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 
 除此之外，想要解决负载均衡器的单点故障问题，可以将第二个负载均衡器连接到第一个上，从而形成一个集群。
 
-
 16. LVS相关了解.
 
+LVS是 Linux Virtual Server 的简称，也就是Linux虚拟服务器。这是一个由章文嵩博士发起的一个开源项目，它的官方网站是[LinuxVirtualServer](http://www.linuxvirtualserver.org)现在 LVS 已经是 Linux 内核标准的一部分。使用 LVS 可以达到的技术目标是：通过 LVS 达到的负载均衡技术和 Linux 操作系统实现一个高性能高可用的 Linux 服务器集群，它具有良好的可靠性、可扩展性和可操作性。
+从而以低廉的成本实现最优的性能。LVS 是一个实现负载均衡集群的开源软件项目，LVS架构从逻辑上可分为调度层、Server集群层和共享存储。
+
+LVS的基本工作原理:
+
+<p align="center">
+<img width="300" align="center" src="../images/68.jpg" />
+</p>
+
+1. 当用户向负载均衡调度器（Director Server）发起请求，调度器将请求发往至内核空间
+2. PREROUTING链首先会接收到用户请求，判断目标IP确定是本机IP，将数据包发往INPUT链
+3. IPVS是工作在INPUT链上的，当用户请求到达INPUT时，IPVS会将用户请求和自己已定义好的集群服务进行比对，如果用户请求的就是定义的集群服务，那么此时IPVS会强行修改数据包里的目标IP地址及端口，并将新的数据包发往POSTROUTING链
+4. POSTROUTING链接收数据包后发现目标IP地址刚好是自己的后端服务器，那么此时通过选路，将数据包最终发送给后端的服务器
+
+LVS的组成:
+
+LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。
+
+1. ipvs(ip virtual server)：一段代码工作在内核空间，叫ipvs，是真正生效实现调度的代码。
+2. ipvsadm：另外一段是工作在用户空间，叫ipvsadm，负责为ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
+
+详细的LVS的介绍可以参考[LVS详解](https://www.cnblogs.com/liqing1009/p/8763045.html).
+
 17. 微服务架构是什么样子的?
+
+通常传统的项目体积庞大，需求、设计、开发、测试、部署流程固定。新功能需要在原项目上做修改。
+
+但是微服务可以看做是对大项目的拆分，是在快速迭代更新上线的需求下产生的。新的功能模块会发布成新的服务组件，与其他已发布的服务组件一同协作。
+服务内部有多个生产者和消费者，通常以http rest的方式调用，服务总体以一个（或几个）服务的形式呈现给客户使用。
+
+微服务架构是一种思想对微服务架构我们没有一个明确的定义，但简单来说微服务架构是：
+
+采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。
+        
+Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例子,可以参考学习.
+
+微服务架构设计包括：
+
+1. 服务熔断降级限流机制 熔断降级的概念(Rate Limiter 限流器,Circuit breaker 断路器)
+2. 框架调用方式解耦方式 Kit 或 Istio 或 Micro 服务发现(consul  zookeeper kubeneters etcd ) RPC调用框架
+3. 链路监控  zipkin  
+4. 多级缓存
+5. 网关 (kong gateway)
+6. Docker部署管理 Kubenetters 
+7. 自动集成部署 CI/CD 实践
+8. 自动扩容机制规则
+9. 压测 优化 
+10. Trasport 数据传输(序列化和反序列化)
+11. Logging 日志
+12. Metrics 指针对每个请求信息的仪表盘化
+
+微服务架构介绍详细的可以参考:
+
+* [Microservice Architectures](http://www.pst.ifi.lmu.de/Lehre/wise-14-15/mse/microservice-architectures.pdf)
 
 18. 分布式锁实现原理，用过吗？
 
