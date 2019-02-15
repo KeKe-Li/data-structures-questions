@@ -651,9 +651,27 @@ Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例�
 
 尽管有这三种方案，但是不同的业务也要根据自己的情况进行选型，他们之间没有最好只有更适合！
 
+* 基于数据库的实现方式
 
+基于数据库的实现方式的核心思想是：在数据库中创建一个表，表中包含方法名等字段，并在方法名字段上创建唯一索引，想要执行某个方法，就使用这个方法名向表中插入数据，成功插入则获取锁，执行完成后删除对应的行数据释放锁。
 
+创建一个表：
 
+```sql
+DROP TABLE IF EXISTS `method_lock`;
+CREATE TABLE `method_lock` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `method_name` varchar(64) NOT NULL COMMENT '锁定的方法名',
+  `desc` varchar(255) NOT NULL COMMENT '备注信息',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_method_name` (`method_name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='锁定中的方法';
+```
+想要执行某个方法，就使用这个方法名向表中插入数据：
+```sql
+INSERT INTO method_lock (method_name, desc) VALUES ('methodName', '测试的methodName');
+```
 
 19. Etcd和Redis怎么实现分布式锁?
 
