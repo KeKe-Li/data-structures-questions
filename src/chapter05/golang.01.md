@@ -976,6 +976,16 @@ func main() {
 
 20. Redis的数据结构有哪些，以及实现场景?
 
+Redis的数据结构有五种:
+
+* string 字符串
+* Hash 字典
+* List 列表
+* Set 集合
+* Sorted Set 有序集合
+
+
+
 21. Mysql高可用方案有哪些?
 
 22. 说下Go的并发模型.
