@@ -97,7 +97,6 @@ func main() {
 
     fmt.Println("finished")
 }
-
 ```
 当主 goroutine 运行到 <-ch 接受 channel 的值的时候，如果该  channel 中没有数据，就会一直阻塞等待，直到有值。 这样就可以简单实现并发控制
 
