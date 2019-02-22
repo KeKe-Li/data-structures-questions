@@ -1092,6 +1092,67 @@ Go语言的运行环境（runtime）会在goroutine需要的时候动态地分�
 
 23. Goroutine和Channel的作用分别是什么?
 
+进程是内存资源管理和cpu调度的执行单元。为了有效利用多核处理器的优势，将进程进一步细分，允许一个进程里存在多个线程，这多个线程还是共享同一片内存空间，但cpu调度的最小单元变成了线程。
+
+那协程又是什么呢，以及与线程的差异性??
+
+协程，可以看作是轻量级的线程。但与线程不同的是，线程的切换是由操作系统控制的，而协程的切换则是由用户控制的。
+
+最早支持协程的程序语言应该是lisp方言scheme里的continuation（续延），续延允许scheme保存任意函数调用的现场，保存起来并重新执行。Lua,C#,python等语言也有自己的协程实现。
+
+Go中的goroutinue就是协程,可以实现并行，多个协程可以在多个处理器同时跑。而协程同一时刻只能在一个处理器上跑（可以把宿主语言想象成单线程的就好了）。
+然而,多个goroutine之间的通信是通过channel，而协程的通信是通过yield和resume()操作。
+
+goroutine非常简单，只需要在函数的调用前面加关键字go即可，例如:
+```go
+go elegance()
+```
+我们也可以启动5个goroutines分别打印索引。
+```go
+func main() {
+	for i:=1;i<5;i++ {
+		go func(i int) {
+			fmt.Println(i)
+		}(i)
+	}
+	// 停歇5s，保证打印全部结束
+	time.Sleep(5*time.Second)
+}
+```
+在分析goroutine执行的随机性和并发性，启动了5个goroutine，再加上main函数的主goroutine，总共有6个goroutines。由于goroutine类似于”守护线程“，异步执行的,如果主goroutine不等待片刻，可能程序就没有输出打印了。
+
+在Golang中channel则是goroutinues之间进行通信的渠道。
+
+可以把channel形象比喻为工厂里的传送带,一头的生产者goroutine往传输带放东西,另一头的消费者goroutinue则从输送带取东西。channel实际上是一个有类型的消息队列,遵循先进先出的特点。
+
+1. channel的操作符号
+
+ch <- data 表示data被发送给channel ch；
+
+data <- ch 表示从channel ch取一个值，然后赋给data。
+
+2. 阻塞式channel
+
+channel默认是没有缓冲区的，也就是说，通信是阻塞的。send操作必须等到有消费者accept才算完成。
+
+应用示例:
+```go
+func main() {
+	ch1 := make(chan int)
+	go pump(ch1) // pump hangs
+	fmt.Println(<-ch1) // prints only 1
+}
+
+func pump(ch chan int) {
+	for i:= 1; ; i++ {
+		ch <- i
+	}
+}
+```
+函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1.
+
+没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
+
 24. 怎么查看Goroutine的数量.
 
 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
