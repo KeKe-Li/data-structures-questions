@@ -1149,11 +1149,12 @@ func pump(ch chan int) {
 	}
 }
 ```
-函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1.
+
+在函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1.
 
 没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
 
-24. 怎么查看Goroutine的数量.
+24. 怎么查看Goroutine的数量?
 
 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
 
