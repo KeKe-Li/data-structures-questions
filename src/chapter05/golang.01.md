@@ -1156,7 +1156,7 @@ func pump(ch chan int) {
 
 24. 怎么查看Goroutine的数量?
 。
-GOMAXPROCS中控制的是未被阻塞的所有goroutine被multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
+GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
 
 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
 
