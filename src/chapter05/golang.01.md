@@ -104,9 +104,9 @@ func main() {
 
 在 sync 包中，提供了 WaitGroup ，它会等待它收集的所有 goroutine 任务全部完成。在WaitGroup里主要有三个方法:
 
-* Add, 可以添加或减少 goroutine的数量
-* Done, 相当于Add(-1)
-* Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0
+* Add, 可以添加或减少 goroutine的数量.
+* Done, 相当于Add(-1).
+* Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0.
 
 在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。
 在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回返回。
