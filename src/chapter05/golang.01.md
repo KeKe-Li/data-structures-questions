@@ -1162,6 +1162,168 @@ GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多
 
 Go中的三种锁包括:互斥锁,读写锁,map的安全的锁.
 
+* 互斥锁
+
+Go并发程序对共享资源进行访问控制的主要手段，由标准库代码包中sync中的Mutex结构体表示。
+
+```go
+//Mutex 是互斥锁， 零值是解锁的互斥锁， 首次使用后不得复制互斥锁。
+type Mutex struct {
+   state int32
+   sema  uint32
+}
+```
+sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
+```go
+//Locker表示可以锁定和解锁的对象。
+type Locker interface {
+   Lock()
+   Unlock()
+}
+
+//锁定当前的互斥量
+//如果锁已被使用，则调用goroutine
+//阻塞直到互斥锁可用。
+func (m *Mutex) Lock() 
+
+//对当前互斥量进行解锁
+//如果在进入解锁时未锁定m，则为运行时错误。
+//锁定的互斥锁与特定的goroutine无关。
+//允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
+func (m *Mutex) Unlock()
+```
+声明一个互斥锁：
+```go
+var mutex sync.Mutex
+```
+不像C或Java的锁类工具，我们可能会犯一个错误：忘记及时解开已被锁住的锁，从而导致流程异常。但Go由于存在defer，所以此类问题出现的概率极低。关于defer解锁的方式如下：
+```go
+var mutex sync.Mutex
+func Write()  {
+   mutex.Lock()
+   defer mutex.Unlock()
+}
+```
+如果对一个已经上锁的对象再次上锁，那么就会导致该锁定操作被阻塞，直到该互斥锁回到被解锁状态.
+```go
+fpackage main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+
+	var mutex sync.Mutex
+	fmt.Println("begin lock")
+	mutex.Lock()
+	fmt.Println("get locked")
+	for i := 1; i <= 3; i++ {
+		go func(i int) {
+			fmt.Println("begin lock ", i)
+			mutex.Lock()
+			fmt.Println("get locked ", i)
+		}(i)
+	}
+
+	time.Sleep(time.Second)
+	fmt.Println("Unlock the lock")
+	mutex.Unlock()
+	fmt.Println("get unlocked")
+	time.Sleep(time.Second)
+
+}
+
+```
+
+我们在for循环之前开始加锁，然后在每一次循环中创建一个协程，并对其加锁，但是由于之前已经加锁了，所以这个for循环中的加锁会陷入阻塞直到main中的锁被解锁， time.Sleep(time.Second) 是为了能让系统有足够的时间运行for循环，输出结果如下：
+```go
+> go run mutex.go 
+begin lock
+get locked
+begin lock  3
+begin lock  1
+begin lock  2
+Unlock the lock
+get unlocked
+get locked  3
+```
+这里可以看到解锁后，三个协程会重新抢夺互斥锁权，最终协程3获胜。
+
+互斥锁锁定操作的逆操作并不会导致协程阻塞，但是有可能导致引发一个无法恢复的运行时的panic，比如对一个未锁定的互斥锁进行解锁时就会发生panic。避免这种情况的最有效方式就是使用defer。
+
+我们知道如果遇到panic，可以使用recover方法进行恢复，但是如果对重复解锁互斥锁引发的panic却是无用的（Go 1.8及以后）。
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+
+	defer func() {
+		fmt.Println("Try to recover the panic")
+		if p := recover(); p != nil {
+			fmt.Println("recover the panic : ", p)
+		}
+	}()
+
+	var mutex sync.Mutex
+	fmt.Println("begin lock")
+	mutex.Lock()
+	fmt.Println("get locked")
+	fmt.Println("unlock lock")
+	mutex.Unlock()
+	fmt.Println("lock is unlocked")
+	fmt.Println("unlock lock again")
+	mutex.Unlock()
+}
+```
+运行:
+```go
+> go run mutex.go 
+begin lock
+get locked
+unlock lock
+lock is unlocked
+unlock lock again
+fatal error: sync: unlock of unlocked mutex
+
+goroutine 1 [running]:
+runtime.throw(0x4bc1a8, 0x1e)
+        /home/keke/soft/go/src/runtime/panic.go:617 +0x72 fp=0xc000084ea8 sp=0xc000084e78 pc=0x427ba2
+sync.throw(0x4bc1a8, 0x1e)
+        /home/keke/soft/go/src/runtime/panic.go:603 +0x35 fp=0xc000084ec8 sp=0xc000084ea8 pc=0x427b25
+sync.(*Mutex).Unlock(0xc00001a0c8)
+        /home/keke/soft/go/src/sync/mutex.go:184 +0xc1 fp=0xc000084ef0 sp=0xc000084ec8 pc=0x45f821
+main.main()
+        /home/keke/go/Test/mutex.go:25 +0x25f fp=0xc000084f98 sp=0xc000084ef0 pc=0x486c1f
+runtime.main()
+        /home/keke/soft/go/src/runtime/proc.go:200 +0x20c fp=0xc000084fe0 sp=0xc000084f98 pc=0x4294ec
+runtime.goexit()
+        /home/keke/soft/go/src/runtime/asm_amd64.s:1337 +0x1 fp=0xc000084fe8 sp=0xc000084fe0 pc=0x450ad1
+exit status 2
+```
+这里试图对重复解锁引发的panic进行recover，但是我们发现操作失败，虽然互斥锁可以被多个协程共享，但还是建议将对同一个互斥锁的加锁解锁操作放在同一个层次的代码中。
+
+* 读写锁
+
+读写锁是针对读写操作的互斥锁，可以分别针对读操作与写操作进行锁定和解锁操作 。
+
+读写锁的访问控制规则如下：
+
+① 多个写操作之间是互斥的
+② 写操作与读操作之间也是互斥的
+③ 多个读操作之间不是互斥的
+
+在这样的控制规则下，读写锁可以大大降低性能损耗。
+
+
+
 26. 读写锁或者互斥锁读的时候能写吗?
 
 27. 怎么限制Goroutine的数量.
