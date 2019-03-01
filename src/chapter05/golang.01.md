@@ -1160,7 +1160,7 @@ GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多
 
 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
 
-Go中的三种锁包括:互斥锁,读写锁,map的安全的锁.
+Go中的三种锁包括:互斥锁,读写锁,sync.Map的安全的锁.
 
 * 互斥锁
 
@@ -1233,9 +1233,7 @@ func main() {
 	mutex.Unlock()
 	fmt.Println("get unlocked")
 	time.Sleep(time.Second)
-
 }
-
 ```
 
 我们在for循环之前开始加锁，然后在每一次循环中创建一个协程，并对其加锁，但是由于之前已经加锁了，所以这个for循环中的加锁会陷入阻塞直到main中的锁被解锁， time.Sleep(time.Second) 是为了能让系统有足够的时间运行for循环，输出结果如下：
@@ -1264,14 +1262,12 @@ import (
 )
 
 func main() {
-
 	defer func() {
 		fmt.Println("Try to recover the panic")
 		if p := recover(); p != nil {
 			fmt.Println("recover the panic : ", p)
 		}
 	}()
-
 	var mutex sync.Mutex
 	fmt.Println("begin lock")
 	mutex.Lock()
@@ -1322,7 +1318,99 @@ exit status 2
 
 在这样的控制规则下，读写锁可以大大降低性能损耗。
 
+在Go的标准库代码包中sync中的RWMutex结构体表示为:
+```go
+// RWMutex是一个读/写互斥锁，可以由任意数量的读操作或单个写操作持有。
+// RWMutex的零值是未锁定的互斥锁。
+//首次使用后，不得复制RWMutex。
+//如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
+//特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
+type RWMutex struct {
+   w           Mutex  //如果有待处理的写操作就持有
+   writerSem   uint32 // 写操作等待读操作完成的信号量
+   readerSem   uint32 //读操作等待写操作完成的信号量
+   readerCount int32  // 待处理的读操作数量
+   readerWait  int32  // number of departing readers
+}
+```
+sync中的RWMutex有以下几种方法：
+```go
+//对读操作的锁定
+func (rw *RWMutex) RLock()
+//对读操作的解锁
+func (rw *RWMutex) RUnlock()
+//对写操作的锁定
+func (rw *RWMutex) Lock()
+//对写操作的解锁
+func (rw *RWMutex) Unlock()
 
+//返回一个实现了sync.Locker接口类型的值，实际上是回调rw.RLock and rw.RUnlock.
+func (rw *RWMutex) RLocker() Locker
+```
+Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
+
+由于读写锁控制下的多个读操作之间不是互斥的，因此对于读解锁更容易被忽视。对于同一个读写锁，添加多少个读锁定，就必要有等量的读解锁，这样才能其他协程有机会进行操作。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	var rwm sync.RWMutex
+	for i := 0; i < 5; i++ {
+		go func(i int) {
+			fmt.Println("try to lock read ", i)
+			rwm.RLock()
+			fmt.Println("get locked ", i)
+			time.Sleep(time.Second * 2)
+			fmt.Println("try to unlock for reading ", i)
+			rwm.RUnlock()
+			fmt.Println("unlocked for reading ", i)
+		}(i)
+	}
+	time.Sleep(time.Millisecond * 1000)
+	fmt.Println("try to lock for writing")
+	rwm.Lock()
+	fmt.Println("locked for writing")
+}
+```
+运行:
+```go
+> go run rwmutex.go 
+try to lock read  0
+get locked  0
+try to lock read  4
+get locked  4
+try to lock read  3
+get locked  3
+try to lock read  1
+get locked  1
+try to lock read  2
+get locked  2
+try to lock for writing
+try to unlock for reading  0
+unlocked for reading  0
+try to unlock for reading  2
+unlocked for reading  2
+try to unlock for reading  1
+unlocked for reading  1
+try to unlock for reading  3
+unlocked for reading  3
+try to unlock for reading  4
+unlocked for reading  4
+locked for writing
+```
+这里可以看到创建了五个协程用于对读写锁的读锁定与读解锁操作。在 rwm.Lock()种会对main中协程进行写锁定，但是for循环中的读解锁尚未完成，因此会造成mian中的协程阻塞。当for循环中的读解锁操作都完成后就会试图唤醒main中阻塞的协程，main中的写锁定才会完成。
+
+
+* sync.Map安全锁
+
+golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
 
 26. 读写锁或者互斥锁读的时候能写吗?
 
