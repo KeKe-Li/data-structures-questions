@@ -1409,6 +1409,7 @@ locked for writing
 
 
 * sync.Map安全锁
+
 golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
 
 26. 读写锁或者互斥锁读的时候能写吗?
