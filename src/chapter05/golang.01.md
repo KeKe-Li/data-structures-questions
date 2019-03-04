@@ -1407,10 +1407,57 @@ locked for writing
 ```
 这里可以看到创建了五个协程用于对读写锁的读锁定与读解锁操作。在 rwm.Lock()种会对main中协程进行写锁定，但是for循环中的读解锁尚未完成，因此会造成mian中的协程阻塞。当for循环中的读解锁操作都完成后就会试图唤醒main中阻塞的协程，main中的写锁定才会完成。
 
-
 * sync.Map安全锁
 
 golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
+
+应用示例:
+```go
+package main
+import (
+    "sync"
+    "fmt"
+)
+
+func main() {
+    //开箱即用
+    var sm sync.Map
+    //store 方法,添加元素
+    sm.Store(1,"a")
+    //Load 方法，获得value
+    if v,ok:=sm.Load(1);ok{
+        fmt.Println(v)
+    }
+    //LoadOrStore方法，获取或者保存
+    //参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
+    if vv,ok:=sm.LoadOrStore(1,"c");ok{
+        fmt.Println(vv)
+    }
+    if vv,ok:=sm.LoadOrStore(2,"c");!ok{
+        fmt.Println(vv)
+    }
+    //遍历该map，参数是个函数，该函数参的两个参数是遍历获得的key和value，返回一个bool值，当返回false时，遍历立刻结束。
+    sm.Range(func(k,v interface{})bool{
+        fmt.Print(k)
+        fmt.Print(":")
+        fmt.Print(v)
+        fmt.Println()
+        return true
+    })
+}
+```
+运行 :
+```go
+a
+a
+c
+1:a
+2:c
+```
+sync.Map的数据结构:
+
+
+
 
 26. 读写锁或者互斥锁读的时候能写吗?
 
