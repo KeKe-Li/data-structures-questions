@@ -1569,6 +1569,7 @@ func (m *Map) dirtyLocked() {
         }
     }
 }
+
 //判断entry是否被标记删除，并且将标记为nil的entry更新标记为expunge
 func (e *entry) tryExpungeLocked() (isExpunged bool) {
     p := atomic.LoadPointer(&e.p)
@@ -1581,6 +1582,7 @@ func (e *entry) tryExpungeLocked() (isExpunged bool) {
     }
     return p == expunged
 }
+
 //对entry 尝试更新
 func (e *entry) tryStore(i *interface{}) bool {
     p := atomic.LoadPointer(&e.p)
@@ -1597,10 +1599,12 @@ func (e *entry) tryStore(i *interface{}) bool {
         }
     }
 }
+
 //read里 将标记为expunge的更新为nil
 func (e *entry) unexpungeLocked() (wasExpunged bool) {
     return atomic.CompareAndSwapPointer(&e.p, expunged, nil)
 }
+
 //更新entry
 func (e *entry) storeLocked(i *interface{}) {
     atomic.StorePointer(&e.p, unsafe.Pointer(i))
@@ -1609,6 +1613,7 @@ func (e *entry) storeLocked(i *interface{}) {
 因此，每次操作先检查read，因为read 并发安全，性能好些；read不满足，则加锁检查dirty，一旦是新的键值，dirty会被read更新。
 
 Load方法:
+
 Load方法是一个加载方法，查找key。
 ```go
 func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
@@ -1634,6 +1639,7 @@ func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
     }
     return e.load()
 }
+
 //dirty 提升至read 关键函数，当misses 经过多次因为load之后，大小等于len（dirty）时候，讲dirty替换到read里，以此达到性能提升。
 func (m *Map) missLocked() {
     m.misses++
