@@ -1662,6 +1662,102 @@ Go中读写锁包括读取锁和写入锁，多个读线程可以同时访问共
 27. 怎么限制Goroutine的数量.
 
 在Golang中，Goroutine虽然很好，但是数量太多了，往往会带来很多麻烦，比如耗尽系统资源导致程序崩溃，或者CPU使用率过高导致系统忙不过来。所以我们可以限制下Goroutine的数量,这样就需要在每一次执行go之前判断goroutine的数量，如果数量超了，就要阻塞go的执行。第一时间想到的就是使用通道。每次执行的go之前向通道写入值，直到通道满的时候就阻塞了，
+```go
+package main
+
+import "fmt"
+
+var ch chan  int
+
+func elegance(){
+	<-ch
+	fmt.Println("the ch value receive",ch)
+}
+
+func main(){
+	ch = make(chan int,5)
+	for i:=0;i<10;i++{
+		ch <-1
+		fmt.Println("the ch value send",ch)
+		go elegance()
+		fmt.Println("the result i",i)
+	}
+
+}
+
+```
+运行:
+```go
+> go run goroutine.go 
+the ch value send 0xc00009c000
+the result i 0
+the ch value send 0xc00009c000
+the result i 1
+the ch value send 0xc00009c000
+the result i 2
+the ch value send 0xc00009c000
+the result i 3
+the ch value send 0xc00009c000
+the result i 4
+the ch value send 0xc00009c000
+the result i 5
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 6
+the ch value receive 0xc00009c000
+the ch value send 0xc00009c000
+the result i 7
+the ch value send 0xc00009c000
+the result i 8
+the ch value send 0xc00009c000
+the result i 9
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 10
+the ch value send 0xc00009c000
+the result i 11
+the ch value send 0xc00009c000
+the result i 12
+the ch value send 0xc00009c000
+the result i 13
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 14
+the ch value receive 0xc00009c000
+keke@keke:~/go/Test$ go run goroutine.go 
+the ch value send 0xc00007e000
+the result i 0
+the ch value send 0xc00007e000
+the result i 1
+the ch value send 0xc00007e000
+the result i 2
+the ch value send 0xc00007e000
+the result i 3
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 4
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 5
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 6
+the ch value send 0xc00007e000
+the result i 7
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the ch value receive 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 8
+the ch value send 0xc00007e000
+the result i 9
+```
+这样每次同时运行的goroutine就被限制为5个了。但是新的问题于是就出现了，因为并不是所有的goroutine都执行完了，在main函数退出之后，还有一些goroutine没有执行完就被强制结束了。这个时候我们就需要用到sync.WaitGroup。使用WaitGroup等待所有的goroutine退出。
 
 
 
