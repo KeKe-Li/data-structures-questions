@@ -1758,10 +1758,96 @@ the ch value send 0xc00007e000
 the result i 9
 ```
 这样每次同时运行的goroutine就被限制为5个了。但是新的问题于是就出现了，因为并不是所有的goroutine都执行完了，在main函数退出之后，还有一些goroutine没有执行完就被强制结束了。这个时候我们就需要用到sync.WaitGroup。使用WaitGroup等待所有的goroutine退出。
+```go
+package main
 
+import (
+	"fmt"
+	"runtime"
+	"sync"
+	"time"
+)
+// Pool Goroutine Pool
+type Pool struct {
+	queue chan int
+	wg *sync.WaitGroup
+}
+// New 新建一个协程池
+func NewPool(size int) *Pool{
+	if size <=0{
+		size = 1
+	}
+	return &Pool{
+		queue:make(chan int,size),
+		wg:&sync.WaitGroup{},
+	}
+}
+// Add 新增一个执行
+func (p *Pool)Add(delta int){
+	// delta为正数就添加
+	for i :=0;i<delta;i++{
+		p.queue <-1
+	}
+	// delta为负数就减少
+	for i:=0;i>delta;i--{
+		<-p.queue
+	}
+	p.wg.Add(delta)
+}
+// Done 执行完成减一
+func (p *Pool) Done(){
+	<-p.queue
+	p.wg.Done()
+}
+// Wait 等待Goroutine执行完毕
+func (p *Pool) Wait(){
+	p.wg.Wait()
+}
 
+func main(){
+	// 这里限制5个并发
+	pool := NewPool(5)
+	fmt.Println("the NumGoroutine begin is:",runtime.NumGoroutine())
+	for i:=0;i<20;i++{
+		pool.Add(1)
+		go func(i int) {
+			time.Sleep(time.Second)
+			fmt.Println("the NumGoroutine continue is:",runtime.NumGoroutine())
+			pool.Done()
+		}(i)
+	}
+	pool.Wait()
+	fmt.Println("the NumGoroutine done is:",runtime.NumGoroutine())
+}
+```
+运行:
+```go
+the NumGoroutine begin is: 1
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 7
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 3
+the NumGoroutine continue is: 2
+the NumGoroutine done is: 1
+```
+其中，Go的GOMAXPROCS默认值已经设置为CPU的核数， 这里允许我们的Go程序充分使用机器的每一个CPU,最大程度的提高我们程序的并发性能。runtime.NumGoroutine函数在被调用后，会返回系统中的处于特定状态的Goroutine的数量。这里的特指是指Grunnable\Gruning\Gsyscall\Gwaition。处于这些状态的Groutine即被看做是活跃的或者说正在被调度。
 
-
+这里需要注意下：垃圾回收所在Groutine的状态也处于这个范围内的话，也会被纳入该计数器。
 
 28. Channel是同步的还是异步的
 
