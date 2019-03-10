@@ -1760,9 +1760,6 @@ the result i 9
 这样每次同时运行的goroutine就被限制为5个了。但是新的问题于是就出现了，因为并不是所有的goroutine都执行完了，在main函数退出之后，还有一些goroutine没有执行完就被强制结束了。这个时候我们就需要用到sync.WaitGroup。使用WaitGroup等待所有的goroutine退出。
 
 
-
-
-
 28. Channel是同步的还是异步的
 
 29. 说一下异步和非阻塞的区别?
