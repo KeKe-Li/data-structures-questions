@@ -1506,6 +1506,7 @@ func (m *Map) Delete(key interface{}) {
         e.delete()
     }
 }
+
 func (e *entry) delete() (hadValue bool) {
     for {
         p := atomic.LoadPointer(&e.p)
