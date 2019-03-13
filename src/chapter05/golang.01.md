@@ -6,7 +6,7 @@ Golang面试问题汇总:
 
 1. Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量？
 
-  Golang中Goroutine 可以通过 Channel 进行安全读写共享变量.
+  Golang中Goroutine 可以通过 Channel 进行安全读写共享变量。
 
 2. 无缓冲 Chan 的发送和接收是否同步?
 
@@ -14,8 +14,8 @@ Golang面试问题汇总:
 ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需要同步.
 ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步. 
 ```
-* channel无缓冲时，发送阻塞直到数据被接收，接收阻塞直到读到数据.
-* channel有缓冲时，当缓冲满时发送阻塞，当缓冲空时接收阻塞.
+* channel无缓冲时，发送阻塞直到数据被接收，接收阻塞直到读到数据。
+* channel有缓冲时，当缓冲满时发送阻塞，当缓冲空时接收阻塞。
 
 3. go语言的并发机制以及它所使用的CSP并发模型．
 
