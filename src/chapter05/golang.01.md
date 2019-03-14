@@ -1849,7 +1849,15 @@ the NumGoroutine done is: 1
 
 这里需要注意下：垃圾回收所在Groutine的状态也处于这个范围内的话，也会被纳入该计数器。
 
-28. Channel是同步的还是异步的
+28. Channel是同步的还是异步的.
+
+Channel是异步进行的。
+
+channel存在3种状态：
+
+* nil，未初始化的状态，只进行了声明，或者手动赋值为nil
+* active，正常的channel，可读或者可写
+* closed，已关闭，千万不要误认为关闭channel后，channel的值是nil
 
 29. 说一下异步和非阻塞的区别?
 
