@@ -101,7 +101,7 @@ func main() {
 
 * 通过sync包中的WaitGroup实现并发控制
 
-在 sync 包中，提供了 WaitGroup ，它会等待它收集的所有 goroutine 任务全部完成。在WaitGroup里主要有三个方法:
+Goroutine是异步执行的，有的时候为了防止在结束mian函数的时候结束掉Goroutine，所以需要同步等待，这个时候就需要用 WaitGroup了，在 sync 包中，提供了 WaitGroup ，它会等待它收集的所有 goroutine 任务全部完成。在WaitGroup里主要有三个方法:
 
 * Add, 可以添加或减少 goroutine的数量.
 * Done, 相当于Add(-1).
