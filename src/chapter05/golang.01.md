@@ -7,7 +7,7 @@ Golang面试问题汇总:
 
   Golang中Goroutine 可以通过 Channel 进行安全读写共享变量。
 
-#### #### 2. 无缓冲 Chan 的发送和接收是否同步?
+#### 2. 无缓冲 Chan 的发送和接收是否同步?
 
 ```go
 ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需要同步.
