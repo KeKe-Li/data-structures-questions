@@ -1725,7 +1725,9 @@ the ch value receive 0xc00009c000
 the ch value receive 0xc00009c000
 the result i 14
 the ch value receive 0xc00009c000
-keke@keke:~/go/Test$ go run goroutine.go 
+```
+```
+> go run goroutine.go 
 the ch value send 0xc00007e000
 the result i 0
 the ch value send 0xc00007e000
