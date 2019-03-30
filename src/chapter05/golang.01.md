@@ -1648,7 +1648,6 @@ func (m *Map) missLocked() {
     m.misses = 0
 }
 ```
-
 sync.Map是通过冗余的两个数据结构(read、dirty),实现性能的提升。为了提升性能，load、delete、store等操作尽量使用只读的read；为了提高read的key击中概率，采用动态调整，将dirty数据提升为read；对于数据的删除，采用延迟标记删除法，只有在提升dirty的时候才删除。
 
 #### 26. 读写锁或者互斥锁读的时候能写吗?
