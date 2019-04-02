@@ -2283,7 +2283,7 @@ func quickDescendingSort(arr []int, start, end int) {
 
 100. Go中切片，map，struct 在64位机器中占用字节是多少?
 
-在64位系统下，Golang的切片占用字节是16位，map和struct都是8位.
+在64位系统下，Golang的切片占用字节是24位，map和struct都是8位.
 
 101. Go中的defer函数使用下面的两种情况下结果是多少，为什么?
 ```go
