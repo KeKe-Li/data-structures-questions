@@ -2281,6 +2281,27 @@ func quickDescendingSort(arr []int, start, end int) {
 
 99. 服务发现怎么实现的.
 
+100. Go中切片，map，struct 在64位机器中占用字节是多少?
+
+在64位系统下，Golang的切片占用字节是24位，map和struct都是8位.
+
+101. Go中的defer函数使用下面的两种情况下结果是多少，为什么?
+```go
+	a := 1
+	defer fmt.Println("the value of a1:",a)
+	a++
+
+	defer func() {
+		fmt.Println("the value of a2:",a)
+	}()
+
+```
+运行:
+```go
+the value of a1: 1
+the value of a1: 2
+```
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
