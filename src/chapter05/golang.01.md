@@ -2301,6 +2301,19 @@ func quickDescendingSort(arr []int, start, end int) {
 the value of a1: 1
 the value of a1: 2
 ```
+第一种情况：
+```go
+defer fmt.Println("the value of a1:",a)
+```
+defer延迟函数调用的fmt.Println(a)函数的参数值在defer语句出现时就已经确定了，所以无论后面如何修改a变量都不会影响延迟函数。
+
+第二种情况:
+```go
+defer func() {
+		fmt.Println("the value of a2:",a)
+	}()
+```
+defer延迟函数调用的函数参数的值在defer定义时候就确定了，而defer延迟函数内部所使用的值需要在这个函数运行时候才确定。
 
 #### Golang面试参考
 
