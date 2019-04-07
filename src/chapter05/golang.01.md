@@ -1972,7 +1972,7 @@ goconvey,vegeta
     | 增加缓存处理（新的字段如cache-control） | 头部压缩        | QUIC为 传输层 协议 ，成为更多应用层的高性能选择 |
     | 增加Host字段、支持断点传输等（把文件分成几部分） | 服务器推送       |                             |
 
-52. Go的调度原理.
+#### 52. Go的调度原理.
 
 * [Go调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
