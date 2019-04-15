@@ -1933,6 +1933,44 @@ IDC的定义是：中间件是一种独立的系统软件或服务程序，分�
 #### 36. 怎么设计orm，让你写,你会怎么写?
 
 #### 37. 用过原生的http包吗？
+Golang中http包中处理 HTTP 请求主要跟两个东西相关：ServeMux 和 Handler。
+
+ServrMux 本质上是一个 HTTP 请求路由器（或者叫多路复用器，Multiplexor）。它把收到的请求与一组预先定义的 URL 路径列表做对比，然后在匹配到路径的时候调用关联的处理器（Handler）。
+
+处理器（Handler）负责输出HTTP响应的头和正文。任何满足了http.Handler接口的对象都可作为一个处理器。通俗的说，对象只要有个如下签名的ServeHTTP方法即可：
+```go
+ServeHTTP(http.ResponseWriter, *http.Request)
+```
+Go 语言的 HTTP 包自带了几个函数用作常用处理器，比如FileServer，NotFoundHandler 和 RedirectHandler。
+
+应用示例:
+```go
+package main
+
+import (
+	"log"
+	"net/http"
+)
+
+func main() {
+	mux := http.NewServeMux()
+
+	rh := http.RedirectHandler("http://www.baidu.com", 307)
+	mux.Handle("/foo", rh)
+
+	log.Println("Listening...")
+	http.ListenAndServe(":3000", mux)
+}
+```
+在这个应用示例中,首先在 main 函数中我们只用了 http.NewServeMux 函数来创建一个空的 ServeMux。
+然后我们使用 http.RedirectHandler 函数创建了一个新的处理器，这个处理器会对收到的所有请求，都执行307重定向操作到 `http://www.baidu.com`。
+接下来我们使用 ServeMux.Handle 函数将处理器注册到新创建的 ServeMux，所以它在 URL 路径/foo 上收到所有的请求都交给这个处理器。
+最后我们创建了一个新的服务器，并通过 http.ListenAndServe 函数监听所有进入的请求，通过传递刚才创建的 ServeMux来为请求去匹配对应处理器。
+在浏览器中访问 `http://localhost:3000/foo`，你应该能发现请求已经成功的重定向了。
+
+此刻你应该能注意到一些有意思的事情：ListenAndServer 的函数签名是 ListenAndServe(addr string, handler Handler) ，但是第二个参数我们传递的是个 ServeMux。
+
+通过这个例子我们就可以知道,net/http包在编写golang web应用中有很重要的作用，它主要提供了基于HTTP协议进行工作的client实现和server实现，可用于编写HTTP服务端和客户端。
 
 #### 38. 一个非常大的数组，让其中两个数想加等于1000怎么算?
 
