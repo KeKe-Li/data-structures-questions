@@ -1958,6 +1958,20 @@ columnN datatype,
 SELECT * FROM T WHERE field1 >= ？ OR field2 >= ？;
 ```
 
+这个过程其实是构建where语句的过程，我们可以根据一些条件，构建where语句，然后映射到成一个sql语句，根据sql语句我们就可以查询到一组符合条件的数据（cursor），然后就是将cursor数据转化成A.
+
+现在总结下第三步操作的两个过程：condition ->sql语句；cursor reslut->A
+
+完成这三部，基本上就完成了一个ORM的设计，如果后面需要对性能，细节进行优化，就可以慢慢来。毕竟主功能已具备。
+
+注意：如果想线程安全进行数据库操作可以考虑  db.enableWriteAheadLogging();
+
+设计orm过程就是: 
+
+* 根据A得到 T;
+* 根据condition构建where,拼接成sql;
+* 根据sql从T中查出cursors；
+* cursor转化成A.
 
 #### 37. 用过原生的http包吗？
 Golang中http包中处理 HTTP 请求主要跟两个东西相关：ServeMux 和 Handler。
