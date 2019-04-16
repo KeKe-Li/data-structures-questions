@@ -1151,7 +1151,7 @@ func pump(ch chan int) {
 没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
 
 #### 24. 怎么查看Goroutine的数量?
-GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
+在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
 
 #### 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
 
