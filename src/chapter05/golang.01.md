@@ -2483,6 +2483,9 @@ defer func() {
 ```
 defer延迟函数调用的函数参数的值在defer定义时候就确定了，而defer延迟函数内部所使用的值需要在这个函数运行时候才确定。
 
+102. 如何通过递归反转单链表?
+
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
