@@ -194,7 +194,7 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 #### （3）TCP 首部格式
 
 <p align="center">
-<img width="500" align="center" src="../images/70.jpg" />
+<img width="500" align="center" src="../images/74.jpg" />
 </p>
 
 
@@ -206,14 +206,13 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 - **终止 FIN** ：用来释放一个连接，当 FIN=1 时，表示此报文段的发送方的数据已发送完毕，并要求释放连接。
 - **窗口** ：窗口值作为接收方让发送方设置其发送窗口的依据。之所以要有这个限制，是因为接收方的数据缓存空间是有限的。
 
-
-
-
 ### 3. TCP三次握手？那四次挥手呢？如何保障可靠传输
 
 #### （1）三次握手
 
-<div align="center"> <img src="pics/tcp-3.png" width="700"/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/75.jpg" />
+</p>
 
 **假设 A 为客户端，B 为服务器端。**
 
@@ -225,8 +224,6 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 - B 收到 A 的确认后，连接建立。
 - B 的 TCP 收到主机 A 的确认后，也通知其上层应用进程：TCP 连接已经建立。
 
-
-
 #### （2）为什么TCP连接需要三次握手，两次不可以吗，为什么
 
 **为了防止已失效的连接请求报文段突然又传送到了服务端，占用服务器资源。 （假设主机A为客户端，主机B为服务器端）**
@@ -237,28 +234,24 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 
 采用三次握手的办法可以防止上述现象的发生。例如在刚才的情况下，A不会向B的确认发出确认。B由于收不到确认，就知道A并没有要求建立连接。
 
-
-
 #### （3）四次挥手
 
-<div align="center"> <img src="pics/tcp-4.png" width="750"/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/76.jpg" />
+</p>
 
 数据传输结束后，通信的双方都可释放连接。现在 A 的应用进程先向其 TCP 发出连接释放报文段，并停止再发送数据，主动关闭 TCP连接。
 
-- A 把连接释放报文段首部的 FIN = 1，其序号 seq = u，等待 B 的确认。
-- B 发出确认，确认号 ack = u+1，而这个报文段自己的序号 seq = v。（TCP 服务器进程通知高层应用进程）
-- 从 A 到 B 这个方向的连接就释放了，TCP 连接处于半关闭状态。A 不能向 B 发送数据；B 若发送数据，A 仍要接收。
-- 当 B 不再需要连接时，发送连接释放请求报文段，FIN=1。
-- A 收到后发出确认，进入 TIME-WAIT 状态，等待 2 MSL（2*2 = 4 mins）时间后释放连接。
-- B 收到 A 的确认后释放连接。
-
-
+* A 把连接释放报文段首部的 FIN = 1，其序号 seq = u，等待 B 的确认。
+* B 发出确认，确认号 ack = u+1，而这个报文段自己的序号 seq = v。（TCP 服务器进程通知高层应用进程）
+* 从 A 到 B 这个方向的连接就释放了，TCP 连接处于半关闭状态。A 不能向 B 发送数据；B 若发送数据，A 仍要接收。
+* 当 B 不再需要连接时，发送连接释放请求报文段，FIN=1。
+* A 收到后发出确认，进入 TIME-WAIT 状态，等待 2 MSL（2*2 = 4 mins）时间后释放连接。
+* B 收到 A 的确认后释放连接。
 
 #### （4）四次挥手的原因
 
 客户端发送了 FIN 连接释放报文之后，服务器收到了这个报文，就进入了 CLOSE-WAIT 状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送 FIN 连接释放报文。
-
-
 
 #### （5）TIME_WAIT
 
@@ -266,14 +259,10 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 
 客户端接收到服务器端的 FIN 报文后进入此状态，此时并不是直接进入 CLOSED 状态，还需要等待一个时间计时器设置的时间 2MSL。这么做有两个理由：
 
-- 确保最后一个确认报文段能够到达。如果 B 没收到 A 发送来的确认报文段，那么就会重新发送连接释放请求报文段，A 等待一段时间就是为了处理这种情况的发生。
-- 等待一段时间是为了让本连接持续时间内所产生的所有报文段都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文段。
-
-
+* 确保最后一个确认报文段能够到达。如果 B 没收到 A 发送来的确认报文段，那么就会重新发送连接释放请求报文段，A 等待一段时间就是为了处理这种情况的发生。
+* 等待一段时间是为了让本连接持续时间内所产生的所有报文段都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文段。
 
 #### （6）如何保证可靠传输
-
-**【详细请查阅】：《计算机网络原理 创新教程》P356——8.4节，可靠传输**
 
 - 应用数据被分割成TCP认为最适合发送的数据块。 
 - **超时重传**：当TCP发出一个段后，它启动一个定时器，等待目的端确认收到这个报文段。如果不能及时收到一个确认，将重发这个报文段。
@@ -282,8 +271,6 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 - TCP的接收端会丢弃重复的数据。
 - **流量控制**：TCP连接的每一方都有固定大小的缓冲空间，TCP的接收端只允许发送端发送接收端缓冲区能接纳的我数据。当接收方来不及处理发送方的数据，能提示发送方降低发送的速率，防止包丢失。TCP使用的流量控制协议是可变大小的滑动窗口协议。
 - **拥塞控制**：当网络拥塞时，减少数据的发送。 
-
-
 
 #### （7）TCP连接状态？ 
 
@@ -300,14 +287,13 @@ TCP/IP 协议族是一种沙漏形状，中间小两边大，IP 协议在其中�
 
 #### （8）TCP和HTTP
 
-<div align="center"> <img src="pics/tcp-and-http.jpg" width="500"/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/77.jpg" />
+</p>
 
 
 
 ### 4. TCP连接中如果断电怎么办
-
-TCP新手误区--心跳的意义 - CSDN博客
-https://blog.csdn.net/bjrxyz/article/details/71076442
 
 
 
@@ -328,11 +314,11 @@ https://blog.csdn.net/bjrxyz/article/details/71076442
 - TCP加快传输效率的方法 
   - 采取一块确认的机制 
 
-
-
 ### 6. TCP滑动窗口
 
-<div align="center"> <img src="pics/sliding_win.png" width=""/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/78.jpg" />
+</p>
 
 窗口是缓存的一部分，用来暂时存放字节流。发送方和接收方各有一个窗口，**接收方通过 TCP 报文段中的窗口字段告诉发送方自己的窗口大小，发送方根据这个值和其它信息设置自己的窗口大小**。
 
@@ -340,15 +326,13 @@ https://blog.csdn.net/bjrxyz/article/details/71076442
 
 接收窗口只会对窗口内最后一个按序到达的字节进行确认，例如接收窗口已经收到的字节为 {31, 34, 35}，其中 {31} 按序到达，而 {32, 33} 就不是，因此只对字节 31 进行确认。发送方得到一个字节的确认之后，就知道这个字节之前的所有字节都已经被接收。
 
-
-
 **以下进行滑动窗口模拟**
 
 在 TCP 中，**滑动窗口是为了实现流量控制**。如果对方发送数据过快，接收方就来不及接收，接收方就需要通告对方，减慢数据的发送。 
 
-<div align="center"> <img src="pics/sliding_windows.png" width=""/></div><br/>
-
-
+<p align="center">
+<img width="500" align="center" src="../images/79.jpg" />
+</p>
 
 - **发送方接收到了对方发来的报文 ack = 33, win = 10，知道对方收到了 33 号前的数据**，现在期望接收 [33, 43) 号数据。发送方连续发送了 4 个报文段假设为 A, B, C, D, 分别携带 [33, 35), [35, 36), [36, 38), [38, 41) 号数据。
 - 接收方接收到了报文段 A, C，但是没收到 B 和 D，也就是只收到了 [33, 35) 和 [36, 38) 号数据。接收方发送回对报文段 A 的确认：ack = 35, win = 10。
@@ -358,23 +342,11 @@ https://blog.csdn.net/bjrxyz/article/details/71076442
 - ……
 - 需要注意的是，接收方接收 tcp 报文的顺序是不确定的，并非是一定先收到 35 再收到 36，也可能是先收到 36，37，再收到 35.
 
- 
-
-参考资料：
-
-- [20-TCP 协议（滑动窗口——基础） - CSDN博客](https://blog.csdn.net/q1007729991/article/details/70142341)
-- [21-TCP 协议（滑动窗口——抓包分析） - CSDN博客](https://blog.csdn.net/q1007729991/article/details/70143062)
-- [TCP 的那些事儿（下） | | 酷 壳 - CoolShell](https://coolshell.cn/articles/11609.html)
-
-
-
 ### 7. TCP流量控制
 
 流量控制是为了控制发送方发送速率，保证接收方来得及接收。
 
 接收方发送的确认报文中的窗口字段可以用来控制发送方窗口大小，从而影响发送方的发送速率。将窗口字段设置为 0，则发送方不能发送数据。
-
-
 
 ### 8. TCP拥塞处理（Congestion Handling）
 
@@ -384,14 +356,11 @@ https://blog.csdn.net/bjrxyz/article/details/71076442
 - 出现资源拥塞的条件：对资源需求的总和 > 可用资源
 - 若网络中有许多资源同时产生拥塞，网络的性能就要明显变坏，整个网络的吞吐量将随输入负荷的增大而下降。  
 
-
-
 如果网络出现拥塞，分组将会丢失，此时发送方会继续重传，从而导致网络拥塞程度更高。因此当出现拥塞时，应当控制发送方的速率。这一点和流量控制很像，但是出发点不同。流量控制是为了让接收方能来得及接收，而拥塞控制是为了降低整个网络的拥塞程度。
 
-
-
-<div align="center"> <img src="pics/congest1.png" width="600"/> </div><br>
-
+<p align="center">
+<img width="500" align="center" src="../images/80.jpg" />
+</p>
  
 
 TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。
@@ -404,41 +373,38 @@ TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、�
 - 虽然 TCP 的窗口基于字节，但是这里设窗口的大小单位为报文段。
 
 
- <div align="center"> <img src="pics/congest2-3.png" width="700"/> </div><br>
-
-
+<p align="center">
+<img width="500" align="center" src="../images/81.jpg" />
+</p>
 
 #### （1）慢开始与拥塞避免
 
-　　发送的最初执行慢开始，令 cwnd=1，发送方只能发送 1 个报文段；当收到确认后，将 cwnd 加倍，因此之后发送方能够发送的报文段数量为：2、4、8 ...
+发送的最初执行慢开始，令 cwnd=1，发送方只能发送 1 个报文段；当收到确认后，将 cwnd 加倍，因此之后发送方能够发送的报文段数量为：2、4、8 ...
 
-　　注意到慢开始每个轮次都将 cwnd 加倍，这样会让 cwnd 增长速度非常快，从而使得发送方发送的速度增长速度过快，网络拥塞的可能也就更高。设置一个慢启动阈值 ssthresh，当 cwnd >= ssthresh 时，进入拥塞避免，每个轮次只将 cwnd 加 1。
+注意到慢开始每个轮次都将 cwnd 加倍，这样会让 cwnd 增长速度非常快，从而使得发送方发送的速度增长速度过快，网络拥塞的可能也就更高。设置一个慢启动阈值 ssthresh，当 cwnd >= ssthresh 时，进入拥塞避免，每个轮次只将 cwnd 加 1。
 
-　　如果出现了超时，则令 ssthresh = cwnd/2，然后重新执行慢开始。
+如果出现了超时，则令 ssthresh = cwnd/2，然后重新执行慢开始。
 
 #### （2）快重传与快恢复
 
-　　在接收方，要求每次接收到报文段都应该对最后一个已收到的有序报文段进行确认。例如已经接收到 M1 和 M2，此时收到 M4，应当发送对 M2 的确认。
+在接收方，要求每次接收到报文段都应该对最后一个已收到的有序报文段进行确认。例如已经接收到 M1 和 M2，此时收到 M4，应当发送对 M2 的确认。
 
-　　在发送方，如果收到三个重复确认，那么可以知道下一个报文段丢失，此时执行快重传，立即重传下一个报文段。例如收到三个 M2，则 M3 丢失，立即重传 M3。
+在发送方，如果收到三个重复确认，那么可以知道下一个报文段丢失，此时执行快重传，立即重传下一个报文段。例如收到三个 M2，则 M3 丢失，立即重传 M3。
 
-　　在这种情况下，只是丢失个别报文段，而不是网络拥塞。因此执行快恢复，令 ssthresh = cwnd/2 ，cwnd = ssthresh，注意到此时直接进入拥塞避免。慢开始和快恢复的快慢指的是 cwnd 的设定值，而不是 cwnd 的增长速率。慢开始 cwnd 设定为 1，而快恢复 cwnd 设定为 ssthresh。
+在这种情况下，只是丢失个别报文段，而不是网络拥塞。因此执行快恢复，令 ssthresh = cwnd/2 ，cwnd = ssthresh，注意到此时直接进入拥塞避免。慢开始和快恢复的快慢指的是 cwnd 的设定值，而不是 cwnd 的增长速率。慢开始 cwnd 设定为 1，而快恢复 cwnd 设定为 ssthresh。
 
 
-
-<div align="center"> <img src="pics/congest3-2.png" width="600"/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/82.jpg" />
+</p>
 
 #### （3）发送窗口的上限值
 
-　　发送方的发送窗口的上限值应当取为接收方窗口 rwnd 和拥塞窗口 cwnd 这两个变量中较小的一个，即应按以下公式确定：
+发送方的发送窗口的上限值应当取为接收方窗口 rwnd 和拥塞窗口 cwnd 这两个变量中较小的一个，即应按以下公式确定：
 
 - 发送窗口的上限值 =  Min {rwnd, cwnd}
   - 当 rwnd < cwnd 时，是接收方的接收能力限制发送窗口的最大值。
   - 当 cwnd < rwnd 时，则是网络的拥塞限制发送窗口的最大值。 
-
-
-
-
 
 ### 9. 如何区分流量控制和拥塞控制 
 
@@ -446,8 +412,6 @@ TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、�
 - 拥塞控制是一个全局性的过程，涉及到所有的主机、所有的路由器，以及与降低网络传输性能有关的所有因素。
 - 流量控制往往指在给定的发送端和接收端之间的点对点通信量的控制。
 - 流量控制所要做的就是抑制发送端发送数据的速率，以便使接收端来得及接收。 
-
-
 
 - 流量控制属于通信双方协商；拥塞控制涉及通信链路全局。
 
@@ -467,13 +431,7 @@ TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、�
   - 重传次数到达上限之后停止重传。
 - **RTT**：数据从发送到接收到对方响应之间的时间间隔，即数据报在网络中一个往返用时。大小不稳定。
 
-
-
 ### 11. 停止等待和超时重传
-
-
-
-
 
 ### 12. 从输入网址到获得页面的网络请求过程
 
@@ -523,8 +481,6 @@ TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、�
 - 浏览器拿到完整的HTML页面代码开始解析和渲染，如果遇到引用的外部[js](http://lib.csdn.net/base/javascript)，CSS,图片等静态资源，它们同样也是一个个的HTTP请求，都需要经过上面的步骤 
 - 浏览器根据拿到的资源对页面进行渲染，最终把一个完整的页面呈现给用户 
 
-
-
 超详细版本请转向阅读：[what-happens-when-zh_CN](https://github.com/skyline75489/what-happens-when-zh_CN)
 
 ## 第二部分：应用层（HTTP）
@@ -546,35 +502,16 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 ### 2. HTTP的请求和响应报文
 
 #### （1）请求报文
-
-<div align="center"> <img src="pics//HTTP_RequestMessageExample.png" width=""/> </div><br>
-
-
-
-**GET请求**
-<div align="center"> <img src="pics/http_request_get.png" width=""/> </div><br>
-
-
-
-**POST请求**
-
-<div align="center"> <img src="pics/http_request_post.png" width=""/> </div><br>
-
-
+<p align="center">
+<img width="500" align="center" src="../images/83.jpg" />
+</p>
 
 
 #### （2）响应报文
 
-
-<div align="center"> <img src="pics//HTTP_ResponseMessageExample.png" width=""/> </div><br>
-
-**200响应**
-<div align="center"> <img src="pics/http_response_200.png" width=""/> </div><br>
-
-
-
-**404响应**
-<div align="center"> <img src="pics/http_response_400.png" width=""/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/84.jpg" />
+</p>
 
 ### 3. HTTP状态
 
@@ -618,8 +555,6 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 
 - **500 Internal Server Error** ：服务器正在执行请求时发生错误。
 - **503 Service Unavailable** ：服务器暂时处于超负载或正在进行停机维护，现在无法处理请求。
-
-
 
 ### 4. HTTP方法
 
@@ -707,8 +642,9 @@ CONNECT www.example.com:443 HTTP/1.1
 ```
 
 
-<div align="center"> <img src="pics/http_connect.jpg" width=""/> </div><br>
-
+<p align="center">
+<img width="500" align="center" src="../images/85.jpg" />
+</p>
 
 #### （9）TRACE
 
@@ -828,8 +764,6 @@ document.cookie = "tasty_cookie=strawberry";
 console.log(document.cookie);
 ```
 
-
-
 #### （5）Secure 和 HttpOnly
 
 标记为 Secure 的 Cookie 只应通过被 HTTPS 协议加密过的请求发送给服务端。但即便设置了 Secure 标记，敏感信息也不应该通过 Cookie 传输，因为 Cookie 有其固有的不安全性，Secure 标记也无法提供确实的安全保障。
@@ -840,8 +774,6 @@ console.log(document.cookie);
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Secure; HttpOnly
 ```
 
-
-
 #### （6）作用域
 
 Domain 标识指定了哪些主机可以接受 Cookie。如果不指定，默认为当前文档的主机（不包含子域名）。如果指定了 Domain，则一般包含子域名。例如，如果设置 Domain=mozilla.org，则 Cookie 也包含在子域名中（如 developer.mozilla.org）。
@@ -851,8 +783,6 @@ Path 标识指定了主机下的哪些路径可以接受 Cookie（该 URL 路径
 - /docs
 - /docs/Web/
 - /docs/Web/HTTP
-
-
 
 ### 9. Session
 
@@ -870,21 +800,19 @@ Session 可以存储在服务器上的文件、数据库或者内存中，现在
 
 应该注意 Session ID 的安全性问题，不能让它被恶意攻击者轻易获取，那么就不能产生一个容易被猜到的 Session ID 值。此外，还需要经常重新生成 Session ID。在对安全性要求极高的场景下，例如转账等操作，除了使用 Session 管理用户状态之外，还需要对用户进行重新验证，比如重新输入密码，或者使用短信验证码等方式。
 
-![](pics/session_mechanism.png)
+<p align="center">
+<img width="500" align="center" src="../images/86.jpg" />
+</p>
 
 ### 10. 浏览器禁用 Cookie
 
 此时无法使用 Cookie 来保存用户信息，只能使用 Session。除此之外，不能再将 Session ID 存放到 Cookie 中，而是使用 URL 重写技术，将 Session ID 作为 URL 的参数进行传递。
-
-
 
 ### 11. Cookie 与 Session 选择
 
 - Cookie 只能存储 ASCII 码字符串，而 Session 则可以存取任何类型的数据，因此在考虑数据复杂性时首选 Session；
 - Cookie 存储在浏览器中，容易被恶意查看。如果非要将一些隐私数据存在 Cookie 中，可以将 Cookie 值进行加密，然后在服务器进行解密；
 - 对于大型网站，如果用户所有的信息都存储在 Session 中，那么开销是非常大的，因此不建议将所有的用户信息都存储到 Session 中。
-
-
 
 ### 12. HTTPs安全性
 
@@ -900,19 +828,12 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 
 通过使用 SSL，HTTPs 具有了加密（防窃听）、认证（防伪装）和完整性保护（防篡改）。
 
-<div align="center"> <img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/ssl-offloading.jpg" width="600"/></div><br/>
-
 #### （1）对称密钥加密
 
 对称密钥加密（Symmetric-Key Encryption），加密和解密使用同一密钥。
 
 - 优点：运算速度快；
 - 缺点：无法安全地将密钥传输给通信方。
-
-
-
-<div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/Interview-Notebook/master/pics/7fffa4b8-b36d-471f-ad0c-a88ee763bb76.png" width="500"/> </div><br>
-
 
 #### （2）非对称密钥加密
 
@@ -925,23 +846,17 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 - 优点：可以更安全地将公开密钥传输给通信发送方；
 - 缺点：运算速度慢。
 
-<div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/Interview-Notebook/master/pics/39ccb299-ee99-4dd1-b8b4-2f9ec9495cb4.png" width="500"/> </div><br>
-
 #### （3）HTTPs 采用的加密方式
 
 HTTPs 采用混合的加密机制，使用非对称密钥加密用于传输对称密钥来保证安全性，之后使用对称密钥加密进行通信来保证效率。
 
-<div align="center"> <img src="pics/How-HTTPS-Works2.png" width="600"/> </div><br>
-
-
-
-
+<p align="center">
+<img width="500" align="center" src="../images/87.jpg" />
+</p>
 
 ### 13. SSL/TLS协议的握手过程
 
 我们知道，HTTP 协议都是明文传输内容，在早期只展示静态内容时没有问题。伴随着互联网的快速发展，人们对于网络传输安全性的要求也越来越高，HTTPS 协议因此出现。如上图所示，在 HTTPS 加密中真正起作用的其实是 SSL/TLS 协议。SSL/TLS 协议作用在 HTTP 协议之下，对于上层应用来说，原来的发送接收数据流程不变，这就很好地兼容了老的 HTTP 协议，这也是软件开发中分层实现的体现。
-
-
 
 #### SSL (Secure Socket Layer，安全套接字层)
 
@@ -949,20 +864,16 @@ SSL为Netscape所研发，用以保障在Internet上数据传输之安全，利�
 
 SSL协议可分为两层： SSL记录协议（SSL Record Protocol）：它建立在可靠的传输协议（如TCP）之上，为高层协议提供数据封装、压缩、加密等基本功能的支持。 SSL握手协议（SSL Handshake Protocol）：它建立在SSL记录协议之上，用于在实际的数据传输开始前，通讯双方进行身份认证、协商加密算法、交换加密密钥等。
 
-
-
 #### TLS (Transport Layer Security，传输层安全协议)
 
 用于两个应用程序之间提供保密性和数据完整性。
 TLS 1.0是IETF（Internet Engineering Task Force，Internet工程任务组）制定的一种新的协议，它建立在SSL 3.0协议规范之上，是SSL 3.0的后续版本，可以理解为SSL 3.1，它是写入了 RFC 的。该协议由两层组成： TLS 记录协议（TLS Record）和 TLS 握手协议（TLS Handshake）。较低的层为 TLS 记录协议，位于某个可靠的传输协议（例如 TCP）上面。
 
-
-
 SSL/TLS 握手是为了**安全**地协商出一份**对称加密**的秘钥，这个过程很有意思，下面我们一起来了解一下。
 
-
-
-<div align="center"> <img src="pics/https_com.png" width="600"/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/88.jpg" />
+</p>
 
 #### （1）client hello
 
@@ -994,55 +905,41 @@ Server Hello Done 通知客户端 Server Hello 过程结束。
 
 为什么要使用三个随机数呢？这是因为 SSL/TLS 握手过程的数据都是明文传输的，并且多个随机数种子来生成秘钥不容易被暴力破解出来。
 
-
-
 #### （6）Change Cipher Spec(Client)
 
 这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息。
-
-
 
 #### （7）Finished(Client)
 
 客户端发送Finished报文。该报文包含连接至今全部报文的整理校验值。这次握手协议是否能成功，要以服务器是否能够正确解密该报文作为判定标准。
 
-
-
 #### （8）Change Cipher Spec(Server)
 
 服务器同样发送Change Cipher Spec报文给客户端
-
-
 
 #### （9）Finished(Server)
 
 服务器同样发送Finished报文给客户端
 
-
-
 #### （10-11）Application Data
 
 到这里，双方已安全地协商出了同一份秘钥，所有的应用层数据都会用这个秘钥加密后再通过 TCP 进行可靠传输。 
-
-
 
 #### （12）Alert：warning, close notify
 
 最后由客户端断开连接。断开连接时，发送close_notify报文。上图做了一些省略，在这步之后再发送一种叫做MAC（Message Authentication Code）的报文摘要。MAC能够查知报文是否遭到篡改，从而保护报文的完整性。
 
-
-
 #### （*）demand client certificate
 
 Certificate Request 是服务端要求客户端上报证书，这一步是可选的，对于安全性要求高的场景会用到。
-
-
 
 #### （*）check server certificate
 
 客户端收到服务端传来的证书后，先从 CA 验证该证书的合法性，验证通过后取出证书中的服务端公钥，再生成一个随机数 **Random3**，再用服务端公钥非对称加密 **Random3** 生成 **PreMaster Key**。
 
-<div align="center"> <img src="pics/SSL_handshake.png" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/89.jpg" />
+</p>
 
 #### 14. 数字签名、数字证书、SSL、https是什么关系？
 
@@ -1068,9 +965,9 @@ HTTPS 是建立在密码学基础之上的一种安全通信协议，严格来�
 
 对称密钥（Symmetric-key algorithm）又称为共享密钥加密，加密和解密使用相同的密钥。常见的对称加密算法有DES、3DES、AES、RC5、RC6。对称密钥的优点是计算速度快，但是它有缺点，接收者需要发送者告知密钥才能解密，因此密钥如何安全的发送给接收者成为了一个问题。
 
-<div align="center"> <img src="https://pic3.zhimg.com/80/v2-95f25c12ae406da22e7c4b4205a491fb_r.jpg" width=""/></div><br/>
-
-
+<p align="center">
+<img width="500" align="center" src="../images/90.jpg" />
+</p>
 
 Alice 给 Bob 发送数据时，把数据用对称加密后发送给 Bob，发送过程中由于对数据进行了加密，因此即使有人窃取了数据也没法破解，因为它不知道密钥是什么。但是同样的问题是 Bob 收到数据后也一筹莫展，因为它也不知道密钥是什么，那么 Alice 是不是可以把数据和密钥一同发给 Bob 呢。当然不行，一旦把密钥和密钥一起发送的话，那就跟发送明文没什么区别了，因为一旦有人把密钥和数据同时获取了，密文就破解了。所以对称加密的密钥配是个问题。如何解决呢，公钥加密是一个办法。
 
@@ -1085,7 +982,9 @@ Alice 给 Bob 发送数据时，把数据用对称加密后发送给 Bob，发�
 3. Alice 用公钥把数据进行加密，并发送给 Bob，发送过程中被人窃取了同样没关系，因为没有配对的私钥进行解密是没法破解的
 4. Bob 用配对的私钥解密。
 
-<div align="center"> <img src="https://pic4.zhimg.com/80/v2-5bd504b82ccc87ae643a6d6e09579f13_r.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/91.jpg" />
+</p>
 
 虽然公钥加密解决了密钥配送的问题，但是你没法确认公钥是不是合法的，Bob 发送的公钥你不能肯定真的是 Bob 发的，因为也有可能在 Bob 把公钥发送给 Alice 的过程中出现中间人攻击，把真实的公钥掉包替换。
 而对于 Alice 来说完全不知。还有一个缺点是它的运行速度比对称加密慢很多。
@@ -1095,7 +994,9 @@ Alice 给 Bob 发送数据时，把数据用对称加密后发送给 Bob，发�
 
 消息摘要（message digest）函数是一种用于判断数据完整性的算法，也称为散列函数或哈希函数，函数返回的值叫散列值，散列值又称为消息摘要或者指纹（fingerprint）。这种算法是一个不可逆的算法，因此你没法通过消息摘要反向推倒出消息是什么。所以它也称为**单向散列函数**。下载软件时如何确定是官方提供的完整版呢，如果有中间人在软件里面嵌入了病毒，你也不得而知。所以我们可以使用散列函数对消息进行运算，生成散列值，通常软件提供方会同时提供软件的下载地址和软件的散列值，用户把软件下载后在本地用相同的散列算法计算出散列值，与官方提供的散列值对比，如果相同，说明该软件是完成的，否则就是被人修改过了。常用的散列算法有MD5、SHA。
 
-<div align="center"> <img src="https://pic3.zhimg.com/80/v2-1d6cf205ce30b01519d8b86e03968643_r.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/92.jpg" />
+</p>
 
 散列函数可以保证数据的完整性，识别出数据是否被篡改，但它并不能识别出数据是不是伪装的，因为中间人可以把数据和消息摘要同时替换，数据虽然是完整的，但真实数据被掉包了，接收者收到的并不是发送者发的，而是中间人的。
 消息认证是解决数据真实性的办法。认证使用的技术有消息认证码和数字签名。
@@ -1105,7 +1006,9 @@ Alice 给 Bob 发送数据时，把数据用对称加密后发送给 Bob，发�
 
 消息认证码（message authentication code）是一种可以确认消息完整性并进行认证（消息认证是指确认消息来自正确的发送者）的技术，简称 MAC。消息认证码可以简单理解为一种与密钥相关的单向散列函数。
 
-<div align="center"> <img src="https://pic1.zhimg.com/80/v2-73d52bc2d3828eec4f0dde5ea68eff36_r.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/93.jpg" />
+</p>
 
 Alice 给 Bob 发送消息前，先把共享密钥（key）发送给 Bob，Alice 把消息计算出 MAC 值，连同消息一起发送给 Bob，Bob 接收到消息和 MAC 值后，与本地计算得到 MAC 值对比，如果两者相同，就说明消息是完整的，而且可以确定是 Alice 发送的，没有中间人伪造。不过，消息认证码同样会遇到对称加密的密钥配送问题，因此解决密钥配送问题还是要采用公钥加密的方式。
 
@@ -1120,7 +1023,9 @@ Alice 发邮件找 Bob 借1万钱，因为邮件可以被人篡改（改成10万
 
 数字签名（Digital Signature）就可以解决否认的问题，发送消息时，Alice 和 Bob 使用不同的密钥，把公钥加密算法反过来使用，发送者 Alice 使用私钥对消息进行签名，而且只能是拥有私钥的 Alice 可以对消息签名，Bob 用配对的公钥去验证签名，第三方机构也可以用公钥验证签名，如果验证通过，说明消息一定是 Alice 发送的，抵赖也不行，因为你只有 Alice 可以生成签名。这就防止了否认的问题。
 
-<div align="center"> <img src="https://pic3.zhimg.com/80/v2-e1819aed10962a9d148a8b4460d606b5_r.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/94.jpg" />
+</p>
 
 它的流程是:
 
@@ -1130,14 +1035,14 @@ Alice 发邮件找 Bob 借1万钱，因为邮件可以被人篡改（改成10万
 
 第三步：对签名进行验证，验证的过程是先把消息提取出来做同样的Hash处理，得到消息摘要，再与 Alice 传过来的签名用公钥解密，如果两者相等，就表示签名验证成功，否则验证失败，表示不是 Alice发的。
 
-<div align="center"> <img src="pics/ca-sign.png" width=""/></div><br/>
-
 
 #### 公钥证书
 
 公钥密码在数字签名技术里面扮演举足轻重的角色，但是如何保证公钥是合法的呢，如果是遭到中间人攻击，掉包怎么办？这个时候公钥就应该交给一个第三方权威机构来管理，这个机构就是认证机构（Certification Authority）CA，CA 把用户的姓名、组织、邮箱地址等个人信息收集起来，还有此人的公钥，并由 CA 提供数字签名生成公钥证书（Public-Key Certificate）PKC，简称证书。
 
-<div align="center"> <img src="https://pic4.zhimg.com/80/v2-f96d70c0d8848921c2ebb6ef591f3c66_r.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/95.jpg" />
+</p>
 
 Alice 向 Bob 发送消息时，是通过 Bob 提供的公钥加密后的数据，而 Alice 获取的公钥并不是由 Bob 直接给的，而是由委托一个受信任的第三方机构给的。
 
@@ -1177,13 +1082,13 @@ HTTP/2 采用二进制格式传输数据，而非 HTTP 1.x 的文本格式，二
 
 **HTTP/2 中，同域名下所有通信都在单个连接上完成，该连接可以承载任意数量的双向数据流。**每个数据流都以消息的形式发送，而消息又由一个或多个帧组成。多个帧之间可以乱序发送，根据帧首部的流标识可以重新组装。
 
-
-
 #### （2）多路复用
 
 多路复用，代替原来的序列和阻塞机制。所有就是请求的都是通过一个 TCP连接并发完成。 HTTP 1.x 中，如果想并发多个请求，必须使用多个 TCP 链接，且浏览器为了控制资源，还会对单个域名有 6-8个的TCP链接请求限制，如下图，红色圈出来的请求就因域名链接数已超过限制，而被挂起等待了一段时间。
 
-<div align="center"> <img src="pics/http2-tcp.jpg" width=""/></div><br/>
+<p align="center">
+<img width="500" align="center" src="../images/96.jpg" />
+</p>
 
 在 HTTP/2 中，有了二进制分帧之后，HTTP /2 不再依赖 TCP 链接去实现多流并行了，在 HTTP/2中：
 
@@ -1206,16 +1111,9 @@ HTTP/2 采用二进制格式传输数据，而非 HTTP 1.x 的文本格式，二
 服务端可以主动推送，客户端也有权利选择是否接收。如果服务端推送的资源已经被浏览器缓存过，浏览器可以通过发送RST_STREAM帧来拒收。主动推送也遵守同源策略，服务器不会随便推送第三方资源给客户端。
 
 
-
 #### （4）头部压缩
 
 HTTP 1.1请求的大小变得越来越大，有时甚至会大于TCP窗口的初始大小，因为它们需要等待带着ACK的响应回来以后才能继续被发送。HTTP/2对消息头采用HPACK（专为http/2头部设计的压缩格式）进行压缩传输，能够节省消息头占用的网络的流量。而HTTP/1.x每次请求，都会携带大量冗余头信息，浪费了很多带宽资源。 
-
-
-
-
-
-
 
 ### 第三部分：网络层
 
@@ -1264,8 +1162,9 @@ DHCP租约过程分为4步：
 | 11111110 | 254    |
 | 11111111 | 255    |
 
-<div align="center"><img src="assets/子网划分.png" width="650"/></div>
-
+<p align="center">
+<img width="500" align="center" src="../images/97.jpg" />
+</p>
 
 
 ```markdown
@@ -1301,8 +1200,6 @@ C:  192.168.0.0 - 192.168.255.255
 
 #### 3. 地址解析协议ARP
 
-
-
 #### 4. 交换机和路由器的区别
 
 1. 路由器可以给你的局域网自动分配IP，虚拟拨号，就像一个交通警察，指挥着你的电脑该往哪走，你自己不用操心那么多了。交换机只是用来分配网络数据的。
@@ -1312,8 +1209,6 @@ C:  192.168.0.0 - 192.168.255.255
 
 交换机是利用**物理地址或者说MAC地址**来确定转发数据的目的地址。而路由器则是利用不同网络的ID号(即IP地址)来确定数据转发的地址。IP地址是在软件中实现的，描述的是设备所在的网络，有时这些第三层的地址也称为协议地址或者网络地址。MAC地址通常是硬件自带的，由网卡生产商来分配的，而且已经固化到了网卡中去，一般来说是不可更改的。而IP地址则通常由网络管理员或系统自动分配。
 
- 
-
 **路由器和交换机的区别一**：交换机是一根网线上网，但是大家上网是分别拨号，各自使用自己的宽带，大家上网没有影响。而路由器比交换机多了一个虚拟拨号功能，通过同一台路由器上网的电脑是共用一个宽带账号，大家上网要相互影响。
 **路由器和交换机的区别二**：交换机工作在中继层，交换机根据MAC地址寻址。路由器工作在网络层，根据IP地址寻址，路由器可以处理TCP/IP协议，而交换机不可以。
 
@@ -1322,7 +1217,6 @@ C:  192.168.0.0 - 192.168.255.255
 **路由器和交换机的区别四**：举几个例子,路由器是小邮局，就一个地址(IP)，负责一个地方的收发(个人电脑，某个服务器，所以你家上网要这个东西)，交换机是省里的大邮政中心，负责由一个地址给各个小地方的联系。简单的说路由器专管入网，交换机只管配送，路由路由就是给你找路让你上网的，交换机只负责开门，交换机上面要没有路由你是上不了网的。
 
 **路由器和交换机的区别五**：路由器提供了防火墙的服务。路由器仅仅转发特定地址的数据包，不传送不支持路由协议的数据包传送和未知目标网络数据包的传送，从而可以防止广播风暴。
-
 
 
 #### 5. 子网掩码的作用
@@ -1383,6 +1277,9 @@ IP    地址：192.168.1.199       **‐＞11000000.10101000.00000001**.11000111
 * [图解SSL/TLS协议](http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html)
 * [学习HTTP/2](http://levy.work/2017-12-28-http2/)
 * [详解 https 是如何确保安全的？](https://juejin.im/entry/570469035bbb500051d4eceb)
+* [20-TCP 协议(滑动窗口——基础)](https://blog.csdn.net/q1007729991/article/details/70142341)
+* [21-TCP 协议(滑动窗口——抓包分析)](https://blog.csdn.net/q1007729991/article/details/70143062)
+* [TCP 的那些事儿（下](https://coolshell.cn/articles/11609.html)
 
 
 
