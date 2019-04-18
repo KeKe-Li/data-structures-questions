@@ -597,7 +597,7 @@ Content-length: 16
 
 PUT 也可以用于修改资源，但是只能完全替代原始资源，PATCH 允许部分修改。
 
-```
+```markdown
 PATCH /file.txt HTTP/1.1
 Host: www.example.com
 Content-Type: application/example
@@ -613,7 +613,7 @@ Content-Length: 100
 
 与 PUT 功能相反，并且同样不带验证机制。
 
-```
+```bash
 DELETE /file.html HTTP/1.1
 ```
 
@@ -631,10 +631,9 @@ DELETE /file.html HTTP/1.1
 
 使用 SSL（Secure Sockets Layer，安全套接层）和 TLS（Transport Layer Security，传输层安全）协议把通信内容加密后经网络隧道传输。
 
-```
+```bash
 CONNECT www.example.com:443 HTTP/1.1
 ```
-
 
 <p align="center">
 <img width="500" align="center" src="../images/85.jpg" />
@@ -649,8 +648,6 @@ CONNECT www.example.com:443 HTTP/1.1
 发送请求时，在 Max-Forwards 首部字段中填入数值，每经过一个服务器就会减 1，当数值为 0 时就停止传输。
 
 通常不会使用 TRACE，并且它容易受到 XST 攻击（Cross-Site Tracing，跨站追踪）。
-
-
 
 ### 5. GET和POST的区别？
 * GET 被强制服务器支持 
@@ -668,7 +665,6 @@ CONNECT www.example.com:443 HTTP/1.1
 * 发送包含未知字符的用户输入时，POST 比 GET 更稳定也更可靠 
 
 
-
 **引申：说完原理性的问题，我们从表面上来看看GET和POST的区别：**
 
 * GET是从服务器上获取数据，POST是向服务器传送数据。 GET和 POST只是一种传递数据的方式，GET也可以把数据传到服务器，他们的本质都是发送请求和接收结果。只是组织格式和数据量上面有差别，http协议里面有介绍
@@ -676,8 +672,6 @@ CONNECT www.example.com:443 HTTP/1.1
 * 对于GET方式，服务器端用Request.QueryString获取变量的值，对于POST方式，服务器端用Request.Form获取提交的数据。 没明白，怎么获得变量和你的服务器有关，和GET或POST无关，服务器都对这些请求做了封装  
 * GET传送的数据量较小，不能大于2KB。POST传送的数据量较大，一般被默认为不受限制。但理论上，IIS4中最大量为80KB，IIS5中为100KB。 POST基本没有限制，我想大家都上传过文件，都是用POST方式的。只不过要修改form里面的那个type参数 
 * GET安全性非常低，POST安全性较高。 如果没有加密，他们安全级别都是一样的，随便一个监听器都可以把所有的数据监听到。
-
-
 
 ### 6. 如何理解HTTP协议是无状态的
 
@@ -692,7 +686,7 @@ HTTP是一个无状态的面向连接的协议，无状态不代表HTTP不能保
 
 而从HTTP/1.1起，默认使用长连接，用以保持连接特性。使用长连接的HTTP协议，会在响应头加入这行代码：
 
-```javascript
+```bash
 Connection:keep-alive
 ```
 
@@ -715,12 +709,11 @@ Cookie 是服务器发送到用户浏览器并保存在本地的一小块数据�
 Cookie 曾一度用于客户端数据的存储，因为当时并没有其它合适的存储办法而作为唯一的存储手段，但现在随着现代浏览器开始支持各种各样的存储方式，Cookie 渐渐被淘汰。由于服务器指定 Cookie 后，浏览器的每次请求都会携带 Cookie 数据，会带来额外的性能开销（尤其是在移动环境下）。新的浏览器 API 已经允许开发者直接将数据存储到本地，如使用 Web storage API （本地存储和会话存储）或 IndexedDB。
 
 
-
 #### （2）创建过程
 
 服务器发送的响应报文包含 Set-Cookie 首部字段，客户端得到响应报文后把 Cookie 内容保存到浏览器中。
 
-```
+```bash
 HTTP/1.0 200 OK
 Content-type: text/html
 Set-Cookie: yummy_cookie=choco
@@ -731,7 +724,7 @@ Set-Cookie: tasty_cookie=strawberry
 
 客户端之后对同一个服务器发送请求时，会从浏览器中读出 Cookie 信息通过 Cookie 请求首部字段发送给服务器。
 
-```
+```bash
 GET /sample_page.html HTTP/1.1
 Host: www.example.org
 Cookie: yummy_cookie=choco; tasty_cookie=strawberry
@@ -742,7 +735,7 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 - 会话期 Cookie：浏览器关闭之后它会被自动删除，也就是说它仅在会话期内有效。
 - 持久性 Cookie：指定一个特定的过期时间（Expires）或有效期（max-age）之后就成为了持久性的 Cookie。
 
-```
+```bash
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 ```
 
@@ -752,7 +745,7 @@ Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 
 通过 `Document.cookie` 属性可创建新的 Cookie，也可通过该属性访问非 HttpOnly 标记的 Cookie。
 
-```
+```bash
 document.cookie = "yummy_cookie=choco";
 document.cookie = "tasty_cookie=strawberry";
 console.log(document.cookie);
@@ -764,7 +757,7 @@ console.log(document.cookie);
 
 标记为 HttpOnly 的 Cookie 不能被 JavaScript 脚本调用。因为跨域脚本 (XSS) 攻击常常使用 JavaScript 的 `Document.cookie`API 窃取用户的 Cookie 信息，因此使用 HttpOnly 标记可以在一定程度上避免 XSS 攻击。
 
-```
+```bash
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Secure; HttpOnly
 ```
 
@@ -1186,6 +1179,7 @@ C:  192.168.0.0 - 192.168.255.255
 224.10.10.10.1              不合法，组播地址
 300.2.4.200/24              不合法
 ```
+
 - IP特殊地址
   - 本地环回地址：127.0.0.0 – 127.255.255.255，测试主机TCP/IP协议栈是否安装正确。
   - 本地链路地址：169.254.0.0 – 169.254.255.255，自动地址无法获取时系统自动配置占位。
@@ -1221,7 +1215,6 @@ C:  192.168.0.0 - 192.168.255.255
 
 我们再来理解子网掩码的作用，先举个例子，市面上的两个厂家都生产电子秤，每个厂家都坚称他们的秤最准，那你是怎么知道他们的秤到底准不准？很简单，你去找一个 1KG 的国际千克原器，各放到他们的秤上测量，如果秤的测量值是1KG，那这把秤就是准的，**子网掩码的作用就相当于这个大家公认的国际千克原器，是我们测量两个IP是否属于同一个网段的一个工具（应该说是让你知道某个IP地址的网络号与主机号分别是什么） 。**
 
- 
 
 **如果让你判断一个IP地址：192.168.1.199的网络号和主机号分别是什么？**
 
