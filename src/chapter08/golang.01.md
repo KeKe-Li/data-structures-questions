@@ -506,7 +506,7 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 #### （2）响应报文
 
 <p align="center">
-<img width="500" align="center" src="../images/98.jpg" />
+<img width="500" align="center" src="../images/96.jpg" />
 </p>
 
 ### 3. HTTP状态
