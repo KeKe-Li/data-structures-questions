@@ -1,11 +1,10 @@
 
 #### Go的堆栈分配
 
-* 每个goroutine维护着一个栈空间，默认最大为4KB
-* 当goroutine的栈空间不足时，golang会调用`runtime.morestack`(汇编实现：asm_xxx.s)来进行动态扩容
-* 连续栈：当栈空间不足的时候申请一个2倍于当前大小的新栈，并把所有数据拷贝到新栈， 接下来的所有调用执行都发生在新栈上。
-* 每个function维护着各自的栈帧(stack frame)，当function退出时会释放栈帧
-
+* 每个goroutine维护着一个栈空间，默认最大为4KB.
+* 当goroutine的栈空间不足时，golang会调用`runtime.morestack`(汇编实现：asm_xxx.s)来进行动态扩容.
+* 连续栈：当栈空间不足的时候申请一个2倍于当前大小的新栈，并把所有数据拷贝到新栈， 接下来的所有调用执行都发生在新栈上.
+* 每个function维护着各自的栈帧(stack frame)，当function退出时会释放栈帧.
 
 #### function内部的栈操作
 
@@ -24,7 +23,7 @@ func main() {
 }
 ```
 	
-执行`go tool compile -S main.go`生成汇编，并截取其中的一部分来说明一下程序调用时的栈操作
+执行`go tool compile -S main.go`生成汇编，并截取其中的一部分来说明一下程序调用时的栈操作.
 
 ``` go
 "".g t=1 size=17 args=0x10 locals=0x0
@@ -95,8 +94,7 @@ func main() {
 	_ = g(c)
 }
 ```
-逃逸分析的结果仍然不会改变
-
+逃逸分析的结果仍然不会改变:
 ```bash
 # command-line-arguments
 ./test_stack.go:3: g p does not escape
@@ -123,7 +121,7 @@ func main() {
 }
 ```
 
-返回值ret是按值传递的，执行的是栈拷贝，不存在逃逸
+返回值ret是按值传递的，执行的是栈拷贝，不存在逃逸.
 
 * 按址传递
 
@@ -142,7 +140,7 @@ func main() {
 }
 ```
 
-返回值&ret是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用
+返回值&ret是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用.
 
 ```bash
 # command-line-arguments
@@ -152,10 +150,10 @@ func main() {
 ./test_stack.go:9:10: main new(int) does not escape
 ```
 
-golang只有在function内的对象可能被外部访问时，才会把该对象分配在堆上
+golang只有在function内的对象可能被外部访问时，才会把该对象分配在堆上.
 
-* 在g()方法中，ret对象的引用被返回到了方法外，因此会发生逃逸；而p对象只在g()内被引用，不会发生逃逸
-* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在main()中的，不会发生逃逸
+* 在g()方法中，ret对象的引用被返回到了方法外，因此会发生逃逸；而p对象只在g()内被引用，不会发生逃逸.
+* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在main()中的，不会发生逃逸.
 
 
 ```go
@@ -188,16 +186,16 @@ func main() {
 ./test_stack.go:14:10: new(int) escapes to heap
 ```
 
-* 可以看到，ret和2.2中一样，存在外部引用，发生了逃逸
-* 由于ret.Data是一个指针对象，p赋值给ret.Data后，也伴随p发生了逃逸
-* main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸
-* 当然，如果定义ret.Data为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝)
+* 可以看到，ret和2.2中一样，存在外部引用，发生了逃逸.
+* 由于ret.Data是一个指针对象，p赋值给ret.Data后，也伴随p发生了逃逸.
+* main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸.
+* 当然，如果定义ret.Data为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
 
 
 #### 开发建议大对象按址传递，小对象按值传递
 
-* 按址传递更高效，按值传递更安全(from William Kennedy)
-* 90%的bug都来自于指针调用
+* 按址传递更高效，按值传递更安全(from William Kennedy).
+* 90%的bug都来自于指针调用.
 
 #### 初始化一个结构体，使用引用的方式来传递指针
 
@@ -210,7 +208,7 @@ func r() *Result{
 }
 ```
 
-只有返回ret对象的引用时才会把对象分配在堆上，我们不必要在一开始的时候就显式地把ret定义为指针
+只有返回ret对象的引用时才会把对象分配在堆上，我们不必要在一开始的时候就显式地把ret定义为指针.
 
 ```go
 ret = &Result{}
