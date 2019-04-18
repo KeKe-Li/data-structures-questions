@@ -491,20 +491,22 @@ TCP 主要通过四种算法来进行拥塞控制：慢开始、拥塞避免、�
 
 URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基本都是 URL。
 
-<div align="center"> <img src="pics/url_uri_urn.jpg" width="400"/> </div><br>
+<p align="center">
+<img width="500" align="center" src="../images/83.jpg" />
+</p>
 
 ### 2. HTTP的请求和响应报文
 
 #### （1）请求报文
 <p align="center">
-<img width="500" align="center" src="../images/83.jpg" />
+<img width="500" align="center" src="../images/84.jpg" />
 </p>
 
 
 #### （2）响应报文
 
 <p align="center">
-<img width="500" align="center" src="../images/84.jpg" />
+<img width="500" align="center" src="../images/98.jpg" />
 </p>
 
 ### 3. HTTP状态
@@ -738,8 +740,6 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 ```bash
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 ```
-
-
 
 ####（4）JavaScript 获取 Cookie
 
