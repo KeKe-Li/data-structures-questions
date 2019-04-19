@@ -804,7 +804,7 @@ Session 可以存储在服务器上的文件、数据库或者内存中，现在
 应该注意 Session ID 的安全性问题，不能让它被恶意攻击者轻易获取，那么就不能产生一个容易被猜到的 Session ID 值。此外，还需要经常重新生成 Session ID。在对安全性要求极高的场景下，例如转账等操作，除了使用 Session 管理用户状态之外，还需要对用户进行重新验证，比如重新输入密码，或者使用短信验证码等方式。
 
 <p align="center">
-<img width="500" align="center" src="../images/86.jpg" />
+<img width="700" align="center" src="../images/86.jpg" />
 </p>
 
 ### 10. 浏览器禁用 Cookie
