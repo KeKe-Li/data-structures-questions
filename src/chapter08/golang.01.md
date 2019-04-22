@@ -559,7 +559,6 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 <img width="500" align="center" src="../images/84.jpg" />
 </p>
 
-
 #### （2）响应报文
 
 <p align="center">
@@ -649,7 +648,6 @@ Content-length: 16
 
 <p>New File</p>
 ```
-
 #### （5）PATCH
 
 > 对资源进行部分修改
