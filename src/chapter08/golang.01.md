@@ -549,7 +549,7 @@ RTO的值被设置过大过小都会对协议造成不利影响。 
 URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基本都是 URL。
 
 <p align="center">
-<img width="500" align="center" src="../images/83.jpg" />
+<img width="300" align="center" src="../images/83.jpg" />
 </p>
 
 ### 2. HTTP的请求和响应报文
