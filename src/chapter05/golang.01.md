@@ -2497,7 +2497,60 @@ defer延迟函数调用的函数参数的值在defer定义时候就确定了，�
 使用链表结构可以克服数组链表需要预先知道数据大小的缺点，链表结构可以充分利用计算机内存空间，实现灵活的内存动态管理。但是链表失去了数组随机读取的优点，同时链表由于增加了结点的指针域，空间开销比较大。链表最明显的好处就是，常规数组排列关联项目的方式可能不同于这些数据项目在记忆体或磁盘上顺序，数据的存取往往要在不同的排列顺序中转换。链表允许插入和移除表上任意位置上的节点，但是不允许随机存取。链表有很多种不同的类型：单向链表，双向链表以及循环链表。链表可以在多种编程语言中实现。像Lisp和Scheme这样的语言的内建数据类型中就包含了链表的存取和操作。
 
 ```go
+package main
 
+import "fmt"
+
+// 通过递归反转单链表
+type Node struct {
+	Value int
+	NextNode *Node
+}
+
+
+func Param(node *Node){
+	for node !=nil{
+		fmt.Print(node.Value,"--->")
+		node = node.NextNode
+	}
+	fmt.Println()
+}
+
+func reverse(headNode *Node) *Node{
+	if headNode ==nil {
+		return headNode
+	}
+	if headNode.NextNode == nil{
+		return headNode
+	}
+	var newNode = reverse(headNode.NextNode)
+	headNode.NextNode.NextNode = headNode
+	headNode.NextNode = nil
+	return newNode
+}
+
+
+func main() {
+	var node1 = &Node{}
+	node1.Value = 1
+	node2 := new(Node)
+	node2.Value = 2
+	node3 := new(Node)
+	node3.Value = 3
+	node4 := new(Node)
+	node4.Value = 4
+	node1.NextNode = node2
+	node2.NextNode = node3
+	node3.NextNode = node4
+	Param(node1)
+	reverseNode := reverse(node1)
+	Param(reverseNode)
+
+```
+运行:
+```go
+1--->2--->3--->4--->
+4--->3--->2--->1--->
 ```
 
 #### Golang面试参考
