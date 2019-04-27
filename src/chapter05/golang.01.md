@@ -560,7 +560,6 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 因为，负载均衡器应当只选择能正常做出响应的后端服务器，因此就需要有一种判断后端服务器是否健康的方法。为了监视后台服务器的运行状况，运行状态检查服务会定期尝试使用转发规则定义的协议和端口去连接后端服务器。
 如果，服务器无法通过健康检查，就会从池中剔除，保证流量不会被转发到该服务器，直到其再次通过健康检查为止。
 
-
 负载均衡算法
 
 负载均衡算法决定了后端的哪些健康服务器会被选中。 其中常用的算法包括：
@@ -2205,7 +2204,7 @@ godoc: https://golang.org/pkg/context/
 
 * [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
 
-57. client如何实现长连接?
+#### 57. client如何实现长连接?
 
 * [TCP协议的KeepAlive机制与HeartBeat心跳包](http://www.nowamagic.net/academy/detail/23350382#)
 
