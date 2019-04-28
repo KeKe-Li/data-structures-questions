@@ -2584,6 +2584,46 @@ if (updated row > 0) {
 
 两种锁各有优缺点，不可认为一种好于另一种，像乐观锁适用于写比较少的情况下，即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。但如果经常产生冲突，上层应用会不断的进行retry，这样反倒是降低了性能，所以这种情况下用悲观锁就比较合适。　　
 
+105. 如何测试代码是否又goroutine泄漏的?
+使用runtime.Stack在测试代码运行前后计算goroutine数量，当然我理解测试代码运行完成之后是会触发gc的。如果触发gc之后，发现还有goroutine没有被回收，那么这个goroutine很有可能是被泄漏的。
+```go
+堆栈将调用goroutine的堆栈跟踪格式化为buf 并返回写入buf的字节数。如果全部为真，则在当前goroutine的跟踪之后，Stack格式化所有其他goroutine的跟踪到buf中。
+func Stack(buf []byte, all bool) int {
+	if all {
+		stopTheWorld("stack trace")
+	}
+
+	n := 0
+	if len(buf) > 0 {
+		gp := getg()
+		sp := getcallersp()
+		pc := getcallerpc()
+		systemstack(func() {
+			g0 := getg()
+			// Force traceback=1 to override GOTRACEBACK setting,
+			// so that Stack's results are consistent.
+			// GOTRACEBACK is only about crash dumps.
+			g0.m.traceback = 1
+			g0.writebuf = buf[0:0:len(buf)]
+			goroutineheader(gp)
+			traceback(pc, sp, 0, gp)
+			if all {
+				tracebackothers(gp)
+			}
+			g0.m.traceback = 0
+			n = len(g0.writebuf)
+			g0.writebuf = nil
+		})
+	}
+
+	if all {
+		startTheWorld()
+	}
+	return n
+}
+```
+
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
