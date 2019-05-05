@@ -2216,11 +2216,11 @@ godoc: https://golang.org/pkg/context/
 
 * [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
 
-##### 59. slice，len，cap，共享，扩容.
+#### 59. slice，len，cap，共享，扩容.
 
 
 
-60. map如何顺序读取?
+#### 60. map如何顺序读取?
 
 可以通过sort中的排序包进行对map中的key进行排序
 
@@ -2252,7 +2252,7 @@ func main() {
 }
 ```
 
-61. 实现set
+#### 61. 实现set
 
 根据go中map的keys的无序性和唯一性，可以将其作为set
 
