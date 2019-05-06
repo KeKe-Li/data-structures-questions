@@ -2705,6 +2705,73 @@ func main() {
 接口值的零值是指动态类型和动态值都为 nil。当仅且当这两部分的值都为 nil 的情况下，这个接口值就才会被认为 接口值 == nil。
 
 107. 编写函数 walk(x interface{}, fn func(string))，参数为结构体 x，并对 x 中的所有字符串字段调用 fn 函数。
+```go
+使用反射区实现:
+func walk(x interface{}, fn func(input string)) {
+	val := getValue(x)
+
+	walkValue := func(value reflect.Value) {
+		walk(value.Interface(), fn)
+	}
+
+	switch val.Kind() {
+	case reflect.String:
+		fn(val.String())
+	case reflect.Struct:
+		for i := 0; i< val.NumField(); i++ {
+			walkValue(val.Field(i))
+		}
+	case reflect.Slice, reflect.Array:
+		for i:= 0; i<val.Len(); i++ {
+			walkValue(val.Index(i))
+		}
+	case reflect.Map:
+		for _, key := range val.MapKeys() {
+			walkValue(val.MapIndex(key))
+		}
+	}
+}
+
+func getValue(x interface{}) reflect.Value {
+	val := reflect.ValueOf(x)
+
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	return val
+}
+
+func testWalk(t *testing.T){
+	cases := []struct{
+		Name string
+		Input interface{}
+		ExpectedCalls []string
+	}{
+		{
+			"Struct with one string field",
+			struct {
+				Name string
+			}{ "Chris"},
+			[]string{"Chris"},
+		},
+	}
+
+	for _,test :=range cases{
+		t.Run(test.Name, func(t *testing.T) {
+			var got []string
+			walk(test.Input, func(input string) {
+				got = append(got,input)
+			})
+
+			if !reflect.DeepEqual(got,test.ExpectedCalls){
+				fmt.Println("not expected")
+			}
+		})
+	}
+}
+
+```
 
 #### Golang面试参考
 
