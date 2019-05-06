@@ -769,7 +769,7 @@ Cookie 曾一度用于客户端数据的存储，因为当时并没有其它合�
 
 #### （2）创建过程
 
-服务器发送的响应报文包含 Set-Cookie 首部字段，客户端得到响应报文后把 Cookie 内容保存到浏览器中。
+服务器发送的响应报文包含Set-Cookie 首部字段，客户端得到响应报文后把 Cookie 内容保存到浏览器中。
 
 ```bash
 HTTP/1.0 200 OK
@@ -779,7 +779,6 @@ Set-Cookie: tasty_cookie=strawberry
 
 [page content]
 ```
-
 客户端之后对同一个服务器发送请求时，会从浏览器中读出 Cookie 信息通过 Cookie 请求首部字段发送给服务器。
 
 ```bash
