@@ -2705,6 +2705,47 @@ func main() {
 接口值的零值是指动态类型和动态值都为 nil。当仅且当这两部分的值都为 nil 的情况下，这个接口值就才会被认为 接口值 == nil。
 
 107. 编写函数 walk(x interface{}, fn func(string))，参数为结构体 x，并对 x 中的所有字符串字段调用 fn 函数。
+```go
+使用反射区实现:
+func walk(x interface{},fn func(input string)){
+	val := reflect.ValueOf(x)
+
+	for i:=0;i<val.NumField();i++{
+		filed := val.Field(i)
+		fn(filed.String())
+	}
+}
+
+func testWalk(t *testing.T){
+	cases := []struct{
+		Name string
+		Input interface{}
+		ExpectedCalls []string
+	}{
+		{
+			"Struct with one string field",
+			struct {
+				Name string
+			}{ "Chris"},
+			[]string{"Chris"},
+		},
+	}
+
+	for _,test :=range cases{
+		t.Run(test.Name, func(t *testing.T) {
+			var got []string
+			walk(test.Input, func(input string) {
+				got = append(got,input)
+			})
+
+			if !reflect.DeepEqual(got,test.ExpectedCalls){
+				fmt.Println("not expected")
+			}
+		})
+	}
+}
+
+```
 
 #### Golang面试参考
 
