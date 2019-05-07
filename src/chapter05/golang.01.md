@@ -2276,7 +2276,7 @@ func main() {
 
 * [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
-65. Http get跟head
+#### 65. Http get跟head
 
 get:获取由Request-URI标识的任何信息(以实体的形式)，如果Request-URI引用某个数据处理过程，则应该以它产生的数据作为在响应中的实体，而不是该过程的源代码文本，除非该过程碰巧输出该文本。
 
@@ -2284,7 +2284,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
 
-66. Http 401,403
+#### 66. Http 401,403
 
 **401 Unauthorized**： 该HTTP状态码表示认证错误，它是为了认证设计的，而不是为了授权设计的。收到401响应，**表示请求没有被认证—压根没有认证或者认证不正确—但是请重新认证和重试。**（一般在响应头部包含一个*WWW-Authenticate*来描述如何认证）。通常由web服务器返回，而不是web应用。从性质上来说是临时的东西。（服务器要求客户端重试）
 
