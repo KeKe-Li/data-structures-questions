@@ -2133,8 +2133,6 @@ grpc是由Google主导开发的RPC框架，使用HTTP/2协议并用ProtoBuf作�
 
 gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2 设计。gRPC 默认使用 protocol buffers，这是 Google 开源的一套成熟的结构数据序列化机制（当然也可以使用其他数据格式如 JSON）.
 
-
-
 #### 51. http2的特点是什么，与http1.1的对比。
 
 | HTTP1.1                    | HTTP2       | QUIC                        |
@@ -2264,7 +2262,7 @@ func main() {
 
 #### 63. 大文件排序.
 
-* [【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
+* [(算法)对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
 
 ##### 64.基本排序，哪些是稳定的.
 
@@ -2292,7 +2290,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
-67.Http keep-alive
+#### 67.Http keep-alive
 
 68. Http能不能一次连接多次请求，不等后端返回
 
