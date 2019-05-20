@@ -2290,11 +2290,11 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
-#### 67.Http keep-alive
+#### 67.Http keep-alive.
 
-68. Http能不能一次连接多次请求，不等后端返回
+#### 68. Http能不能一次连接多次请求，不等后端返回.
 
-69. TCP 和 UDP 有什么区别,适用场景
+#### 69. TCP 和 UDP 有什么区别,适用场景.
 
 * TCP 是面向连接的，UDP 是面向无连接的；故 TCP 需要建立连接和断开连接，UDP 不需要。
 
