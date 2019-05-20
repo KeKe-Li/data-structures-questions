@@ -2023,12 +2023,11 @@ func main() {
 ```go
 goconvey,vegeta
 ```
-#### 41. 复杂的单元测试怎么测试，比如有外部接口mysql接口的情况
+#### 41. 复杂的单元测试怎么测试，比如有外部接口mysql接口的情况?
 
-#### 42. redis集群，哨兵，持久化，事务
+#### 42. redis集群，哨兵，持久化，事务.
 
 #### 43. mysql和redis区别是什么？
-
 * mysql和redis的数据库类型
 
 mysql是关系型数据库，主要用于存放持久化数据，将数据存储在硬盘中，读取速度较慢。
@@ -2103,7 +2102,6 @@ Keepalived可以单独使用，即通过IP漂移实现服务的高可用，也�
 ```markdown
 在事务T开始时，此时数据库有一种状态，这个状态是所有的MySQL对象处于一致的状态，例如数据库完整性约束正确，日志状态一致等，当事务T提交后，这时数据库又有了一个新的状态，不同的数据，不同的索引，不同的日志等，但此时，约束，数据，索引，日志等MySQL各种对象还是要保持一致性（正确性）。 这就是 从一个一致性的状态，变到另一个一致性的状态。也就是事务执行后，并没有破坏数据库的完整性约束（一切都是对的）。
 ```
-
 * 隔离性
 
 隔离性是指当多个用户并发访问数据库时，比如操作同一张表时，数据库为每一个用户开启的事务，不能被其他事务的操作所干扰，多个并发事务之间要相互隔离。
@@ -2134,8 +2132,6 @@ grpc是由Google主导开发的RPC框架，使用HTTP/2协议并用ProtoBuf作�
 #### 50. grpc内部原理是什么？
 
 gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2 设计。gRPC 默认使用 protocol buffers，这是 Google 开源的一套成熟的结构数据序列化机制（当然也可以使用其他数据格式如 JSON）.
-
-
 
 #### 51. http2的特点是什么，与http1.1的对比。
 
@@ -2258,25 +2254,25 @@ func main() {
 
 * [golang实现set集合,变相实现切片去重](https://studygolang.com/articles/3291)
 
-62. 实现消息队列（多生产者，多消费者）
+#### 62. 实现消息队列（多生产者，多消费者）
 
 根据Goroutine和channel的读写可以实现消息队列，
 
 * [golang channel多生产者和多消费者实例](https://blog.csdn.net/phpduang/article/details/80143626)
 
-63. 大文件排序
+#### 63. 大文件排序.
 
-* [【算法】对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
+* [(算法)对一个20GB大的文件排序](https://blog.csdn.net/michellechouu/article/details/47002393)
 
-64.基本排序，哪些是稳定的
+##### 64.基本排序，哪些是稳定的.
 
 选择排序、快速排序、希尔排序、堆排序不是稳定的排序算法，
 
-冒泡排序、插入排序、归并排序和基数排序是稳定的排序算法
+冒泡排序、插入排序、归并排序和基数排序是稳定的排序算法.
 
 * [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
-65. Http get跟head
+#### 65. Http get跟head
 
 get:获取由Request-URI标识的任何信息(以实体的形式)，如果Request-URI引用某个数据处理过程，则应该以它产生的数据作为在响应中的实体，而不是该过程的源代码文本，除非该过程碰巧输出该文本。
 
@@ -2284,7 +2280,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [Http介绍](https://github.com/xuelangZF/CS_Offer/blob/master/Network/HTTP.md)
 
-66. Http 401,403
+#### 66. Http 401,403
 
 **401 Unauthorized**： 该HTTP状态码表示认证错误，它是为了认证设计的，而不是为了授权设计的。收到401响应，**表示请求没有被认证—压根没有认证或者认证不正确—但是请重新认证和重试。**（一般在响应头部包含一个*WWW-Authenticate*来描述如何认证）。通常由web服务器返回，而不是web应用。从性质上来说是临时的东西。（服务器要求客户端重试）
 
@@ -2294,7 +2290,7 @@ head: 除了服务器不能在响应中返回消息体，HEAD方法与GET相同�
 
 * [HTTP响应码403 Forbidden和401 Unauthorized对比](https://www.jianshu.com/p/6dceeebbde5b)
 
-67.Http keep-alive
+#### 67.Http keep-alive
 
 68. Http能不能一次连接多次请求，不等后端返回
 
@@ -2705,7 +2701,73 @@ func main() {
 接口值的零值是指动态类型和动态值都为 nil。当仅且当这两部分的值都为 nil 的情况下，这个接口值就才会被认为 接口值 == nil。
 
 107. 编写函数 walk(x interface{}, fn func(string))，参数为结构体 x，并对 x 中的所有字符串字段调用 fn 函数。
+```go
+使用反射区实现:
+func walk(x interface{}, fn func(input string)) {
+	val := getValue(x)
 
+	walkValue := func(value reflect.Value) {
+		walk(value.Interface(), fn)
+	}
+
+	switch val.Kind() {
+	case reflect.String:
+		fn(val.String())
+	case reflect.Struct:
+		for i := 0; i< val.NumField(); i++ {
+			walkValue(val.Field(i))
+		}
+	case reflect.Slice, reflect.Array:
+		for i:= 0; i<val.Len(); i++ {
+			walkValue(val.Index(i))
+		}
+	case reflect.Map:
+		for _, key := range val.MapKeys() {
+			walkValue(val.MapIndex(key))
+		}
+	}
+}
+
+func getValue(x interface{}) reflect.Value {
+	val := reflect.ValueOf(x)
+
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	return val
+}
+
+func testWalk(t *testing.T){
+	cases := []struct{
+		Name string
+		Input interface{}
+		ExpectedCalls []string
+	}{
+		{
+			"Struct with one string field",
+			struct {
+				Name string
+			}{ "Chris"},
+			[]string{"Chris"},
+		},
+	}
+
+	for _,test :=range cases{
+		t.Run(test.Name, func(t *testing.T) {
+			var got []string
+			walk(test.Input, func(input string) {
+				got = append(got,input)
+			})
+
+			if !reflect.DeepEqual(got,test.ExpectedCalls){
+				fmt.Println("not expected")
+			}
+		})
+	}
+}
+
+```
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
