@@ -921,25 +921,18 @@ SSL/TLS 握手是为了**安全**地协商出一份**对称加密**的秘钥，�
 
 握手第一步是客户端向服务端发送 Client Hello 消息，这个消息里包含了一个客户端生成的随机数 **Random1**、客户端支持的**加密套件**（Support Ciphers）和 SSL Version 等信息。
 
-
-
 #### （2）server hello 
 
 第二步是服务端向客户端发送 Server Hello 消息，这个消息会从 Client Hello 传过来的 Support Ciphers 里确定一份加密套件，这个套件决定了后续加密和生成摘要时具体使用哪些算法，另外还会生成一份随机数 **Random2**。注意，至此客户端和服务端都拥有了两个随机数（Random1+ Random2），这两个随机数会在后续生成对称秘钥时用到。
-
-
 
 #### （3）server certificate 
 
 这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。
 
 
-
 #### （4）Server Hello Done
 
 Server Hello Done 通知客户端 Server Hello 过程结束。
-
-
 
 #### （5）Client Key Exchange
 
