@@ -100,7 +100,7 @@ func main() {
 ./test_stack.go:8: main new(int) does not escape
 ```
 
-那么，什么时候指针对象才会逃逸呢？
+那么，在什么时候指针对象才会逃逸呢？
 
 #### 按值传递和按址传递
 
