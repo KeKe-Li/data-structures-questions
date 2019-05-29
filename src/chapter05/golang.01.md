@@ -2773,9 +2773,85 @@ func testWalk(t *testing.T){
 
 mysql的索引分为单列索引(主键索引,唯索引,普通索引)和组合索引.
 
-单列索引:一个索引只包含一个列,一个表可以有多个单列索引.
+* 单列索引:一个索引只包含一个列,一个表可以有多个单列索引.
 
-组合索引:一个组合索引包含两个或两个以上的列,
+* 组合索引:一个组合索引包含两个或两个以上的列.
+
+如下一个table表:
+```sql
+CREATE TABLE `award` (
+   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+   `activity_id` varchar(100) NOT NULL DEFAULT '' COMMENT '活动场景id',
+   `nickname` varchar(12) NOT NULL DEFAULT '' COMMENT '用户昵称',
+   `is_awarded` tinyint(1) NOT NULL DEFAULT 0 COMMENT '用户是否领奖',
+   `award_time` int(11) NOT NULL DEFAULT 0 COMMENT '领奖时间',
+   `account` varchar(12) NOT NULL DEFAULT '' COMMENT '帐号',
+   `password` char(32) NOT NULL DEFAULT '' COMMENT '密码',
+   `message` varchar(255) NOT NULL DEFAULT '' COMMENT '获奖信息',
+   `created_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+   `updated_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+   PRIMARY KEY (`id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='获奖信息表';
+```
+
+索引的创建:
+
+1.单列索引
+
+* 普通索引.
+
+普通索引是最基本的索引,其sql格式是:
+```sql
+CREATE INDEX IndexName ON `TableName`(`字段名`(length)) 或者 ALTER TABLE TableName ADD INDEX IndexName(`字段名`(length))
+```
+第一种方式 :
+```sql
+CREATE INDEX account_Index ON `award`(`account`);
+```
+第二种方式: 
+```sql
+ALTER TABLE award ADD INDEX account_Index(`account`)
+```
+如果是CHAR,VARCHAR,类型,length可以小于字段的实际长度,如果是BLOB和TEXT类型就必须指定长度.
+
+* 唯一索引.
+
+唯一索引与普通索引类似,但是不同的是唯一索引要求所有的类的值是唯一的,这一点和主键索引一样.但是唯一索引允许有空值.
+
+唯一索引的sql格式是:
+```sql
+CREATE UNIQUE INDEX IndexName ON `TableName`(`字段名`(length)); 或者 ALTER TABLE TableName ADD UNIQUE (column_list)  ```
+
+```sql
+ CREATE UNIQUE INDEX account_UNIQUE_Index ON `award`(`account`);
+```
+* 主键索引
+
+主键索引不允许有空值,(在B+TREE中的InnoDB引擎中,主键索引起到了至关重要的地位).
+
+主键索引建立的规则是 int优于varchar,一般在建表的时候创建,最好是与表的其他字段不相关的列或者是业务不相关的列.一般会设为 int 而且是 AUTO_INCREMENT自增类型的.
+
+
+2.组合索引
+
+一个表中含有多个单列索引不代表是组合索引,通常来讲 组合索引是:包含多个字段但是只有索引名称.
+
+组合索引sql格式是:
+```sql
+CREATE INDEX IndexName On `TableName`(`字段名`(length),`字段名`(length),...);
+```
+实现的sql是:
+```sql
+CREATE INDEX nickname_account_createdTime_Index ON `award`(`nickname`, `account`, `created_time`);
+```
+通过下面的sql我们可以查看到刚刚建表的具体的索引:
+```sql
+SHOW INDEX from `award`
+```
+
+
+
+
 
 109. Golang并发为n的时候,出现的问题是什么?
 
