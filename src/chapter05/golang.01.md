@@ -2769,6 +2769,16 @@ func testWalk(t *testing.T){
 }
 
 ```
+108. Mysql索引.
+
+mysql的索引分为单列索引(主键索引,唯索引,普通索引)和组合索引.
+
+单列索引:一个索引只包含一个列,一个表可以有多个单列索引.
+
+组合索引:一个组合索引包含两个或两个以上的列,
+
+109. Golang并发为n的时候,出现的问题是什么?
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
