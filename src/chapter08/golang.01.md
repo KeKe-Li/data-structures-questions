@@ -870,7 +870,7 @@ Session 可以存储在服务器上的文件、数据库或者内存中，现在
 - 不验证通信方的身份，通信方的身份有可能遭遇伪装；
 - 无法证明报文的完整性，报文有可能遭篡改。
 
-HTTPs（Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。
+HTTPs（Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲HTTPs是HTTP的安全版。
 
 HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）通信，再由 SSL 和 TCP 通信。也就是说 HTTPs 使用了隧道进行通信。
 
