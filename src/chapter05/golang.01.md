@@ -2216,7 +2216,6 @@ godoc: https://golang.org/pkg/context/
 #### 59. slice，len，cap，共享，扩容.
 
 
-
 #### 60. map如何顺序读取?
 
 可以通过sort中的排序包进行对map中的key进行排序
@@ -2321,11 +2320,11 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 
 * [iOS 面试题 TCP UDP 有什么区别？TCP 为什么要三次握手，四次挥手？](https://mp.weixin.qq.com/s/jLkhjM7wOpZuWgJdAXis1A) 
 
-70. time-wait的作用
+#### 70. time-wait的作用
 
 * [TCP/IP状态图的TIME_WAIT作用](https://www.iteblog.com/archives/169.html)
 
-71. 数据库如何建索引
+#### 71. 数据库如何建索引
 
 * [正确合理的建立MySQL数据库索引](https://blog.csdn.net/nanaMasuda/article/details/52358114)
 
