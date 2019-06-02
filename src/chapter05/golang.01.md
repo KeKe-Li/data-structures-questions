@@ -2989,8 +2989,6 @@ DORP INDEX IndexName ON `TableName`
 3. 定义为text和image和bit数据类型的列不应该增加索引.
 4. 当表的修改(UPDATE,INSERT,DELETE)操作远远大于检索(SELECT)操作时不应该创建索引,这两个操作是互斥的关系.
 
-
-
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
