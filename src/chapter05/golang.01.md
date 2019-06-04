@@ -2987,6 +2987,8 @@ DORP INDEX IndexName ON `TableName`
 3. 定义为text和image和bit数据类型的列不应该增加索引.
 4. 当表的修改(UPDATE,INSERT,DELETE)操作远远大于检索(SELECT)操作时不应该创建索引,这两个操作是互斥的关系.
 
+109. 设计一个连续签到的任务,连续签到7天,中间不能中断,如果中断了,就重新从第一天开始签到,连续签到三天奖励,连续签到7天奖励.
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
