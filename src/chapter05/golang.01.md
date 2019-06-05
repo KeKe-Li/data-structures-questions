@@ -2376,6 +2376,41 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向无连接的通信服
 4. 破坏“循环等待”条件：采用资源有序分配其基本思想是将系统中的所有资源顺序编号，将紧缺的，稀少的采用较大的编号，在申请资源时必须按照编号的顺序进行，一个进程只有获得较小编号的进程才能申请较大编号的进程。
 
 #### 74. linux命令，查看端口占用，cpu负载，内存占用，如何发送信号给一个进程.
+linux ps命令，查看某进程cpu和内存占用率情况:
+```bash
+> ps aux
+USER               PID  %CPU %MEM      VSZ    RSS   TT  STAT STARTED      TIME COMMAND
+admin            72824  17.3  1.4  5518204 118212   ??  R    27 519   54:49.93 /Applications/iTerm.app/Contents/MacOS/iTerm2
+_windowserver      179  16.1  0.6  7525352  46552   ??  Rs   21 519  457:09.25 /System/Library/PrivateFrameworks/SkyLight.fra
+admin              734  12.2  3.3  6095348 273108   ??  R    21 519  635:17.25 /Users/admin/Desktop/Google Chrome.app/Content
+admin            10718   9.0  2.7  5604388 223604   ??  S    22 519  557:56.89 /Users/admin/Desktop/Google Chrome.app/Content
+admin              750   6.4  0.6  4633300  52372   ??  S    21 519  147:59.59 /Users/admin/Desktop/Google Chrome.app/Content
+admin              749   5.6  1.2  5570904  96832   ??  S    21 519  359:56.37 /Users/admin/Desktop/Google Chrome.app/Content
+admin              818   4.5  0.1  6557980   5508   ??  S    21 519  557:27.52 com.docker.hyperkit -A -u -F vms/0/hyperkit.pi
+admin            32898   3.5  1.4  4977204 117684   ??  S    10:54上午   0:02.27 /Users/admin/Desktop/Google Chrome.app/Content
+admin            30591   2.2  3.7  9505844 310584   ??  S     9:47上午  10:49.28 /Applications/GoLand.app/Contents/MacOS/goland
+root              1300   1.9  0.1  4334916   6212   ??  Ss   21 519  123:53.86 /usr/libexec/taskgated
+admin            31232   1.2  1.1 10553808  88860   ??  S    10:24上午   3:28.67 /Applications/WebStorm.app/Contents/MacOS/webs
+admin            18704   0.7  0.2 19282032  12948   ??  S     3:56下午   4:18.12 /private/var/folders/kp/3yqnp9cj4f3_9539b06q4
+```
+* linux 下的ps命令
+* USER 进程运行用户
+* PID    进程编号
+* %CPU 进程的cpu占用率
+* %MEM 进程的内存占用率
+* VSZ 进程所使用的虚存的大小
+* RSS 进程使用的驻留集大小或者是实际内存的大小
+* TTY 与进程关联的终端（tty）
+* STAT 检查的状态：进程状态使用字符表示的，如R（running正在运行或准备运行）、S（sleeping睡眠）、I（idle空闲）、Z (僵死)、D（不可中断的睡眠，通常是I/O）、P（等待交换页）、W（换出,表示当前页面不在内存）、N（低优先级任务）T(terminate终止)、W has no resident pages
+* START （进程启动时间和日期）
+* TIME ;（进程使用的总cpu时间）
+* COMMAND （正在执行的命令行命令）
+* NI (nice)优先级
+* PRI 进程优先级编号
+* PPID 父进程的进程ID（parent process id）
+* SID 会话ID（session id）
+* WCHAN 进程正在睡眠的内核函数名称；该函数的名称是从/root/system.map文件中获得的。
+* FLAGS 与进程相关的数字标识
 
 #### 75. git文件版本，使用顺序，merge跟rebase.
 
