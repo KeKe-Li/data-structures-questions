@@ -1680,7 +1680,6 @@ func main(){
 	}
 
 }
-
 ```
 运行:
 ```go
@@ -2411,6 +2410,32 @@ admin            18704   0.7  0.2 19282032  12948   ??  S     3:56下午   4:18.
 * SID 会话ID（session id）
 * WCHAN 进程正在睡眠的内核函数名称；该函数的名称是从/root/system.map文件中获得的。
 * FLAGS 与进程相关的数字标识
+
+通常在linux中可以通过pkill 命令、kill 命令和 killall 命令,或者组合键向进程发送各种信号.
+
+* Ctrl + C: 中断信号，发送 SIGINT 信号到运行在前台的进程.
+* Ctrl + Y: 延时挂起信号，使运行的进程在尝试从终端读取输入时停止。控制权返回给 Shell，使用户可以将进程放在前台或后台，或杀掉该进程.
+* Ctrl + Z: 挂起信号，发送 SIGTSTP 信号到运行的进程，由此将其停止，并将控制权返回给 Shell.
+
+也可以使用 kill命令结束进程:
+
+* 发送 SIGKILL 信号到 PID 是 123 的进程：
+```bash
+> kill -9 123
+```
+killall 命令会发送信号到运行任何指定命令的所有进程。所以，当一个进程启动了多个实例时，使用 killall 命令来杀掉这些进程会更方便一些。
+
+* 使用 killall 命令杀掉所有 firefox 进程:
+```bash
+> killall firefox
+```
+
+使用 pkill 命令，可以通过指定进程名、用户名、组名、终端、UID、EUID和GID等属性来杀掉相应的进程。pkill 命令默认也是发送 SIGTERM 信号到进程。
+
+* 使用 pkill 命令杀掉所有用户的 firefox 进程.
+```bash
+> pkill firefox
+```
 
 #### 75. git文件版本，使用顺序，merge跟rebase.
 
