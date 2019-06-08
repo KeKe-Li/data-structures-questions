@@ -467,7 +467,7 @@ go func()//通过go关键字启动一个协程来运行函数
 groutine能拥有强大的并发实现是通过GPM调度模型实现.
 
 <p align="center">
-<img width="500" align="center" src="../images/59.jpg" />
+<img width="300" align="center" src="../images/59.jpg" />
 </p>
 
 Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
@@ -480,7 +480,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 调度实现:
 
 <p align="center">
-<img width="500" align="center" src="../images/65.jpg" />
+<img width="300" align="center" src="../images/65.jpg" />
 </p>
 
 从上图中可以看到，有2个物理线程M，每一个M都拥有一个处理器P，每一个也都有一个正在运行的goroutine。P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。
@@ -490,7 +490,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 当一个OS线程M0陷入阻塞时，P转而在运行M1，图中的M1可能是正被创建，或者从线程缓存中取出。
 
 <p align="center">
-<img width="500" align="center" src="../images/60.jpg" />
+<img width="300" align="center" src="../images/60.jpg" />
 </p>
 
 当MO返回时，它必须尝试取得一个P来运行goroutine，一般情况下，它会从其他的OS线程那里拿一个P过来，
