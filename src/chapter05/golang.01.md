@@ -2145,6 +2145,22 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 
 #### 52. Go的调度原理.
 
+调度器的三个抽象概念：G、M、P
+
+* G：代表一个 goroutine，每个 goroutine 都有自己独立的栈存放当前的运行内存及状态。可以把一个G当做一个任务。
+
+* M: 代表内核线程(Pthread)，它本身就与一个内核线程进行绑定，goroutine 运行在M上。
+
+* P：代表一个处理器，可以认为一个“有运行任务”的P占了一个CPU线程的资源，且只要处于调度的时候就有P。
+
+内核线程和 CPU 线程的区别，在系统里可以有上万个内核线程，但 CPU 线程并没有那么多，CPU 线程也就是 Top 命令里看到的 CPU0、CPU1、CPU2......的数量。
+
+
+
+
+
+
+
 * [Go调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
 
 * [Go语言实战笔记（十二）| Go goroutine](http://www.flysnow.org/2017/04/11/go-in-action-go-goroutine.html)
