@@ -2170,7 +2170,6 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 * [Goroutine调度过程](https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/chapter10/01.0.md)
 
 #### 53. go struct能不能比较
-
 * 相同struct类型的可以比较
 
 * 不同struct类型的不可以比较,编译都不过，类型不匹配
