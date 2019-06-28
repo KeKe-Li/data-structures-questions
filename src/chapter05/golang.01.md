@@ -3083,6 +3083,8 @@ DORP INDEX IndexName ON `TableName`
 
 109.设计一个连续签到的任务,连续签到7天,中间不能中断,如果中断了,就重新从第一天开始签到,连续签到三天奖励,连续签到7天奖励.
 
+110.kubernetes中不同的Node中的pod如何进行通信?
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
