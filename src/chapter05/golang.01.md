@@ -2566,7 +2566,7 @@ func quickDescendingSort(arr []int, start, end int) {
 有效的避免上述的五种逃逸的情况,可以避免内存逃逸.
 
 
-91. 配置中心如何保证一致性？
+#### 91. 配置中心如何保证一致性？
 
 92. Golang 的GC触发时机是什么?
 
