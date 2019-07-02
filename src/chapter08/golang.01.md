@@ -118,6 +118,11 @@
 ### 1. 说一下OSI七层模型  TCP/IP四层模型  五层协议
 
 <p align="center">
+<img width="1000" align="center" src="../images/1.jpeg" />
+</p>
+
+
+<p align="center">
 <img width="500" align="center" src="../images/69.jpg" />
 </p>
 
