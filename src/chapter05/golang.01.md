@@ -2451,7 +2451,6 @@ killall 命令会发送信号到运行任何指定命令的所有进程。所以
 ```bash
 > pkill firefox
 ```
-
 #### 75. git文件版本，使用顺序，merge跟rebase.
 
 #### 76. 通常一般会用到哪些数据结构?
@@ -2568,7 +2567,7 @@ func quickDescendingSort(arr []int, start, end int) {
 
 #### 91. 配置中心如何保证一致性？
 
-92. Golang 的GC触发时机是什么?
+#### 92. Golang 的GC触发时机是什么?
 
 93. Redis 里数据结构的实现熟悉吗?
 
