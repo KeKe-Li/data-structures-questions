@@ -719,6 +719,7 @@ CONNECT www.example.com:443 HTTP/1.1
 通常不会使用 TRACE，并且它容易受到 XST 攻击（Cross-Site Tracing，跨站追踪）。
 
 ### 5. GET和POST的区别？
+
 * GET 被强制服务器支持 
 * 浏览器对URL的长度有限制，所以GET请求不能代替POST请求发送大量数据
 * GET请求发送数据更小 
@@ -807,7 +808,7 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 ```
 
-####（4）JavaScript 获取 Cookie
+#### （4）JavaScript 获取 Cookie
 
 通过 `Document.cookie` 属性可创建新的 Cookie，也可通过该属性访问非 HttpOnly 标记的 Cookie。
 
