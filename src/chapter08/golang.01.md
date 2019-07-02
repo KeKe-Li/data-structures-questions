@@ -115,12 +115,14 @@
 
 ### 第一部分：传输层
 
-### 1. 说一下OSI七层模型  TCP/IP四层模型  五层协议
+### 1. 7层模型的概览图
 
 <p align="center">
 <img width="1000" align="center" src="../images/1.jpeg" />
 </p>
 
+
+#### OSI七层模型  TCP/IP四层模型 ,五层协议.
 
 <p align="center">
 <img width="500" align="center" src="../images/69.jpg" />
