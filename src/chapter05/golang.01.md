@@ -3073,7 +3073,7 @@ DORP INDEX IndexName ON `TableName`
 
 4. 在经常需要排序(order by),分组(group by)和的distinct 列上加索引 可以加快排序查询的时间,(单独order by 用不了索引，索引考虑加where 或加limit).
 
-5. 在一些where 之后的 < <= > >= BETWEEN IN 以及某个情况下的like 建立字段的索引(B-TREE).
+5. 在一些where 之后的 <, <=, >, >= BETWEEN IN 以及某个情况下的like 建立字段的索引(B-TREE).
 
 6. like语句的 如果你对nickname字段建立了一个索引.当查询的时候的语句是 nickname lick '%ABC%' 那么这个索引讲不会起到作用.而nickname lick 'ABC%' 那么将可以用到索引.
 
@@ -3113,7 +3113,7 @@ Redis的主要缺点是数据库容量受到物理内存的限制，不能用作
 * 支持事务，操作都是原子性，所谓的原子性就是对数据的更改要么全部执行，要么全部不执行.
 * 丰富的特性：可用于缓存，消息，按key设置过期时间，过期后将会自动删除.
 
-113. redis事物的了解CAS(check-and-set 操作实现乐观锁 )?
+#### 113. redis事物的了解CAS(check-and-set 操作实现乐观锁 )?
 和众多其它数据库一样，Redis作为NoSQL数据库也同样提供了事务机制。在Redis中，MULTI/EXEC/DISCARD/WATCH这四个命令是我们实现事务的基石。
 相信对有关系型数据库开发经验的开发者而言这一概念并不陌生，即便如此，我们还是会简要的列出 Redis中事务的实现特征 ：
 
