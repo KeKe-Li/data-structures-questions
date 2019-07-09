@@ -2159,9 +2159,13 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 <p align="center">
 <img width="600" align="center" src="../images/99.jpg" />
 </p>
-
+`:
 图1、图2代表2个有运行任务时的状态。M 与一个内核线程绑定，可运行的 goroutine 列表存放到P里面，然后占用了一个CPU线程来运行。
 图3代表没有运行任务时的状态，M 依然与一个内核线程绑定，由于没有运行任务因此不占用 CPU 线程，同时也不占用P。
+
+
+
+
 
 
 
@@ -2208,107 +2212,7 @@ func main() {
 // ./.go:14:7: invalid operation: a == b (mismatched types A and B) 
 ```
 
-#### 54. go defer的一些问题.
-
-```go
-func f()int{
-	i := 5
-	defer func() {
-		i++
-	}()
-	return i
-
-
-	//拆解后：
-	/*
-	i :=5
-
-	// 1. 赋值指令
-	r = i
-
-	// 2. defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过
-	func(){
-		t = t + 5
-	}
-
-	// 3. 空的return指令
-	return
-
-	*/
-}
-
-func f1() int{
-	i :=5
-	defer func() {
-		i++
-	}()
-	return i
-
-	//f
-	//rval = i
-	//i ++
-	//ret 5
-
-	// return i 后将i拷贝到返回值了,在修改i,没有影响了.
-}
-
-func f2()(result int)  {
-	defer func() {
-		result++
-	}()
-	return 0
-
-	//f1
-	//result = 0
-	//defer // result ++
-	//return 1
-	// return 0 后将0赋值给result再修改result=1
-}
-
-
-func f3()(r int){
-	t :=5
-	defer func() {
-		t = t +5
-	}()
-	return t
-
-	//f2
-	// r = t
-	// defer // t = t + 5
-	// return 5
-}
-
-
-func f4()(r int){
-	defer func(r int) {
-		r = r + 5
-	}(r)
-	return 1
-
-	// 1
-	// defer func的参数名称覆盖了外部捕获的r
-
-	//拆解后
-	/*
-	// 1. 赋值
-	r = 1
-
-	// 2. 这里改的r是之前传值传进去的r，不会改变要返回的那个r值
-
-	func (r int){
-		r = r + 5
-	}(r)
-
-	// 3. 空的return
-	return
-	*/
-}
-```
-
-
-
-
+#### 54. go defer（for defer）
 
 * [Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
 
