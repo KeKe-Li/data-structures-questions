@@ -2159,7 +2159,7 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 <p align="center">
 <img width="600" align="center" src="../images/99.jpg" />
 </p>
-`:
+
 图1、图2代表2个有运行任务时的状态。M 与一个内核线程绑定，可运行的 goroutine 列表存放到P里面，然后占用了一个CPU线程来运行。
 图3代表没有运行任务时的状态，M 依然与一个内核线程绑定，由于没有运行任务因此不占用 CPU 线程，同时也不占用P。
 
@@ -2294,7 +2294,9 @@ func main() {
 
 下面来围绕G、M、P三个概念介绍 Goroutine 调度循环的运作流程。
 
-
+<p align="center">
+<img width="600" align="center" src="../images/100.jpg" />
+</p>
 
 
 
