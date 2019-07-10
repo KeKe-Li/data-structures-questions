@@ -2235,6 +2235,65 @@ func osinit() {
 }
 ```
 
+runtime.schedinit(SB)调度相关的一些初始化.
+```go
+
+// runtime/proc.go
+
+// 设置最大M数量
+sched.maxmcount = 10000
+
+// 初始化当前M,即全局M0
+mcommoninit(_g_.m)
+
+// 查看应该启动的P数量，默认为cpu core数.
+// 如果设置了环境变量GOMAXPROCS则以环境变量为准,最大不得超过_MaxGomaxprocs(1024)个
+procs := ncpu
+if n, ok := atoi32(gogetenv("GOMAXPROCS")); ok && n > 0 {
+  procs = n
+}
+if procs > _MaxGomaxprocs {
+  procs = _MaxGomaxprocs
+}
+// 调整P数量，此时由于是初始化阶段，所以P都是新建的
+if procresize(procs) != nil {
+  throw("unknown runnable goroutine during bootstrap")
+}
+```
+这里 sched.maxmcount 设置了M最大的数量，而M代表的是系统内核线程，因此可以认为一个进程最大只能启动10000个系统线程。
+
+procresize 初始化P的数量，procs 参数为初始化的数量，而在初始化之前先做数量的判断，默认是 ncpu(与CPU核数相等)。也可以通过环境变量 GOMAXPROCS 来控制P的数量。_MaxGomaxprocs 控制了最大的P数量只能是1024。
+
+```markdown
+通常在进程初始化的时候经常用到 runtime.GOMAXPROCS() 方法，其实也是调用的 procresize 方法重新设置了最大 CPU 使用数量。
+```
+
+runtime·mainPC(SB)启动监控任务.
+
+```go
+
+// runtime/proc.go
+
+// The main goroutine.
+func main() {
+  ......
+  
+  // 启动后台监控
+  systemstack(func() {
+    newm(sysmon, nil)
+  })
+
+  ......
+}
+```
+在 runtime 下会启动一个全程运行的监控任务，该任务用于标记抢占执行过长时间的G，以及检测 epoll 里面是否有可执行的G。下面会详细说到。
+
+最后 runtime·mstart(SB)启动调度循环.
+
+前面都是各种初始化操作，在这里开启了调度器的第一个调度循环。(这里启动的M就是M0)
+
+下面来围绕G、M、P三个概念介绍 Goroutine 调度循环的运作流程。
+
 
 
 
