@@ -2163,9 +2163,77 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 图1、图2代表2个有运行任务时的状态。M 与一个内核线程绑定，可运行的 goroutine 列表存放到P里面，然后占用了一个CPU线程来运行。
 图3代表没有运行任务时的状态，M 依然与一个内核线程绑定，由于没有运行任务因此不占用 CPU 线程，同时也不占用P。
 
+进程启动时都做了什么？下面我们通过汇编plan9看下:
+```go
+
+// runtime/asm_amd64.s
+
+TEXT runtime·rt0_go(SB),NOSPLIT,$0
+......此处省略N多代码......
+ok:
+        // set the per-goroutine and per-mach "registers"
+        get_tls(BX)  // 将 g0 放到 tls(thread local storage)里
+        LEAQ    runtime·g0(SB), CX
+        MOVQ    CX, g(BX)
+        LEAQ    runtime·m0(SB), AX
+
+        // save m->g0 = g0  // 将全局M0与全局G0绑定
+        MOVQ    CX, m_g0(AX)
+        // save m0 to g0->m
+        MOVQ    AX, g_m(CX)
+
+        CLD                             // convention is D is always left cleared
+        CALL    runtime·check(SB)
+
+        MOVL    16(SP), AX              // copy argc
+        MOVL    AX, 0(SP)
+        MOVQ    24(SP), AX              // copy argv
+        MOVQ    AX, 8(SP)
+        CALL    runtime·args(SB) // 解析命令行参数
+        CALL    runtime·osinit(SB) // 只初始化了CPU核数
+        CALL    runtime·schedinit(SB) // 内存分配器、栈、P、GC回收器等初始化
+
+        // create a new goroutine to start program
+        MOVQ    $runtime·mainPC(SB), AX         // 
+        PUSHQ   AX
+        PUSHQ   $0                      // arg size
+        CALL    runtime·newproc(SB) // 创建一个新的G来启动runtime.main
+        POPQ    AX
+        POPQ    AX
+
+        // start this M
+        CALL    runtime·mstart(SB) // 启动M0,开始等待空闲G,正式进入调度循环
+
+        MOVL    $0xf1, 0xf1  // crash
+        RET
+
+```
+在启动过程里主要做了这三个事情(这里只跟调度相关的)：
+
+* 初始化固定数量的P.
+* 创建一个新的G来启动 runtime.main, 也就是 runtime 下的 main 方法.
+* 创建全局 M0、全局 G0，启动 M0 进入第一个调度循环.
 
 
+这里注意下: 
+```markdown
+M0 是什么？程序里会启动多个 M，第一个启动的叫 M0。G0 是什么？
+G 分三种，第一种是执行用户任务的叫做 G，第二种执行 runtime 下调度工作的叫G0，每个M都绑定一个G0。第三种则是启动 runtime.main 用到的G。写程序接触到的基本都是第一种.
+```
+我们按照顺序看是怎么完成上面三个事情的。
 
+runtime.osinit(SB)方法针对系统环境的初始化.
+
+这里实质只做了一件事情，就是获取 CPU 的线程数，也就是 Top 命令里看到的 CPU0、CPU1、CPU2......的数量。
+
+```go
+
+// runtime/os_linux.go
+
+func osinit() {
+  ncpu = getproccount()
+}
+```
 
 
 
