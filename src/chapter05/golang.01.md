@@ -2164,12 +2164,21 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 图3代表没有运行任务时的状态，M 依然与一个内核线程绑定，由于没有运行任务因此不占用 CPU 线程，同时也不占用P。
 
 进程启动时都做了什么？下面我们通过汇编plan9看下:
+
+* go进程的启动
+进程的本质是代码区的指令不断执行，驱使动态数据区和静态数据区产生数据变化。
+
+golang进程怎么启动的。熟悉c的同学应该知道，c语言的main函数是程序的入口函数，在golang中main包中的main函数并不是入口函数， 入口函数是在asm_amd64.s中定义的，而main包中的main函数是由runtime main函数启动的。但是这里我们不详细探讨系统是怎么到程序入口函数的， 我们只需要明白，go程序启动后，会调用 runtime·rt0_go 来执行程序的初始化和启动调度系统。runtime·rt0_go 很重要，如果要是自己看runtime的源码， 可以从这个函数看起。
+
 ```go
+// runtime·rt0_go
 
-// runtime/asm_amd64.s
-
-TEXT runtime·rt0_go(SB),NOSPLIT,$0
-......此处省略N多代码......
+// 程序刚启动的时候必定有一个线程启动（主线程）
+// 将当前的栈和资源保存在g0
+// 将该线程保存在m0
+// tls: Thread Local Storage
+// set the per-goroutine and per-mach "registers"
+get_tls(BX)
 ok:
         // set the per-goroutine and per-mach "registers"
         get_tls(BX)  // 将 g0 放到 tls(thread local storage)里
