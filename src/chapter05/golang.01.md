@@ -2159,7 +2159,7 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 <p align="center">
 <img width="600" align="center" src="../images/99.jpg" />
 </p>
-`:
+
 图1、图2代表2个有运行任务时的状态。M 与一个内核线程绑定，可运行的 goroutine 列表存放到P里面，然后占用了一个CPU线程来运行。
 图3代表没有运行任务时的状态，M 依然与一个内核线程绑定，由于没有运行任务因此不占用 CPU 线程，同时也不占用P。
 
@@ -2294,21 +2294,120 @@ func main() {
 
 下面来围绕G、M、P三个概念介绍 Goroutine 调度循环的运作流程。
 
+<p align="center">
+<img width="600" align="center" src="../images/100.jpg" />
+</p>
+
+
+图1代表M启动的过程，把M跟一个P绑定在一起。在程序初始化的过程中,到在进程启动的最后一步启动了第一个M(即M0)，这个M从全局的空闲P列表里拿到一个P，然后与其绑定。而P里面有2个管理G的链表(runq 存储等待运行的G列表，gfree 存储空闲的G列表)，M启动后等待可执行的G。
+
+图2代表创建G的过程。创建完一个G先扔到当前P的 runq 待运行队列里。在图3的执行过程里，M从绑定的P的 runq 列表里获取一个G来执行。当执行完成后，图4的流程里把G仍到 gfree 队列里。注意此时G并没有销毁(只重置了G的栈以及状态)，当再次创建G的时候优先从 gfree 列表里获取，这样就起到了复用G的作用，避免反复与系统交互创建内存。
+
+M即启动后处于一个自循环状态，执行完一个G之后继续执行下一个G，反复上面的图2~图4过程。当第一个M正在繁忙而又有新的G需要执行时，会再开启一个M来执行。
+
+接着我们详细看下调度循环的实现。
+
+调度器如何开启调度循环?
+
+先看一下M的启动过程（M0启动是个特殊的启动过程，也是第一个启动的M，由汇编实现的初始化后启动，而后续的M创建以及启动则是Go代码实现）。
+```go
+// runtime/proc.go
+
+func startm(_p_ *p, spinning bool) {
+  lock(&sched.lock)
+  if _p_ == nil {
+    // 从空闲P里获取一个
+    _p_ = pidleget()
+    
+    ......
+  }
+  // 获取一个空闲的m
+  mp := mget()
+  unlock(&sched.lock)
+  // 如果没有空闲M，则new一个
+  if mp == nil {
+    var fn func()
+    if spinning {
+      // The caller incremented nmspinning, so set m.spinning in the new M.
+      fn = mspinning
+    }
+    newm(fn, _p_)
+    return
+  }
+  
+  ......
+  
+  // 唤醒M
+  notewakeup(&mp.park)
+}
+
+func newm(fn func(), _p_ *p) {
+  // 创建一个M对象,且与P关联
+  mp := allocm(_p_, fn)
+  // 暂存P
+  mp.nextp.set(_p_)
+  mp.sigmask = initSigmask
+  
+  ......
+  
+  execLock.rlock() // Prevent process clone.
+  // 创建系统内核线程
+  newosproc(mp, unsafe.Pointer(mp.g0.stack.hi))
+  execLock.runlock()
+}
+
+// runtime/os_linux.go
+func newosproc(mp *m, stk unsafe.Pointer) {
+  // Disable signals during clone, so that the new thread starts
+  // with signals disabled. It will enable them in minit.
+  var oset sigset
+  sigprocmask(_SIG_SETMASK, &sigset_all, &oset)
+  ret := clone(cloneFlags, stk, unsafe.Pointer(mp), unsafe.Pointer(mp.g0), unsafe.Pointer(funcPC(mstart)))
+  sigprocmask(_SIG_SETMASK, &oset, nil)
+}
+
+func allocm(_p_ *p, fn func()) *m {
+  ......
+  
+  mp := new(m)
+  mp.mstartfn = fn // 设置启动函数
+  mcommoninit(mp)  // 初始化m
+
+  // 创建g0
+  // In case of cgo or Solaris, pthread_create will make us a stack.
+  // Windows and Plan 9 will layout sched stack on OS stack.
+  if iscgo || GOOS == "solaris" || GOOS == "windows" || GOOS == "plan9" {
+    mp.g0 = malg(-1)
+  } else {
+    mp.g0 = malg(8192 * sys.StackGuardMultiplier)
+  }
+  // 把新创建的g0与M做关联
+  mp.g0.m = mp
+
+  ......
+  
+  return mp
+}
+
+func mstart() {
+  ......
+  
+  mstart1()
+}
+
+func mstart1() {
+
+  ......
+  
+  // 进入调度循环(阻塞不返回)
+  schedule()
+}
+```
 
 
 
 
 
-
-
-
-* [Go调度器: M, P 和 G](https://colobu.com/2017/05/04/go-scheduler/)
-
-* [Go语言实战笔记（十二）| Go goroutine](http://www.flysnow.org/2017/04/11/go-in-action-go-goroutine.html)
-
-* [Golang调度器源码分析](http://ga0.github.io/golang/2015/09/20/golang-runtime-scheduler.html)
-
-* [Goroutine调度过程](https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/chapter10/01.0.md)
 
 #### 53. go struct能不能比较
 * 相同struct类型的可以比较
