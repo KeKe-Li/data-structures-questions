@@ -1922,7 +1922,6 @@ CP中采用滑动窗口来进行传输控制，滑动窗口的大小意味着接
 
 #### 34. 让你设计一个web框架，你要怎么设计，说一下步骤.
 
-
 #### 35. 说一下中间件原理.
 中间件（middleware）是基础软件的一大类，属于可复用软件的范畴。中间件处于操作系统软件与用户的应用软件的中间。中间件在操作系统、网络和数据库之上，应用软件的下层，总的作用是为处于自己上层的应用软件提供运行与开发的环境，帮助用户灵活、高效地开发和集成复杂的应用软件 
 IDC的定义是：中间件是一种独立的系统软件或服务程序，分布式应用软件借助这种软件在不同的技术之间共享资源，中间件位于客户机服务器的操作系统之上，管理计算资源和网络通信。
@@ -2419,7 +2418,164 @@ newm 方法中通过 newosproc 新建一个内核线程，并把内核线程与M
 allocm 方法中创建M的同时创建了一个G与自己关联，这个G就是我们在上面说到的g0。为什么M要关联一个g0？因为 runtime 下执行一个G也需要用到栈空间来完成调度工作，而拥有执行栈的地方只有G，因此需要为每个执行线程里配置一个g0。
 
 
+调度器如何进行调度循环?
 
+调用 schedule 进入调度器的调度循环后，在这个方法里永远不再返回。下面看下实现。
+```go
+
+// runtime/proc.go
+
+func schedule() {
+  _g_ := getg()
+
+  // 进入gc MarkWorker 工作模式
+  if gp == nil && gcBlackenEnabled != 0 {
+    gp = gcController.findRunnableGCWorker(_g_.m.p.ptr())
+  }
+  if gp == nil {
+    // Check the global runnable queue once in a while to ensure fairness.
+    // Otherwise two goroutines can completely occupy the local runqueue
+    // by constantly respawning each other.
+    // 每处理n个任务就去全局队列获取G任务,确保公平
+    if _g_.m.p.ptr().schedtick%61 == 0 && sched.runqsize > 0 {
+      lock(&sched.lock)
+      gp = globrunqget(_g_.m.p.ptr(), 1)
+      unlock(&sched.lock)
+    }
+  }
+  // 从P本地获取
+  if gp == nil {
+    gp, inheritTime = runqget(_g_.m.p.ptr())
+    if gp != nil && _g_.m.spinning {
+      throw("schedule: spinning with local work")
+    }
+  }
+  // 从其它地方获取G,如果获取不到则沉睡M，并且阻塞在这里，直到M被再次使用
+  if gp == nil {
+    gp, inheritTime = findrunnable() // blocks until work is available
+  }
+
+  ......
+  
+  // 执行找到的G
+  execute(gp, inheritTime)
+}
+
+// 从P本地获取一个可运行的G
+func runqget(_p_ *p) (gp *g, inheritTime bool) {
+  // If there's a runnext, it's the next G to run.
+  // 优先从runnext里获取一个G，如果没有则从runq里获取
+  for {
+    next := _p_.runnext
+    if next == 0 {
+      break
+    }
+    if _p_.runnext.cas(next, 0) {
+      return next.ptr(), true
+    }
+  }
+
+  // 从队头获取
+  for {
+    h := atomic.Load(&_p_.runqhead) // load-acquire, synchronize with other consumers
+    t := _p_.runqtail
+    if t == h {
+      return nil, false
+    }
+    gp := _p_.runq[h%uint32(len(_p_.runq))].ptr()
+    if atomic.Cas(&_p_.runqhead, h, h+1) { // cas-release, commits consume
+      return gp, false
+    }
+  }
+}
+
+// 从其它地方获取G
+func findrunnable() (gp *g, inheritTime bool) {
+  ......
+
+  // 从本地队列获取
+  if gp, inheritTime := runqget(_p_); gp != nil {
+    return gp, inheritTime
+  }
+
+  // 全局队列获取
+  if sched.runqsize != 0 {
+    lock(&sched.lock)
+    gp := globrunqget(_p_, 0)
+    unlock(&sched.lock)
+    if gp != nil {
+      return gp, false
+    }
+  }
+  
+  // 从epoll里取
+  if netpollinited() && sched.lastpoll != 0 {
+    if gp := netpoll(false); gp != nil { // non-blocking
+      ......
+      
+      return gp, false
+    }
+  }
+  
+  ......
+  
+  // 尝试4次从别的P偷
+  for i := 0; i < 4; i++ {
+    for enum := stealOrder.start(fastrand()); !enum.done(); enum.next() {
+      if sched.gcwaiting != 0 {
+        goto top
+      }
+      stealRunNextG := i > 2 // first look for ready queues with more than 1 g
+      // 在这里开始针对P进行偷取操作
+      if gp := runqsteal(_p_, allp[enum.position()], stealRunNextG); gp != nil {
+        return gp, false
+      }
+    }
+  }
+}
+
+// 尝试从全局runq中获取G
+// 在"sched.runqsize/gomaxprocs + 1"、"max"、"len(_p_.runq))/2"三个数字中取最小的数字作为获取的G数量
+func globrunqget(_p_ *p, max int32) *g {
+  if sched.runqsize == 0 {
+    return nil
+  }
+
+  n := sched.runqsize/gomaxprocs + 1
+  if n > sched.runqsize {
+    n = sched.runqsize
+  }
+  if max > 0 && n > max {
+    n = max
+  }
+  if n > int32(len(_p_.runq))/2 {
+    n = int32(len(_p_.runq)) / 2
+  }
+
+  sched.runqsize -= n
+  if sched.runqsize == 0 {
+    sched.runqtail = 0
+  }
+
+  gp := sched.runqhead.ptr()
+  sched.runqhead = gp.schedlink
+  n--
+  for ; n > 0; n-- {
+    gp1 := sched.runqhead.ptr()
+    sched.runqhead = gp1.schedlink
+    runqput(_p_, gp1, false) // 放到本地P里
+  }
+  return gp
+}
+
+```
+schedule 中首先尝试从P本地队列中获取(runqget)一个可执行的G，如果没有则从其它地方获取(findrunnable),最终通过 execute 方法执行G。
+runqget 先通过 runnext 拿到待运行G,没有的话，再从 runq 里面取。
+
+findrunnable 从全局队列、epoll、别的P里获取。(后面会扩展分析实现)
+在调度的开头出还做了一个小优化：每处理一些任务之后，就优先从全局队列里获取任务，以保障公平性，防止由于每个P里的G过多，而全局队列里的任务一直得不到执行机会。
+
+这里用到了一个关键方法getg()，runtime 的代码里大量使用该方法，它由汇编实现，该方法就是获取当前运行的G。
 
 
 
