@@ -2578,7 +2578,137 @@ findrunnable 从全局队列、epoll、别的P里获取。(后面会扩展分析
 这里用到了一个关键方法getg()，runtime 的代码里大量使用该方法，它由汇编实现，该方法就是获取当前运行的G。
 
 
+多个线程下如何调度:
 
+有一个问题是:每个P里面的G执行时间是不可控的，如果多个P同时在执行，会不会出现有的P里面的G执行不完，有的P里面几乎没有G可执行呢？
+这就要从M的自循环过程中如何获取G、归还G的行为说起了.
+
+<p align="center">
+<img width="600" align="center" src="../images/101.jpg" />
+</p>
+
+通过图中可以看出有两种途径：
+1. 借助全局队列 sched.runq 作为中介，本地P里的G太多的话就放全局里，G太少的话就从全局取。
+2. 全局列表里没有的话直接从P1里偷取(steal)。(更多M在执行的话，同样的原理，这里就只拿2个来举例)
+
+第1种途径实现如下：
+```go
+// runtime/proc.go
+
+func runqput(_p_ *p, gp *g, next bool) {
+  if randomizeScheduler && next && fastrand()%2 == 0 {
+    next = false
+  }
+
+  // 尝试把G添加到P的runnext节点，这里确保runnext只有一个G，如果之前已经有一个G则踢出来放到runq里
+  if next {
+  retryNext:
+    oldnext := _p_.runnext
+    if !_p_.runnext.cas(oldnext, guintptr(unsafe.Pointer(gp))) {
+      goto retryNext
+    }
+    if oldnext == 0 {
+      return
+    }
+    // 把老的g踢出来，在下面放到runq里
+    gp = oldnext.ptr()
+  }
+
+retry:
+  // 如果_p_.runq队列不满，则放到队尾就结束了。
+  // 试想如果不放到队尾而放到队头里会怎样？如果频繁的创建G则可能后面的G总是不被执行，对后面的G不公平
+  h := atomic.Load(&_p_.runqhead) // load-acquire, synchronize with consumers
+  t := _p_.runqtail
+  if t-h < uint32(len(_p_.runq)) {
+    _p_.runq[t%uint32(len(_p_.runq))].set(gp)
+    atomic.Store(&_p_.runqtail, t+1) // store-release, makes the item available for consumption
+    return
+  }
+  //如果队列满了，尝试把G和当前P里的一部分runq放到全局队列
+  //因为操作全局需要加锁,所以名字里带个slow
+  if runqputslow(_p_, gp, h, t) {
+    return
+  }
+  // the queue is not full, now the put above must succeed
+  goto retry
+}
+
+func runqputslow(_p_ *p, gp *g, h, t uint32) bool {
+  var batch [len(_p_.runq)/2 + 1]*g
+
+  // First, grab a batch from local queue.
+  n := t - h
+  n = n / 2
+  if n != uint32(len(_p_.runq)/2) {
+    throw("runqputslow: queue is not full")
+  }
+  // 从runq头部开始取出一半的runq放到临时变量batch里
+  for i := uint32(0); i < n; i++ {
+    batch[i] = _p_.runq[(h+i)%uint32(len(_p_.runq))].ptr()
+  }
+  if !atomic.Cas(&_p_.runqhead, h, h+n) { // cas-release, commits consume
+    return false
+  }
+  // 把要put的g也放进batch去
+  batch[n] = gp
+
+  if randomizeScheduler {
+    for i := uint32(1); i <= n; i++ {
+      j := fastrandn(i + 1)
+      batch[i], batch[j] = batch[j], batch[i]
+    }
+  }
+
+  // 把取出来的一半runq组成链表
+  for i := uint32(0); i < n; i++ {
+    batch[i].schedlink.set(batch[i+1])
+  }
+
+  // 将一半的runq放到global队列里,一次多转移一些省得转移频繁
+  lock(&sched.lock)
+  globrunqputbatch(batch[0], batch[n], int32(n+1))
+  unlock(&sched.lock)
+  return true
+}
+
+func globrunqputbatch(ghead *g, gtail *g, n int32) {
+  gtail.schedlink = 0
+  if sched.runqtail != 0 {
+    sched.runqtail.ptr().schedlink.set(ghead)
+  } else {
+    sched.runqhead.set(ghead)
+  }
+  sched.runqtail.set(gtail)
+  sched.runqsize += n
+}
+```
+runqput 方法归还执行完的G,runq 定义是 runq [256]guintptr，有固定的长度，因此当前P里的待运行G超过256的时候说明过多了，则执行 runqputslow 方法把一半G扔给全局G链表，globrunqputbatch 连接全局链表的头尾指针。
+
+但可能别的P里面并没有超过256，就不会放到全局G链表里，甚至可能一直维持在不到256个。这就借助第2个途径了.
+
+第2种途径实现如下：
+```go
+// runtime/proc.go
+
+// 从其它地方获取G
+func findrunnable() (gp *g, inheritTime bool) {
+  ......
+  
+  // 尝试4次从别的P偷
+  for i := 0; i < 4; i++ {
+    for enum := stealOrder.start(fastrand()); !enum.done(); enum.next() {
+      if sched.gcwaiting != 0 {
+        goto top
+      }
+      stealRunNextG := i > 2 // first look for ready queues with more than 1 g
+      // 在这里开始针对P进行偷取操作
+      if gp := runqsteal(_p_, allp[enum.position()], stealRunNextG); gp != nil {
+        return gp, false
+      }
+    }
+  }
+}
+```
 
 #### 53. go struct能不能比较
 * 相同struct类型的可以比较
