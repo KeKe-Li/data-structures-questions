@@ -2165,6 +2165,7 @@ gRPC 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2
 进程启动时都做了什么？下面我们通过汇编plan9看下:
 
 * go进程的启动
+
 进程的本质是代码区的指令不断执行，驱使动态数据区和静态数据区产生数据变化。
 
 golang进程怎么启动的。熟悉c的同学应该知道，c语言的main函数是程序的入口函数，在golang中main包中的main函数并不是入口函数， 入口函数是在asm_amd64.s中定义的，而main包中的main函数是由runtime main函数启动的。但是这里我们不详细探讨系统是怎么到程序入口函数的， 我们只需要明白，go程序启动后，会调用 runtime·rt0_go 来执行程序的初始化和启动调度系统。runtime·rt0_go 很重要，如果要是自己看runtime的源码， 可以从这个函数看起。
@@ -2578,10 +2579,11 @@ findrunnable 从全局队列、epoll、别的P里获取。(后面会扩展分析
 这里用到了一个关键方法getg()，runtime 的代码里大量使用该方法，它由汇编实现，该方法就是获取当前运行的G。
 
 
-多个线程下如何调度:
+* 多个线程下如何调度
 
-有一个问题是:每个P里面的G执行时间是不可控的，如果多个P同时在执行，会不会出现有的P里面的G执行不完，有的P里面几乎没有G可执行呢？
-这就要从M的自循环过程中如何获取G、归还G的行为说起了.
+每个P里面的G执行时间是不可控的，如果多个P同时在执行，会不会出现有的P里面的G执行不完，有的P里面几乎没有G可执行呢？
+
+这个问题就要从M的自循环过程中如何获取G、归还G的行为说起了.
 
 <p align="center">
 <img width="600" align="center" src="../images/101.jpg" />
@@ -2709,6 +2711,68 @@ func findrunnable() (gp *g, inheritTime bool) {
   }
 }
 ```
+从别的P里面"偷取"一些G过来执行了。runqsteal 方法实现了"偷取"操作。
+```go
+
+// runtime/proc.go
+
+// 偷取P2一半到本地运行队列，失败则返回nil
+func runqsteal(_p_, p2 *p, stealRunNextG bool) *g {
+  t := _p_.runqtail
+  n := runqgrab(p2, &_p_.runq, t, stealRunNextG)
+  if n == 0 {
+    return nil
+  }
+  n--
+  // 返回尾部的一个G
+  gp := _p_.runq[(t+n)%uint32(len(_p_.runq))].ptr()
+  if n == 0 {
+    return gp
+  }
+  h := atomic.Load(&_p_.runqhead) // load-acquire, synchronize with consumers
+  if t-h+n >= uint32(len(_p_.runq)) {
+    throw("runqsteal: runq overflow")
+  }
+  atomic.Store(&_p_.runqtail, t+n) // store-release, makes the item available for consumption
+  return gp
+}
+
+// 从P里获取一半的G,放到batch里
+func runqgrab(_p_ *p, batch *[256]guintptr, batchHead uint32, stealRunNextG bool) uint32 {
+  for {
+    // 计算一半的数量
+    h := atomic.Load(&_p_.runqhead) // load-acquire, synchronize with other consumers
+    t := atomic.Load(&_p_.runqtail) // load-acquire, synchronize with the producer
+    n := t - h
+    n = n - n/2
+    
+    ......
+    
+    // 将偷到的任务转移到本地P队列里
+    for i := uint32(0); i < n; i++ {
+      g := _p_.runq[(h+i)%uint32(len(_p_.runq))]
+      batch[(batchHead+i)%uint32(len(batch))] = g
+    }
+    if atomic.Cas(&_p_.runqhead, h, h+n) { // cas-release, commits consume
+      return n
+    }
+  }
+}
+
+```
+由此可以看出从别的P里面偷(steal)了一半，这样就足够运行了。有了“偷取”操作也就充分利用了多线程的资源。
+
+* 调度循环中如何让出CPU
+
+1. 正常完成让出CPU
+
+绝大多数场景下我们程序都是执行完一个G，再执行另一个G，那我们就看下G是如何被执行以及执行完如何退出的。
+
+
+
+
+
+
 
 #### 53. go struct能不能比较
 * 相同struct类型的可以比较
