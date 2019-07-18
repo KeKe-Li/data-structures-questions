@@ -3783,6 +3783,58 @@ key 太长会导致一个页当中能够存放的 key 的数目变少，间接�
 
 首先根据目的IP和路由表决定走哪个网卡，再根据网卡的子网掩码地址判断目的IP是否在子网内。如果不在则会通过arp缓存查询IP的网卡地址，不存在的话会通过广播询问目的IP的mac地址，得到后就开始发包了，同时mac地址也会被arp缓存起来。
 
+122. 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+什么是二叉树（Binary Tree)?
+
+每个结点至多拥有两棵子树的树结构(即二叉树中不存在度大于2的结点)。并且，二叉树的子树有左右之分，其次序不能任意颠倒。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用于实现二叉查找树和二叉堆。
+
+上面概念中提到了“度”的概念，“度”其实就是某个节点子节点的数量。如果某个节点的子节点数量为1，则该节点的度为1，如果有8个子节点，则度为8，以此类推。
+
+假设一个二叉搜索树具有如下特征：
+
+* 节点的左子树只包含小于当前节点的数。
+* 节点的右子树只包含大于当前节点的数。
+* 所有左子树和右子树自身必须也是二叉搜索树。
+```markdown
+示例 1:
+输入:
+   2
+  / \
+ 1   3
+输出: true
+示例 2:
+输入:
+     5
+    / \
+   1   4
+  / \
+ 3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。
+根节点的值为 5 ，但是其右子节点值为 4 。
+```
+
+```go
+func isValidBST(root *TreeNode) bool {
+	return isValid(root, math.MinInt64, math.MaxInt64)
+}
+
+func isValid(root *TreeNode, min, max int) bool {
+	if root == nil {
+		return true
+	}
+	if root.Val <= min {
+		return false
+	}
+	if root.Val >= max {
+		return false
+	}
+	return isValid(root.Left, min, root.Val) && isValid(root.Right, root.Val, max)
+}
+
+```
+
 
 #### Golang面试参考
 
