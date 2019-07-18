@@ -3816,6 +3816,12 @@ key 太长会导致一个页当中能够存放的 key 的数目变少，间接�
 ```
 解法一，直接按照定义比较大小，比 root 节点小的都在左边，比 root 节点大的都在右边
 ```go
+type TreeNode struct {
+      Val int
+      Left *TreeNode
+      Right *TreeNode
+}
+
 func isValidBST(root *TreeNode) bool {
 	return isValid(root, math.MinInt64, math.MaxInt64)
 }
