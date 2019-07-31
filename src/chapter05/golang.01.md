@@ -2884,6 +2884,66 @@ func main() {
 
 如果将 i 作为参数传入 defer 表达式中，在传入最初就会进行求值保存，只是没有执行延迟函数而已。
 
+应用示例:
+
+```go
+func f1() (result int) {
+    defer func() {
+        result++
+    }()
+    return 0
+}
+```
+
+```go
+func f2() (r int) {
+    defer func(r int) {
+        r = r + 5
+    }(r)
+    return 1
+}
+```
+
+```go
+func f3() (r int) {
+    defer func(r int) {
+        r = r + 5
+    }(r)
+    return 1
+}
+```
+
+```go
+type Test struct {
+    Max int
+}
+
+func (t *Test) Println() {
+    fmt.Println(t.Max)
+}
+
+func deferExec(f func()) {
+    f()
+}
+
+func call() {
+    var t *Test
+    defer deferExec(t.Println)
+
+    t = new(Test)
+}
+
+```
+
+有没有得出结果？例1的答案不是 0，例2的答案不是 10，例3的答案也不是 6。
+
+f1，比较简单，参考结论2，将 0 赋给 result，defer 延迟函数修改 result，最后返回给调用函数。正确答案是 1。
+
+f2，defer 是在 t 赋值给 r 之后执行的，而 defer 延迟函数只改变了 t 的值，r 不变。正确答案 5。
+
+f3，这里将 r 作为参数传入了 defer 表达式。故 func (r int) 中的 r 非 func f() (r int) 中的 r，只是参数命名相同而已。正确答案 1。
+
+f4，这里将发生 panic。将方法传给 deferExec，实际上在传的过程中对方法求了值。而此时的 t 任然为 nil。
 
 
 #### 55. select可以用于什么?
