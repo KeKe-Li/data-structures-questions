@@ -2762,18 +2762,6 @@ func runqgrab(_p_ *p, batch *[256]guintptr, batchHead uint32, stealRunNextG bool
 ```
 由此可以看出从别的P里面偷(steal)了一半，这样就足够运行了。有了“偷取”操作也就充分利用了多线程的资源。
 
-* 调度循环中如何让出CPU
-
-1. 正常完成让出CPU
-
-绝大多数场景下我们程序都是执行完一个G，再执行另一个G，那我们就看下G是如何被执行以及执行完如何退出的。
-
-
-
-
-
-
-
 #### 53. go struct能不能比较
 * 相同struct类型的可以比较
 
@@ -2805,7 +2793,98 @@ func main() {
 
 #### 54. go defer（for defer）
 
-* [Go 关键字 defer 的一些坑](https://deepzz.com/post/how-to-use-defer-in-golang.html)
+什么是 defer？如何理解 defer 关键字？Go 中使用 defer 的一些坑。
+
+defer 意为延迟，在 golang 中用于延迟执行一个函数。它可以帮助我们处理容易忽略的问题，如资源释放、连接关闭等。但在实际使用过程中，有一些需要注意的地方.
+
+1. 若函数中有多个 defer，其执行顺序为 先进后出，可以理解为栈。
+```go
+package main
+
+import "fmt"
+
+func main() {
+  for i := 0; i < 5; i++ {
+    defer fmt.Println(i)
+  }
+}
+
+```
+运行:
+```go
+4
+3
+2
+1
+0
+```
+
+2. return 会做什么呢?
+
+ Go 的函数返回值是通过堆栈返回的, return 语句不是原子操作，而是被拆成了两步,
+
+* 给返回值赋值 (rval)
+* 调用 defer 表达式
+* 返回给调用函数(ret)
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(increase(1))
+}
+
+func increase(d int) (ret int) {
+  defer func() {
+    ret++
+  }()
+
+  return d
+}
+```
+运行输出:
+```go
+2
+```
+
+3. 若 defer 表达式有返回值，将会被丢弃。
+
+闭包与匿名函数.
+
+* 匿名函数：没有函数名的函数。
+* 闭包：可以使用另外一个函数作用域中的变量的函数。
+
+在实际开发中，defer 的使用经常伴随着闭包与匿名函数的使用。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    for i := 0; i < 5; i++ {
+        defer func() {
+            fmt.Println(i)
+        }()
+    }
+}
+
+```
+运行输出:
+```go
+5
+5
+5
+5
+5
+```
+之所以这样是因为,defer 表达式中的 i 是对 for 循环中 i 的引用。到最后，i 加到 5，故最后全部打印 5。
+
+如果将 i 作为参数传入 defer 表达式中，在传入最初就会进行求值保存，只是没有执行延迟函数而已。
+
+
 
 #### 55. select可以用于什么?
 
@@ -2892,7 +2971,7 @@ func main() {
 
 * [稳定排序和不稳定排序](https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html)
 
-#### 65. Http get跟head
+#### 65. Http中的Get和Head头
 
 get:获取由Request-URI标识的任何信息(以实体的形式)，如果Request-URI引用某个数据处理过程，则应该以它产生的数据作为在响应中的实体，而不是该过程的源代码文本，除非该过程碰巧输出该文本。
 
