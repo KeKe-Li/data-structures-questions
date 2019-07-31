@@ -157,7 +157,266 @@ func main() {
         main.go:3       0x208d  ebb1                    JMP main.patent(SB)
         :-1             0x208f  cc                      INT $0x3
 ```
+从结果的 CALL runtime.newobject(SB) ，证明我们的对象在堆上进行分配了。
 
+但当使用默认参数，我们观察下结果：
+```go
+> go build  -o patent main.go
+```
+当我们跟上面一样分析test的分配情况时：
+```go
+go tool objdump -s "main\.patent" patent
+```
 
+命令执行后，并没有输出, 我们分析下main方法:
+```go
+go tool objdump -s "main\.main" patent
+```
+得到的结果如下：
+```go
+        main.go:9       0x2040  65488b0c25a0080000      GS MOVQ GS:0x8a0, CX
+        main.go:9       0x2049  483b6110                CMPQ 0x10(CX), SP
+        main.go:9       0x204d  763d                    JBE 0x208c
+        main.go:9       0x204f  4883ec18                SUBQ $0x18, SP
+        main.go:9       0x2053  48896c2410              MOVQ BP, 0x10(SP)
+        main.go:9       0x2058  488d6c2410              LEAQ 0x10(SP), BP
+        main.go:10      0x205d  48c7442408d2040000      MOVQ $0x4d2, 0x8(SP)
+        main.go:10      0x2066  e875210200              CALL runtime.printlock(SB)
+        main.go:10      0x206b  48c70424d2040000        MOVQ $0x4d2, 0(SP)
+        main.go:10      0x2073  e8b8280200              CALL runtime.printint(SB)
+        main.go:10      0x2078  e8e3230200              CALL runtime.printnl(SB)
+        main.go:10      0x207d  e8ee210200              CALL runtime.printunlock(SB)
+        main.go:11      0x2082  488b6c2410              MOVQ 0x10(SP), BP
+        main.go:11      0x2087  4883c418                ADDQ $0x18, SP
+        main.go:11      0x208b  c3                      RET
+        main.go:9       0x208c  e83f720400              CALL runtime.morestack_noctxt(SB)
+        main.go:9       0x2091  ebad                    JMP main.main(SB)
+```
+这表明内联优化后的代码没有调用newobject在堆上分配内存。
+
+编译器这么做的目的是：没有内联时，需要在两个栈帧间传递对象，因此在堆上分配而不是返回一个失效栈帧的数据。而当内联后，实际上就成看main栈帧内的局部变量，无需到堆上操作。
+
+内存分配流程
+1、将小对象的大小向上取整到一个对应的尺寸类别（大约100种），查找相应的MCache的空闲链表，如果链表不空，直接从上面分配一个对象，这个过程不加锁
+
+2、如果MCache自由链表是空的，通过MCentral的自由链表取一些对象进行补充
+
+3、如果MCentral的自由链表是空的，则往MHeap中取用一些页对MCentral进行补充，然后将这些内存截断成特定规格
+
+4、如果MHeap空或者没有足够大的页的情况下，从操作系统分配一组新的页面，一般在1MB以上
+
+Go分配流程核心源码实现：
+```go
+func mallocgc(size uintptr, typ *_type, flags uint32) unsafe.Pointer {
+    if gcphase == _GCmarktermination {
+        throw("mallocgc called with gcphase == _GCmarktermination")
+    }
+
+    if size == 0 {
+        return unsafe.Pointer(&zerobase)
+    }
+
+    if flags&flagNoScan == 0 && typ == nil {
+        throw("malloc missing type")
+    }
+
+    if debug.sbrk != 0 {
+        align := uintptr(16)
+        if typ != nil {
+            align = uintptr(typ.align)
+        }
+        return persistentalloc(size, align, &memstats.other_sys)
+    }
+
+    // assistG is the G to charge for this allocation, or nil if
+    // GC is not currently active.
+    var assistG *g
+    if gcBlackenEnabled != 0 {
+        // Charge the current user G for this allocation.
+        assistG = getg()
+        if assistG.m.curg != nil {
+            assistG = assistG.m.curg
+        }
+        // Charge the allocation against the G. We'll account
+        // for internal fragmentation at the end of mallocgc.
+        assistG.gcAssistBytes -= int64(size)
+
+        if assistG.gcAssistBytes < 0 {
+            // This G is in debt. Assist the GC to correct
+            // this before allocating. This must happen
+            // before disabling preemption.
+            gcAssistAlloc(assistG)
+        }
+    }
+
+    // Set mp.mallocing to keep from being preempted by GC.
+    mp := acquirem()
+    if mp.mallocing != 0 {
+        throw("malloc deadlock")
+    }
+    if mp.gsignal == getg() {
+        throw("malloc during signal")
+    }
+    mp.mallocing = 1
+
+    shouldhelpgc := false
+    dataSize := size
+    c := gomcache()
+    var s *mspan
+    var x unsafe.Pointer
+    if size <= maxSmallSize {
+        if flags&flagNoScan != 0 && size < maxTinySize {
+            //小对象分配
+            off := c.tinyoffset
+            // Align tiny pointer for required (conservative) alignment.
+            if size&7 == 0 {
+                off = round(off, 8)
+            } else if size&3 == 0 {
+                off = round(off, 4)
+            } else if size&1 == 0 {
+                off = round(off, 2)
+            }
+            if off+size <= maxTinySize && c.tiny != 0 {
+                // The object fits into existing tiny block.
+                x = unsafe.Pointer(c.tiny + off)
+                c.tinyoffset = off + size
+                c.local_tinyallocs++
+                mp.mallocing = 0
+                releasem(mp)
+                return x
+            }
+            // Allocate a new maxTinySize block.
+            s = c.alloc[tinySizeClass]
+            v := s.freelist
+            if v.ptr() == nil {
+                systemstack(func() {
+                    c.refill(tinySizeClass)
+                })
+                shouldhelpgc = true
+                s = c.alloc[tinySizeClass]
+                v = s.freelist
+            }
+            s.freelist = v.ptr().next
+            s.ref++
+            // prefetchnta offers best performance, see change list message.
+            prefetchnta(uintptr(v.ptr().next))
+            x = unsafe.Pointer(v)
+            (*[2]uint64)(x)[0] = 0
+            (*[2]uint64)(x)[1] = 0
+            // See if we need to replace the existing tiny block with the new one
+            // based on amount of remaining free space.
+            if size < c.tinyoffset || c.tiny == 0 {
+                c.tiny = uintptr(x)
+                c.tinyoffset = size
+            }
+            size = maxTinySize
+        } else {
+            var sizeclass int8
+            if size <= 1024-8 {
+                sizeclass = size_to_class8[(size+7)>>3]
+            } else {
+                sizeclass = size_to_class128[(size-1024+127)>>7]
+            }
+            size = uintptr(class_to_size[sizeclass])
+            s = c.alloc[sizeclass]
+            v := s.freelist
+            if v.ptr() == nil {
+                systemstack(func() {
+                    c.refill(int32(sizeclass))
+                })
+                shouldhelpgc = true
+                s = c.alloc[sizeclass]
+                v = s.freelist
+            }
+            s.freelist = v.ptr().next
+            s.ref++
+            // prefetchnta offers best performance, see change list message.
+            prefetchnta(uintptr(v.ptr().next))
+            x = unsafe.Pointer(v)
+            if flags&flagNoZero == 0 {
+                v.ptr().next = 0
+                if size > 2*sys.PtrSize && ((*[2]uintptr)(x))[1] != 0 {
+                    memclr(unsafe.Pointer(v), size)
+                }
+            }
+        }
+    } else {
+        var s *mspan
+        shouldhelpgc = true
+        systemstack(func() {
+            s = largeAlloc(size, flags)
+        })
+        x = unsafe.Pointer(uintptr(s.start << pageShift))
+        size = s.elemsize
+    }
+
+    if flags&flagNoScan != 0 {
+        // All objects are pre-marked as noscan. Nothing to do.
+    } else {
+        if typ == deferType {
+            dataSize = unsafe.Sizeof(_defer{})
+        }
+        heapBitsSetType(uintptr(x), size, dataSize, typ)
+        if dataSize > typ.size {
+            // Array allocation. If there are any
+            // pointers, GC has to scan to the last
+            // element.
+            if typ.ptrdata != 0 {
+                c.local_scan += dataSize - typ.size + typ.ptrdata
+            }
+        } else {
+            c.local_scan += typ.ptrdata
+        }
+        publicationBarrier()
+    }
+    if gcphase == _GCmarktermination || gcBlackenPromptly {
+        systemstack(func() {
+            gcmarknewobject_m(uintptr(x), size)
+        })
+    }
+
+    if raceenabled {
+        racemalloc(x, size)
+    }
+    if msanenabled {
+        msanmalloc(x, size)
+    }
+
+    mp.mallocing = 0
+    releasem(mp)
+
+    if debug.allocfreetrace != 0 {
+        tracealloc(x, size, typ)
+    }
+
+    if rate := MemProfileRate; rate > 0 {
+        if size < uintptr(rate) && int32(size) < c.next_sample {
+            c.next_sample -= int32(size)
+        } else {
+            mp := acquirem()
+            profilealloc(mp, x, size)
+            releasem(mp)
+        }
+    }
+
+    if assistG != nil {
+        // Account for internal fragmentation in the assist
+        // debt now that we know it.
+        assistG.gcAssistBytes -= int64(size - dataSize)
+    }
+
+    if shouldhelpgc && gcShouldStart(false) {
+        gcStart(gcBackgroundMode, false)
+    }
+
+    return x
+}
+```
+
+Go也有happens-before ,go happens-before常用的三原则是：
+
+* 对于不带缓冲区的channel，对其写happens-before对其读
+* 对于带缓冲区的channel,对其读happens-before对其写
+* 对于不带缓冲的channel的接收操作 happens-before 相应channel的发送操作完成
 
 
