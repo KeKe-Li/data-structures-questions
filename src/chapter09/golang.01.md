@@ -117,6 +117,46 @@ Go的内存模型可以视为两级的内存模型：
 
 为对象分配内存须区分是在栈上分配还是在堆上分配。通常情况下，编译器有责任尽可能使用寄存器和栈来存储对象，这有助于提升性能，减少垃圾回收器的压力。
 
+应用示例:
+```go
+package main
+
+func patent() *int {
+    x := new(int)
+    *x = 1234
+    return x
+}
+
+func main() {
+    println(*patent())
+}
+```
+
+我们禁止内联优化来编译上面的代码：
+```go 
+> go build -gcflags="-l" -o patent main.go
+```
+得到的结果是:
+```go 
+        main.go:3       0x2040  65488b0c25a0080000      GS MOVQ GS:0x8a0, CX
+        main.go:3       0x2049  483b6110                CMPQ 0x10(CX), SP
+        main.go:3       0x204d  7639                    JBE 0x2088
+        main.go:3       0x204f  4883ec18                SUBQ $0x18, SP
+        main.go:3       0x2053  48896c2410              MOVQ BP, 0x10(SP)
+        main.go:3       0x2058  488d6c2410              LEAQ 0x10(SP), BP
+        main.go:4       0x205d  488d05dc3b0500          LEAQ 0x53bdc(IP), AX
+        main.go:4       0x2064  48890424                MOVQ AX, 0(SP)
+        main.go:4       0x2068  e823a70000              CALL runtime.newobject(SB)
+        main.go:4       0x206d  488b442408              MOVQ 0x8(SP), AX
+        main.go:5       0x2072  48c700d2040000          MOVQ $0x4d2, 0(AX)
+        main.go:6       0x2079  4889442420              MOVQ AX, 0x20(SP)
+        main.go:6       0x207e  488b6c2410              MOVQ 0x10(SP), BP
+        main.go:6       0x2083  4883c418                ADDQ $0x18, SP
+        main.go:6       0x2087  c3                      RET
+        main.go:3       0x2088  e893720400              CALL runtime.morestack_noctxt(SB)
+        main.go:3       0x208d  ebb1                    JMP main.patent(SB)
+        :-1             0x208f  cc                      INT $0x3
+```
 
 
 
