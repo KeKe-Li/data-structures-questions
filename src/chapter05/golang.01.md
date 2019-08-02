@@ -3069,13 +3069,6 @@ func worker(stopCh <-chan struct{}) {
 * ,ok可以处理多个读通道关闭，需要关闭当前使用for-select的协程。
 * 显式关闭通道stopCh可以处理主动通知协程退出的场景。
 
-
-
-
-Go的select主要是处理多个channel的操作.
-
-* [Go语言并发模型：使用 select](https://segmentfault.com/a/1190000006815341)
-
 #### 56. context包的用途是什么?
 
 godoc: https://golang.org/pkg/context/
