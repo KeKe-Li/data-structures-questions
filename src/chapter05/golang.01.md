@@ -3075,6 +3075,78 @@ func worker(stopCh <-chan struct{}) {
 
 在Google 内部，我们开发了 Context 包，专门用来简化 对于处理单个请求的多个 goroutine 之间与请求域的数据、取消信号、截止时间等相关操作，这些操作可能涉及多个 API 调用。
 
+context的数据结构是:
+```go
+// A Context carries a deadline, cancelation signal, and request-scoped values
+// across API boundaries. Its methods are safe for simultaneous use by multiple
+// goroutines.
+type Context interface {
+    // Done returns a channel that is closed when this `Context` is canceled
+    // or times out.
+    Done() <-chan struct{}
+
+    // Err indicates why this Context was canceled, after the Done channel
+    // is closed.
+    Err() error
+
+    // Deadline returns the time when this Context will be canceled, if any.
+    Deadline() (deadline time.Time, ok bool)
+
+    // Value returns the value associated with key or nil if none.
+    Value(key interface{}) interface{}
+}
+```
+
+Context中的方法:
+
+- Done会返回一个channel，当该context被取消的时候，该channel会被关闭，同时对应的使用该context的routine也应该结束并返回。
+- Context中的方法是协程安全的，这也就代表了在父routine中创建的context，可以传递给任意数量的routine并让他们同时访问。
+- Deadline会返回一个超时时间，routine获得了超时时间后，可以对某些io操作设定超时时间。
+- Value可以让routine共享一些数据，当然获得数据是协程安全的。
+
+这里需要注意一点的是在goroutine中使用context包的时候,通常我们需要在goroutine中新创建一个上下文的context,原因是:如果直接传递外部context到协层中,一个请求可能在主函数中已经结束,在goroutine中如果还没有结束的话,会直接导致goroutine中的运行的被取消.
+
+```go
+go func() {
+   _, ctx, _ := log.FromContextOrNew(context.Background(), nil)
+}()
+```
+
+context.Background函数的返回值是一个空的context，经常作为树的根结点，它一般由接收请求的第一个routine创建，不能被取消、没有值、也没有过期时间。
+
+Background函数的声明如下：
+```go
+// Background returns an empty Context. It is never canceled, has no deadline,
+// and has no values. Background is typically used in main, init, and tests,
+// and as the top-level `Context` for incoming requests.
+func Background() Context
+```
+WithCancel 和 WithTimeout 函数 会返回继承的 Context 对象， 这些对象可以比它们的父 Context 更早地取消。
+
+当请求处理函数返回时，与该请求关联的 Context 会被取消。 当使用多个副本发送请求时，可以使用 WithCancel取消多余的请求。 WithTimeout 在设置对后端服务器请求截止时间时非常有用。 下面是这三个函数的声明：
+```go
+// WithCancel returns a copy of parent whose Done channel is closed as soon as
+// parent.Done is closed or cancel is called.
+func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
+
+// A CancelFunc cancels a Context.
+type CancelFunc func()
+
+// WithTimeout returns a copy of parent whose Done channel is closed as soon as
+// parent.Done is closed, cancel is called, or timeout elapses. The new
+// Context's Deadline is the sooner of now+timeout and the parent's deadline, if
+// any. If the timer is still running, the cancel function releases its
+// resources.
+func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+```
+WithValue 函数能够将请求作用域的数据与 Context 对象建立关系。声明如下：
+
+```go
+// WithValue returns a copy of parent whose Value method returns val for key.
+func WithValue(parent Context, key interface{}, val interface{}) Context
+```
+
+
 godoc: https://golang.org/pkg/context/
 
 * [Go Context的踩坑经历](https://zhuanlan.zhihu.com/p/34417106)
