@@ -3139,19 +3139,55 @@ type CancelFunc func()
 // resources.
 func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
 ```
+调用CancelFunc对象将撤销对应的Context对象，这样父结点的所在的环境中，获得了撤销子节点context的权利，当触发某些条件时，可以调用CancelFunc对象来终止子结点树的所有routine。在子节点的routine中，需要判断何时退出routine：
+
+```go
+select {
+    case <-cxt.Done():
+        // do some cleaning and return
+}
+```
+根据cxt.Done()判断是否结束。当顶层的Request请求处理结束，或者外部取消了这次请求，就可以cancel掉顶层context，从而使整个请求的routine树得以退出。
+
+WithDeadline和WithTimeout比WithCancel多了一个时间参数，它指示context存活的最长时间。如果超过了过期时间，会自动撤销它的子context。所以context的生命期是由父context的routine和deadline共同决定的。
+
+
 WithValue 函数能够将请求作用域的数据与 Context 对象建立关系。声明如下：
 
 ```go
-// WithValue returns a copy of parent whose Value method returns val for key.
-func WithValue(parent Context, key interface{}, val interface{}) Context
+type valueCtx struct {
+    Context
+    key, val interface{}
+}
+
+func WithValue(parent Context, key, val interface{}) Context {
+    if key == nil {
+        panic("nil key")
+    }
+    ......
+    return &valueCtx{parent, key, val}
+}
+
+func (c *valueCtx) Value(key interface{}) interface{} {
+    if c.key == key {
+        return c.val
+    }
+    return c.Context.Value(key)
+}
 ```
+WithValue返回parent的一个副本，该副本保存了传入的key/value，而调用Context接口的Value(key)方法就可以得到val。注意在同一个context中设置key/value，若key相同，值会被覆盖。
 
+context上下文数据的存储就像一个树，每个结点只存储一个key/value对。WithValue()保存一个key/value对，它将父context嵌入到新的子context，并在节点中保存了key/value数据。Value()查询key对应的value数据，会从当前context中查询，如果查不到，会递归查询父context中的数据。
 
-godoc: https://golang.org/pkg/context/
+值得注意的是，context中的上下文数据并不是全局的，它只查询本节点及父节点们的数据，不能查询兄弟节点的数据。
 
-* [Go Context的踩坑经历](https://zhuanlan.zhihu.com/p/34417106)
+Context 使用原则:
 
-* [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
+* 不要把Context放在结构体中，要以参数的方式传递。
+* 以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位。
+* 给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO。
+* Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递。
+* Context是线程安全的，可以放心的在多个goroutine中传递。
 
 #### 57. client如何实现长连接?
 
