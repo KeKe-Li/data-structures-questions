@@ -3140,6 +3140,7 @@ type CancelFunc func()
 func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
 ```
 调用CancelFunc对象将撤销对应的Context对象，这样父结点的所在的环境中，获得了撤销子节点context的权利，当触发某些条件时，可以调用CancelFunc对象来终止子结点树的所有routine。在子节点的routine中，需要判断何时退出routine：
+
 ```go
 select {
     case <-cxt.Done():
@@ -3180,11 +3181,13 @@ context上下文数据的存储就像一个树，每个结点只存储一个key/
 
 值得注意的是，context中的上下文数据并不是全局的，它只查询本节点及父节点们的数据，不能查询兄弟节点的数据。
 
-godoc: https://golang.org/pkg/context/
+Context 使用原则:
 
-* [Go Context的踩坑经历](https://zhuanlan.zhihu.com/p/34417106)
-
-* [Go语言实战笔记（二十）| Go Context](http://www.flysnow.org/2017/05/12/go-in-action-go-context.html)
+* 不要把Context放在结构体中，要以参数的方式传递。
+* 以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位。
+* 给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO。
+* Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递。
+* Context是线程安全的，可以放心的在多个goroutine中传递。
 
 #### 57. client如何实现长连接?
 
