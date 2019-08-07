@@ -3266,10 +3266,6 @@ func main() {
 Goroutine 2
 Goroutine 1
 ```
-
-
-* [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
-
 #### 59. slice，len，cap，共享，扩容.
 
 
