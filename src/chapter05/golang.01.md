@@ -1847,7 +1847,6 @@ the NumGoroutine done is: 1
 这里需要注意下：垃圾回收所在Groutine的状态也处于这个范围内的话，也会被纳入该计数器。
 
 #### 28. Channel是同步的还是异步的.
-
 Channel是异步进行的。
 
 channel存在3种状态：
@@ -2974,7 +2973,7 @@ go func(in <-chan int) {
     }
 }(in)
 ```
-2. 使用,ok退出
+2. 使用select case ,ok退出
 
 for-select也是使用频率很高的结构，select提供了多路复用的能力，所以for-select可以让函数具有持续多路处理多个channel的能力。但select没有感知channel的关闭，这引出了2个问题：
 
@@ -3233,7 +3232,41 @@ TCP的KeepAlive机制，首先它貌似默认是不打开的，要用setsockopt�
 
 #### 58. 主协程如何等其余协程完再操作?
 
-* [Go并发：利用sync.WaitGroup实现协程同步](https://blog.csdn.net/u011304970/article/details/72722044)
+Go提供了更简单的方法——使用sync.WaitGroup。WaitGroup，就是用来等待一组操作完成的。WaitGroup内部实现了一个计数器，用来记录未完成的操作个数，它提供了三个方法，Add()用来添加计数。Done()用来在操作结束时调用，使计数减一。Wait()用来等待所有的操作结束，即计数变为0，该函数会在计数不为0时等待，在计数为0时立即返回。
+
+应用示例:
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+
+    var wg sync.WaitGroup
+
+    wg.Add(2) // 因为有两个动作，所以增加2个计数
+    go func() {
+        fmt.Println("Goroutine 1")
+        wg.Done() // 操作完成，减少一个计数
+    }()
+
+    go func() {
+        fmt.Println("Goroutine 2")
+        wg.Done() // 操作完成，减少一个计数
+    }()
+
+    wg.Wait() // 等待，直到计数为0
+}
+```
+运行输出:
+```go
+Goroutine 2
+Goroutine 1
+```
+
 
 * [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
 
