@@ -3266,11 +3266,42 @@ func main() {
 Goroutine 2
 Goroutine 1
 ```
-
-
-* [Go语言重点笔记-深入了解sync.WaitGroup](http://yoojia.xyz/2018/04/13/golang-waitgroup/)
-
 #### 59. slice，len，cap，共享，扩容.
+
+slice在Go的运行时库中就是一个C语言动态数组的实现:
+```go
+struct    Slice
+    {    // must not move anything
+        byte*    array;        // actual data
+        uintgo    len;        // number of elements
+        uintgo    cap;        // allocated number of elements
+    };
+```
+这个结构有3个字段，第一个字段表示array的指针，就是真实数据的指针（这个一定要注意），所以才经常说slice是数组的引用，第二个是表示slice的长度，第三个是表示slice的容量，这里需要注意：len和cap都不是指针。
+
+在对slice进行append等操作时，可能会造成slice的自动扩容。其扩容时的大小增长规则是：
+* 如果切片的容量小于1024个元素，那么扩容的时候slice的cap就翻番，乘以2；一旦元素个数超过1024个元素，增长因子就变成1.25，即每次增加原来容量的四分之一。
+* 如果扩容之后，还没有触及原数组的容量，那么，切片中的指针指向的位置，就还是原数组，如果扩容之后，超过了原数组的容量，那么，Go就会开辟一块新的内存，把原来的值拷贝过来，这种情况丝毫不会影响到原数组。
+
+通过slice源码可以看到,append的实现只是简单的在内存中将旧slice复制给新slice.
+```go
+
+newcap := old.cap
+if newcap+newcap < cap {
+    newcap = cap
+} else {
+    for {
+        if old.len < 1024 {
+            newcap += newcap
+        } else {
+            newcap += newcap / 4
+        }
+        if newcap >= cap {
+            break
+        }
+    }
+}
+```
 
 
 #### 60. map如何顺序读取?
