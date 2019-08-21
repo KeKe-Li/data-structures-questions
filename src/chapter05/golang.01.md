@@ -4429,6 +4429,8 @@ func isValid(root *TreeNode, min, max int) bool {
 * Go GC会不会太慢, 跟不上内存分配的速度?
 * Go GC会不会暂停我们的应用? 暂停多久? 影不影响我的请求?
 
+114. Mysql分区表的数量限制和需要注意的地方?
+
 
 #### Golang面试参考
 
