@@ -1974,9 +1974,10 @@ SELECT * FROM T WHERE field1 >= ？ OR field2 >= ？;
 * cursor转化成A.
 
 #### 37. 用过原生的http包吗？
+
 Golang中http包中处理 HTTP 请求主要跟两个东西相关：ServeMux 和 Handler。
 
-ServrMux 本质上是一个 HTTP 请求路由器（或者叫多路复用器，Multiplexor）。它把收到的请求与一组预先定义的 URL 路径列表做对比，然后在匹配到路径的时候调用关联的处理器（Handler）。
+ServreMux 本质上是一个 HTTP 请求路由器（或者叫多路复用器，Multiplexor）。它把收到的请求与一组预先定义的 URL 路径列表做对比，然后在匹配到路径的时候调用关联的处理器（Handler）。
 
 处理器（Handler）负责输出HTTP响应的头和正文。任何满足了http.Handler接口的对象都可作为一个处理器。通俗的说，对象只要有个如下签名的ServeHTTP方法即可：
 ```go
