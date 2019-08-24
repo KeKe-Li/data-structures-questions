@@ -3642,9 +3642,9 @@ killall 命令会发送信号到运行任何指定命令的所有进程。所以
 
 #### 81. TCP 有哪些状态?
 
-82. TCP 的 LISTEN 状态是什么?
+#### 82. TCP 的 LISTEN 状态是什么?
 
-83. TCP 的 CLOSE_WAIT 状态是什么?
+#### 83. TCP 的 CLOSE_WAIT 状态是什么?
 
 84. 建立一个 socket 连接要经过哪些步骤?
 85. 常见的 HTTP 状态码有哪些?
