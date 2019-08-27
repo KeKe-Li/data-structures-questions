@@ -4435,6 +4435,9 @@ func isValid(root *TreeNode, min, max int) bool {
 
 114. Mysql分区表的数量限制和需要注意的地方?
 
+115. Mysql为什么使用B+树？而不是使用平衡二叉树.
+
+主要是查询效率高，O(logN)，可以充分利用磁盘预读的特性，多叉树，深度小，叶子结点有序且存储数据.
 
 #### Golang面试参考
 
