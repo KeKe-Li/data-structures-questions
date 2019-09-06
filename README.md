@@ -1,4 +1,4 @@
-### golang-interview-questions
+### data-structures-questions
 
 <p align='left'>
 <img src="https://img.shields.io/badge/build-passing-brightgreen.svg">
@@ -9,6 +9,7 @@
 算法和程序结构是我们学习编程的基础，但是很多的时候，我们很多都是只是在应用，而没有深入的去研究这些，所以自己也在不断的思考和探索，然后分析，学习，总结自己学习的过程，希望可以和大家一起学习和交流下算法！
 
 #### 目录
+
 * [网络协议](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter01/golang.01.md)
 * [数据结构](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter02/golang.01.md)
 * [算法](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter03/golang.01.md)
@@ -20,7 +21,8 @@
 * [Golang内存分配](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter09/golang.01.md)
 * [Golang的调度](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter10/golang.01.md)
 
-### golang-interview-questions
+### data-structures-questions
+
 觉得此文章不错，支持我的话可以给我star ，:star:！如果有问题可以加我的微信 Sen0676,也可以加入我们的交流群一起交流算法！
 
 ### License
