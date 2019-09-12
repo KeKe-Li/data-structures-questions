@@ -3634,6 +3634,10 @@ WEB缓存(cache)位于Web服务器和客户端之间，缓存机制会根据请�
 
 #### 68. Http能不能一次连接多次请求，不等后端返回.
 
+早期的tcp确实一个connection一个request，不过后来keepalive和persistent tcp connection 已经是标准实现，一个connection一般都会有多个request response的交互, 其次，tcp是保证顺序的投递服务所以不会出现你所说的乱序，如果你使用三个conn来发三个服务倒是有可能由于路由或者掉包重传导致到达顺序随机
+
+此外, http是无状态协议，所以乱序不应该成为问题，每个request response都应该相对独立.
+
 #### 69. TCP 和 UDP 有什么区别,适用场景.
 
 * TCP 是面向连接的，UDP 是面向无连接的；故 TCP 需要建立连接和断开连接，UDP 不需要。
