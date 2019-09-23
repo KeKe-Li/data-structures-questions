@@ -214,7 +214,7 @@ ret = &Result{}
 ...
 return ret
 ```
-对阅读代码也容易产生误导.
+对阅读代码也会容易产生误导.
 
 #### 参考链接
 * [Golang汇编快速指南](http://blog.rootk.com/post/golang-asm.html)
