@@ -4368,7 +4368,7 @@ Where c1= ‘andy’ and c2 like = ‘ke%’ and c3=’jame’ 改查询只会�
 
 (3)、不能跳过某个字段来进行查询,这样利用不到索引.
 
-比如sql 是explain select * from `award` where nickname > 'heln' and account = '120839' and created_time = 1449567822; 那么这时候他使用不到其组合索引.
+比如sql 是explain, select * from `award` where nickname > 'heln' and account = '120839' and created_time = 1449567822; 那么这时候他使用不到其组合索引.
 
 因为我的索引是 (nickname, account, created_time),如果第一个字段出现 范围符号的查找,那么将不会用到索引,如果我是第二个或者第三个字段使用范围符号的查找,那么他会利用索引,利用的索引是(nickname),
 
@@ -4381,6 +4381,7 @@ Where c1= ‘andy’ and c2 like = ‘ke%’ and c3=’jame’ 改查询只会�
 如果文本中出现多个一样的字符,而且需要查找的话,那么其条件只能是 where column lick '%xxxx%' 这样做会让索引失效.这个时候全文索引就开始起作用了.
 
 全文索引sql格式是:
+
 ```sql
 ALTER TABLE tablename ADD FULLTEXT(column1, column2)
 ```
@@ -4390,7 +4391,6 @@ SELECT * FROM tablename WHERE MATCH(column1, column2) AGAINST(‘xxx′, ‘keke
 ```
 
 这样就可以把column1和column2字段里有keke、jame和andy的数据记录全部查询出来。
-
 
 索引的删除:
 
