@@ -190,7 +190,6 @@ func main() {
 * main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸.
 * 当然，如果定义ret.Data为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
 
-
 #### 开发建议大对象按址传递，小对象按值传递
 
 * 按址传递更高效，按值传递更安全(from William Kennedy).
@@ -217,6 +216,7 @@ return ret
 对阅读代码也会容易产生误导.
 
 #### 参考链接
+
 * [Golang汇编快速指南](http://blog.rootk.com/post/golang-asm.html)
 * [Golang汇编](https://lrita.github.io/2017/12/12/golang-asm/#how)
 * [Golang汇编命令解读](http://www.cnblogs.com/yjf512/p/6132868.html)
