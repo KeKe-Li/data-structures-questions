@@ -3827,6 +3827,47 @@ killall 命令会发送信号到运行任何指定命令的所有进程。所以
 ```
 #### 75. git文件版本，使用顺序，merge跟rebase.
 
+在使用 git 进行版本管理的项目中，当完成一个特性的开发并将其合并到 master 分支时，我们有两种方式：git merge 和 git rebase。
+
+通常，我们对 git merge 使用的较多，而对于 git rebase 使用的较少，其实 git rebase 也是极其强大的一种方法。
+
+* git merge
+
+git merge 的使用方法很简单，假如你想将分支 feature 合并到分支 master，那么只需执行如下两步即可：
+
+将分支切换到 master 上去：git checkout master
+将分支 feature 合并到当前分支（即 master 分支）上：git merge feature
+
+<p align="center">
+<img width="300" align="center" src="../images/107.jpg" />
+</p>
+
+git merge 有如下特点：
+
+git merge只处理一次冲突,引入了一次合并的历史记录，合并后的所有 commit 会按照提交时间从旧到新排列所有的过程信息更多，可能会提高之后查找问题的难度
+
+因此git merge 提交的信息过多可能会影响查找问题的难度,在一个大型项目中，单纯依靠 git merge 方法进行合并，会保存所有的提交过程的信息：引出分支，合并分支，在分支上再引出新的分支等等，类似这样的操作一多，提交历史信息就会显得杂乱，这时如果有问题需要查找就会比较困难了。
+
+
+* git rebase
+
+git rebase 的目的也是将一个分支的更改并入到另外一个分支中去。但是git rebase会把你的所有分支信息衍合成一条信息,减少中间不必要的历史记录.
+
+
+<p align="center">
+<img width="300" align="center" src="../images/108.jpg" />
+</p>
+
+git rebase特点:
+
+* git rebase会改变当前分支从 master 上拉出分支的位置.
+* 没有多余的合并历史的记录，且合并后的 commit 顺序不一定按照 commit 的提交时间排列.
+* 可能会多次解决同一个地方的冲突（有 squash 来解决）.
+* 更清爽一些，master 分支上每个 commit 点都是相对独立完整的功能单元.
+
+因此, 当需要保留详细的合并信息的时候建议使用git merge，特别是需要将分支合并进入master分支时；当发现自己修改某个功能时，频繁进行了git commit提交时，发现其实过多的提交信息没有必要时，可以尝试git rebase。
+
+
 #### 76. 通常一般会用到哪些数据结构?
 
 #### 77. 链表和数组相比, 有什么优缺点?
