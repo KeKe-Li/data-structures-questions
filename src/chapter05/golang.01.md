@@ -4530,6 +4530,7 @@ DORP INDEX IndexName ON `TableName`
 #### 110.kubernetes中不同的Node中的pod如何进行通信?
 
 #### 111. Reids的特点?
+
 Redis本质上是一个Key-Value类型的内存数据库，很像memcached，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。
 
 因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过 10万次读写操作，是已知性能最快的Key-Value DB。
