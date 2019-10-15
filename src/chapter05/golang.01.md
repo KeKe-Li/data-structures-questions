@@ -3989,6 +3989,7 @@ func quickDescendingSort(arr []int, start, end int) {
 #### 92. Golang 的GC触发时机是什么?
 
 #### 93. Redis 里数据结构的实现熟悉吗,调表的实现原理是什么?
+
 Redis中的set数据结构底层用的是调表实现的.
 
 跳表是一个随机化的数据结构，实质就是一种可以进行二分查找的有序链表。
