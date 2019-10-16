@@ -3989,6 +3989,7 @@ func quickDescendingSort(arr []int, start, end int) {
 #### 92. Golang 的GC触发时机是什么?
 
 #### 93. Redis 里数据结构的实现熟悉吗,调表的实现原理是什么?
+
 Redis中的set数据结构底层用的是调表实现的.
 
 跳表是一个随机化的数据结构，实质就是一种可以进行二分查找的有序链表。
@@ -4530,6 +4531,7 @@ DORP INDEX IndexName ON `TableName`
 #### 110.kubernetes中不同的Node中的pod如何进行通信?
 
 #### 111. Reids的特点?
+
 Redis本质上是一个Key-Value类型的内存数据库，很像memcached，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。
 
 因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过 10万次读写操作，是已知性能最快的Key-Value DB。
