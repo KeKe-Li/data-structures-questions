@@ -1,6 +1,11 @@
-#### Golang内存分配
+#### Go内存管理
 
-Go内存管理基于tcmalloc，使用连续虚拟地址，以页(8k)为单位、多级缓存进行管理；在分配内存时，需要对size进行对齐处理，根据best-fit找到合适的mspan，对未用完的内存还会拆分成其他大小的mspan继续使用.
+Go 内存管理
+<p align="center">
+<img width="500" align="center" src="../images/109.jpg" />
+</p>
+
+Go内存管理基于TCMalloc，使用连续虚拟地址，以页(8k)为单位、多级缓存进行管理；在分配内存时，需要对size进行对齐处理，根据best-fit找到合适的mspan，对未用完的内存还会拆分成其他大小的mspan继续使用.
 
 在new一个object时(忽略逃逸分析)，根据object的size做不同的分配策略：
 
