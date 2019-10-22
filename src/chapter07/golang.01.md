@@ -67,6 +67,7 @@ func main() {
 	
 执行`go tool compile -S main.go`生成汇编，并截取其中的一部分来说明一下程序调用时的栈操作.
 
+
 ``` go
 "".g t=1 size=17 args=0x10 locals=0x0
     // 初始化函数的栈地址
