@@ -23,6 +23,7 @@
 #### 变量是堆（heap）还是堆栈（stack）
 
 官方给出的解释如下:
+
 ```markdown
 How do I know whether a variable is allocated on the heap or the stack?
 From a correctness standpoint, you don't need to know. Each variable in Go exists as long as there are references to it. The storage location chosen by the implementation is irrelevant to the semantics of the language.
@@ -64,7 +65,6 @@ func main() {
 ```
 	
 执行`go tool compile -S main.go`生成汇编，并截取其中的一部分来说明一下程序调用时的栈操作.
-
 
 ``` go
 "".g t=1 size=17 args=0x10 locals=0x0
@@ -144,7 +144,7 @@ func main() {
 
 那么，在什么时候指针对象才会逃逸呢？
 
-#### 按值传递和按址传递
+那就是在按值传递和按址传递时候.
 
 * 按值传递
 
