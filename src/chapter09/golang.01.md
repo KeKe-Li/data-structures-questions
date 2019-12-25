@@ -1,6 +1,5 @@
 #### Go内存管理
 
-Go 内存管理
 <p align="center">
 <img width="500" align="center" src="../images/109.jpg" />
 </p>
@@ -178,12 +177,12 @@ func main() {
 ```
 当我们跟上面一样分析test的分配情况时：
 ```go
-go tool objdump -s "main\.patent" patent
+> go tool objdump -s "main\.patent" patent
 ```
 
 命令执行后，并没有输出, 我们分析下main方法:
 ```go
-go tool objdump -s "main\.main" patent
+> go tool objdump -s "main\.main" patent
 ```
 得到的结果如下：
 ```go
