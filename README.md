@@ -19,9 +19,9 @@
 * [Golang的堆栈分配](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter07/golang.01.md)
 * [计算机网络基础知识](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter08/golang.01.md)
 * [Golang内存管理](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter09/golang.01.md)
-* [Golang的调度](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter10/golang.01.md)
+* [Golang runtime的调度](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter10/golang.01.md)
 * [Golang的逃逸分析]()
-* [Goroutine并发调度模型解析]()
+
 
 ### data-structures-questions
 
