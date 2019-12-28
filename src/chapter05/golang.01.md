@@ -4767,6 +4767,13 @@ B+树，仍是m叉搜索树，在B树的基础上，做了一些改进：
 
 116. Data Race问题怎么解决？能不能不加锁解决这个问题？
 
+117. 解决hash冲突的办法?
+
+* 开放定址法（线性探测再散列，二次探测再散列，伪随机探测再散列）
+* 再哈希法
+* 链地址法
+* 建立一个公共溢出区
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
