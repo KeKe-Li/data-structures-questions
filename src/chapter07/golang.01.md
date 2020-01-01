@@ -103,6 +103,7 @@ func main() {
     0x001b 00027 (test_stack.go:10) ADDQ    $16, SP
     0x001f 00031 (test_stack.go:10) RET
 ```
+
 事实上，即便我定义了指针调用，以上的数据也都是在栈上拷贝的；那么Golang中的数据什么时候会被分配到堆上呢？
 
 #### Golang逃逸分析
