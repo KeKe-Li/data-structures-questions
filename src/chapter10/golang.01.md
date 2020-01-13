@@ -63,3 +63,26 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 * 当一个 G 在 M 里执行结束后，P 会从队列中把该 G 取出；如果此时 P 的队列为空，即没有其他 G 可以执行， M 就随机选择另外一个 P，从其可执行的 G 队列中取走一半。
 
 该算法避免了在 goroutine 调度时使用全局锁。
+
+
+#### GPM模型调度
+
+Go 调度器工作时会维护两种用来保存 G 的任务队列：一种是一个 Global 任务队列，一种是每个 P 维护的 Local 任务队列。
+
+当通过go关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。为了运行 goroutine，M 需要持有（绑定）一个 P，接着 M 会启动一个 OS 线程，循环从 P 的本地队列里取出一个 goroutine 并执行。当然上面提到的 work-stealing调度算法：当 M 执行完了当前 P 的 Local 队列里的所有 G 后，P 也不会就这么在那躺尸啥都不干，它会先尝试从 Global 队列寻找 G 来执行，如果 Global 队列为空，它会随机挑选另外一个 P，从它的队列里中拿走一半的 G 到自己的队列中执行。
+
+
+如果一切正常，调度器会以上述的那种方式顺畅地运行，但这个世界没这么美好，总有意外发生，以下分析 goroutine 在两种例外情况下的行为。
+
+Go runtime 会在下面的 goroutine 被阻塞的情况下运行另外一个 goroutine：
+
+* blocking syscall (for example opening a file)
+* network input
+* channel operations
+* primitives in the sync package
+
+这四种场景又可归类为两种类型：
+
+* 用户态阻塞/唤醒
+
+当 goroutine 因为 channel 操作或者 network I/O 而阻塞时（实际上 golang 已经用 netpoller 实现了 goroutine 网络 I/O 阻塞不会导致 M 被阻塞，仅阻塞 G，这里仅仅是举个栗子），对应的 G 会被放置到某个 wait 队列(如 channel 的 waitq)，该 G 的状态由_Gruning变为_Gwaitting，而 M 会跳过该 G 尝试获取并执行下一个 G，如果此时没有 runnable 的 G 供 M 运行，那么 M 将解绑 P，并进入 sleep 状态；当阻塞的 G 被另一端的 G2 唤醒时（比如 channel 的可读/写通知），G 被标记为 runnable，尝试加入 G2 所在 P 的 runnext，然后再是 P 的 Local 队列和 Global 队列。
