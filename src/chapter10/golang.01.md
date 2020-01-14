@@ -64,6 +64,9 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 
 该算法避免了在 goroutine 调度时使用全局锁。
 
+<p align="center">
+<img width="600" align="center" src="../images/121.jpg" />
+</p>
 
 #### GPM模型调度
 
