@@ -798,7 +798,7 @@ func shrinkstack(gp *g) {
 ```
 
 
-这里只是对Go的调度器进行一个分析, 当然，Go 的调度中更复杂的抢占式调度、阻塞调度的更多细节，大家可以自行去找相关资料深入理解，这里只讲到 Go 调度器的基本调度过程，所以想了解更多细节的同学可以去看看 Go 调度器 G-P-M 模型的设计者 Dmitry Vyukov 写的该模型的设计文档[《Go Preemptive Scheduler Design》](https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#!)以及直接去看源码，G-P-M 模型的定义放在src/runtime/runtime2.go里面，而调度过程则放在了src/runtime/proc.go里。
+这里只是对Go的调度器进行一个分析, 当然，Go 的调度中更复杂的抢占式调度、阻塞调度的更多细节，大家可以自行去找相关资料深入理解，这里只讲到 Go 调度器的基本调度过程，所以想了解更多细节的同学可以去看看 Go 调度器 G-P-M 模型的设计者 Dmitry Vyukov 写的该模型的设计文档[《Go Preemptive Scheduler Design》](https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#!)以及直接去看源码，G-P-M 模型的定义放在src/runtime/runtime2.go里面，而调度过程则放在了`src/runtime/proc.go`里。
 
 
 #### 资料参考
