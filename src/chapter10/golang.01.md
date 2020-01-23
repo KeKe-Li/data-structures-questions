@@ -58,7 +58,6 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 
 在新的版本1.13.6中Go的GPM的模型的源码位于`src/runtime/runtime2.go`. 至于为什么M的的最大数量限制在10000,[在这里可以查看](https://github.com/golang/go/blob/master/src/runtime/proc.go#L540)
 
-
 关于 P, 其实在 Go 1.0 发布的时候，它的调度器其实 G-M 模型，也就是没有 P 的，调度过程全由 G 和 M 完成，这个模型暴露出一些问题：
 
 单一全局互斥锁(Sched.Lock)和集中状态存储的存在导致所有 goroutine 相关操作，比如：创建、重新调度等都要上锁；
@@ -95,13 +94,11 @@ Go 调度器工作时会维护两种用来保存 G 的任务队列：一种是�
 当然上面提到的 `work-stealing`调度算法：当 M 执行完了当前 P 的 Local 队列里的所有 G 后，P 也不会就这么在那干等着啥都不干，它会先尝试从 Global 队列寻找 G 来执行，如果 Global 队列为空，它会随机挑选另外一个 P，从它的队列里中拿走一半的 G 到自己的队列中执行。
 
 ```go
-
 // go1.13.6 src/runtime/proc.go
 
 // 省略了GC检查等其它细节，只保留了主要流程
 // g:       G结构体定义
 // sched:   Global队列
-
 
 // 获取一个待执行的G
 // 尝试从其他P中steal，从全局队列中获取g，轮询网络。
