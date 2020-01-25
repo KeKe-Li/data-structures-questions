@@ -562,7 +562,7 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 因为，负载均衡器应当只选择能正常做出响应的后端服务器，因此就需要有一种判断后端服务器是否健康的方法。为了监视后台服务器的运行状况，运行状态检查服务会定期尝试使用转发规则定义的协议和端口去连接后端服务器。
 如果，服务器无法通过健康检查，就会从池中剔除，保证流量不会被转发到该服务器，直到其再次通过健康检查为止。
 
-负载均衡算法
+负载均衡算法:
 
 负载均衡算法决定了后端的哪些健康服务器会被选中。 其中常用的算法包括：
 
@@ -612,7 +612,7 @@ LVS 由2部分程序组成，包括 `ipvs` 和 `ipvsadm`。
         
 Golang的微服务框架[kit](https://gokit.io/)中有详细的微服务的例子,可以参考学习.
 
-微服务架构设计包括：
+微服务架构设计包括:
 
 1. 服务熔断降级限流机制 熔断降级的概念(Rate Limiter 限流器,Circuit breaker 断路器).
 2. 框架调用方式解耦方式 Kit 或 Istio 或 Micro 服务发现(consul  zookeeper kubeneters etcd ) RPC调用框架.
@@ -668,6 +668,7 @@ CREATE TABLE `method_lock` (
   UNIQUE KEY `uidx_method_name` (`method_name`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='锁定中的方法';
 ```
+
 想要执行某个方法，就使用这个方法名向表中插入数据：
 
 ```sql
@@ -696,10 +697,12 @@ delete from method_lock where method_name ='methodName';
 * 基于Redis的实现方式
 
 选用Redis实现分布式锁原因：
+
 1. Redis有很高的性能； 
 2. Redis命令对此支持较好，实现起来比较方便
 
 主要实现方式:
+
 1. SET lock currentTime+expireTime EX 600 NX，使用set设置lock值，并设置过期时间为600秒，如果成功，则获取锁；
 2. 获取锁后，如果该节点掉线，则到过期时间ock值自动失效；
 3. 释放锁时，使用del删除lock键值；
