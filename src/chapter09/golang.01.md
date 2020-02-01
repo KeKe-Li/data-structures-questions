@@ -218,6 +218,7 @@ func main() {
 4、如果MHeap空或者没有足够大的页的情况下，从操作系统分配一组新的页面，一般在1MB以上
 
 Go分配流程核心源码实现：
+
 ```go
 func mallocgc(size uintptr, typ *_type, flags uint32) unsafe.Pointer {
     if gcphase == _GCmarktermination {
