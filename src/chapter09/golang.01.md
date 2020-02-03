@@ -97,7 +97,7 @@ mmap函数要求内核创建一个新的虚拟存储区域，最好是从起始�
 * 空闲链表: 提供直接可供使用，已分配的结构块，缺点是不能全局控制.
 * slab：linux提供的，可以把不同的对象划分为所谓高速缓存组.
 
-5. Go的内存分配
+#### 5. Go的内存分配
 
 Go的内存分配器是采用google自家的tcmalloc，tcmalloc是一个带内存池的分配器，底层直接调用mmap函数，并使用bestfit进行动态分配。
 
@@ -431,5 +431,3 @@ Go也有happens-before ,go happens-before常用的三原则是：
 * 对于不带缓冲区的channel，对其写happens-before对其读
 * 对于带缓冲区的channel,对其读happens-before对其写
 * 对于不带缓冲的channel的接收操作 happens-before 相应channel的发送操作完成
-
-
