@@ -4,7 +4,7 @@
 <img width="500" align="center" src="../images/109.jpg" />
 </p>
 
-Go内存管理基于TCMalloc，使用连续虚拟地址，以页(8k)为单位、多级缓存进行管理；在分配内存时，需要对size进行对齐处理，根据best-fit找到合适的mspan，对未用完的内存还会拆分成其他大小的mspan继续使用.
+Go内存管理基于TCMalloc，使用连续虚拟地址，以页(8k)为单位、多级缓存进行管理；在分配内存时，需要对size进行对齐处理，根据best-fit找到合适的mspan，对未用完的内存还会拆分成其他大小的mspan继续使用。
 
 在new一个object时(忽略逃逸分析)，根据object的size做不同的分配策略：
 
@@ -22,7 +22,7 @@ Go内存管理基于TCMalloc，使用连续虚拟地址，以页(8k)为单位、
 * page的结构与物理页相关，而非与虚拟页相关
 * 系统中的每个物理页都要分配一个page结构体
 
-在了解Go的内存分配器原理之前，我们先了解一下“动态存储分配器”.
+在了解Go的内存分配器原理之前，我们先了解一下“动态存储分配器”。
 
 #### 2. 动态存储分配器
 
@@ -97,7 +97,7 @@ mmap函数要求内核创建一个新的虚拟存储区域，最好是从起始�
 * 空闲链表: 提供直接可供使用，已分配的结构块，缺点是不能全局控制.
 * slab：linux提供的，可以把不同的对象划分为所谓高速缓存组.
 
-5. Go的内存分配
+#### 5. Go的内存分配
 
 Go的内存分配器是采用google自家的tcmalloc，tcmalloc是一个带内存池的分配器，底层直接调用mmap函数，并使用bestfit进行动态分配。
 
@@ -218,6 +218,7 @@ func main() {
 4、如果MHeap空或者没有足够大的页的情况下，从操作系统分配一组新的页面，一般在1MB以上
 
 Go分配流程核心源码实现：
+
 ```go
 func mallocgc(size uintptr, typ *_type, flags uint32) unsafe.Pointer {
     if gcphase == _GCmarktermination {
@@ -430,5 +431,3 @@ Go也有happens-before ,go happens-before常用的三原则是：
 * 对于不带缓冲区的channel，对其写happens-before对其读
 * 对于带缓冲区的channel,对其读happens-before对其写
 * 对于不带缓冲的channel的接收操作 happens-before 相应channel的发送操作完成
-
-
