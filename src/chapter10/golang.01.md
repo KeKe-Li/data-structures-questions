@@ -70,7 +70,6 @@ Goroutine，是Go 语言基于并发（并行）编程的核心。goroutine 是�
 
 * 由于 syscall 调用而形成的剧烈的 worker thread 阻塞和解除阻塞，导致额外的性能损耗。
 
-
 这些问题实在太严重了，导致 Go1.0 虽然号称原生支持并发，却在并发性能上一直饱受诟病，于是Dmitry Vyukov在[Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#heading=h.mmq8lm48qfcw)提出该模型在并发伸缩性方面的问题，并通过加入P(Processors)来改进该问题。
 
 在重新设计和实现了 Go 调度器（在原有的 G-M 模型中引入了 P）并且实现了一个叫做 [work-stealing](https://en.wikipedia.org/wiki/Work_stealing) 的调度算法：
@@ -205,3 +204,22 @@ top:
 stop:
 
 	// 我们没事做如果我们
+```
+ 然而在通常情况下, Go runtime 会在下面的 goroutine 被阻塞的情况下运行另外一个 goroutine：
+* blocking syscall (for example opening a file)
+* network input
+* channel operations
+* primitives in the sync package
+
+这里其实可以看做两个情况,即`用户态阻塞/唤醒` 和 `系统调用阻塞`.
+
+* 用户态阻塞/唤醒
+
+当 goroutine 因为 channel 操作或者 network I/O 而阻塞时（实际上 golang 已经用 netpoller 实现了 goroutine 网络 I/O 阻塞不会导致 M 被阻塞，仅阻塞 G，这里仅仅举例），对应的 G 会被放置到某个 wait 队列(如 channel 的 waitq)，该 G 的状态由_Gruning变为_Gwaitting，而 M 会跳过该 G 尝试获取并执行下一个 G，如果此时没有 runnable 的 G 供 M 运行，那么 M 将解绑 P，并进入 sleep 状态；当阻塞的 G 被另一端的 G2 唤醒时（比如 channel 的可读/写通知），G 被标记为 runnable，尝试加入 G2 所在 P 的 runnext，然后再是 P 的 Local 队列和 Global 队列。
+
+* 系统调用阻塞
+
+当 G 被阻塞在某个系统调用上时，此时 G 会阻塞在_Gsyscall状态，M 也处于 block on syscall 状态，此时的 M 可被抢占调度：执行该 G 的 M 会与 P 解绑，而 P 则尝试与其它 idle 的 M 绑定，继续执行其它 G。如果没有其它 idle 的 M，但 P 的 Local 队列中仍然有 G 需要执行，则创建一个新的 M；当系统调用完成后，G 会重新尝试获取一个 idle 的 P 进入它的 Local 队列恢复执行，如果没有 idle 的 P，G 会被标记为 runnable 加入到 Global 队列。
+
+如果想要详细的了解go的调度器可以看看 Go 调度器 G-P-M 模型的设计者 Dmitry Vyukov 写的该模型的设计文档[《Go Preemptive Scheduler Design》](https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#!) 或者直接去看Go源码，G-P-M 模型的定义放在`src/runtime/runtime2.go`里面，而调度过程则放在了`src/runtime/proc.go`里,不过随着Go源码1.14的发布,Go的调度器也进行了新的优化.
+
