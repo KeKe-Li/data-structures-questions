@@ -2,9 +2,6 @@
 
 Golang作为一个为并发而产生的语言, 从Golang产生的那一刻就注定它具有高并发的特性，而 Go 语言中的并发（并行）编程是经由 goroutine 实现的，goroutine 是 Golang 最重要的特性之一，具有使用成本低、消耗资源低、能效高等特点，官方宣称原生 goroutine 并发成千上万不成问题，于是它也成为 Gopher 们经常使用的特性。
 
-Goroutine，是Go 语言基于并发（并行）编程的核心。goroutine 是什么？
-
-<<<<<<< HEAD
 Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什么？
 
 通常 goroutine 会被当做 coroutine（协程）的 golang 实现，从比较粗浅的层面来看，这种认知也算是合理.
@@ -12,7 +9,7 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 但实际上，goroutine 并非传统意义上的协程，现在主流的线程模型分三种： 内核级线程模型、用户级线程模型和两级线程模型（也称混合型线程模型），传统的协程库属于用户级线程模型.
 
 而 goroutine 和它的Go Scheduler在底层实现上其实是属于两级线程模型，
-=======
+
 通常 goroutine 会被当做 coroutine（协程）的 golang 实现，从比较粗浅的层面来看，这种认知也算是合理.
 
 但是，goroutine 并非传统意义上的协程，现在主流的线程模型分三种：
@@ -20,9 +17,6 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 * 内核级线程模型
 * 用户级线程模型和两级线程模型（也称混合型线程模型）
 * 传统的协程库属于用户级线程模型.
-
-而 goroutine 和它的Go Scheduler在底层实现上其实是属于两级线程模型.
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 
 因此，有时候为了方便理解可以简单把 goroutine 类比成协程，但心里一定要有个清晰的认知 — goroutine 并不等同于协程。
 
@@ -55,19 +49,11 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 每一个 OS 线程都有一个固定大小的内存块(一般会是 2MB)来做栈，这个栈会用来存储当前正在被调用或挂起(指在调用其它函数时)的函数的内部变量。这个固定大小的栈同时很大又很小。因为 2MB 的栈对于一个小小的 goroutine 来说是很大的内存浪费，而对于一些复杂的任务（如深度嵌套的递归）来说又显得太小。因此，Go 语言做了它自己的`线程`。
 
 在 Go 语言中，每一个 goroutine 是一个独立的执行单元，相较于每个 OS 线程固定分配 2M 内存的模式，goroutine 的栈采取了动态扩容方式， 初始时仅为 2KB，随着任务执行按需增长，最大可达 1GB（64 位机器最大是 1G，32 位机器最大是 256M），且完全由 golang 自己的调度器 Go Scheduler 来调度。
-<<<<<<< HEAD
 
 此外，GC 还会周期性地将不再使用的内存回收，收缩栈空间。 因此，Go 程序可以同时并发成千上万个 goroutine 是得益于它强劲的调度器和高效的内存模型。Go 的创造者大概对 goroutine 的定位就是屠龙刀，因为他们不仅让 goroutine 作为 golang 并发编程的最核心组件（开发者的程序都是基于 goroutine 运行的）而且 golang 中的许多标准库的实现也到处能见到 goroutine 的身影，比如 net/http 这个包，甚至语言本身的组件 runtime 运行时和 GC 垃圾回收器都是运行在 goroutine 上的，作者对 goroutine 的厚望可见一斑。
 
 任何用户线程最终肯定都是要交由 OS 线程来执行的，goroutine（称为 G）也不例外，但是 G 并不直接绑定 OS 线程运行，而是由 Goroutine Scheduler 中的 P - Logical Processor （逻辑处理器）来作为两者的传递者，P 可以看作是一个抽象的资源或者一个上下文，一个 P 绑定一个 OS 线程. 
 
-=======
-
-此外，GC 还会周期性地将不再使用的内存回收，收缩栈空间。 因此，Go 程序可以同时并发成千上万个 goroutine 是得益于它强劲的调度器和高效的内存模型。Go 的创造者大概对 goroutine 的定位就是屠龙刀，因为他们不仅让 goroutine 作为 golang 并发编程的最核心组件（开发者的程序都是基于 goroutine 运行的）而且 golang 中的许多标准库的实现也到处能见到 goroutine 的身影，比如 net/http 这个包，甚至语言本身的组件 runtime 运行时和 GC 垃圾回收器都是运行在 goroutine 上的，作者对 goroutine 的厚望可见一斑。
-
-任何用户线程最终肯定都是要交由 OS 线程来执行的，goroutine（称为 G）也不例外，但是 G 并不直接绑定 OS 线程运行，而是由 Goroutine Scheduler 中的 P - Logical Processor （逻辑处理器）来作为两者的传递者，P 可以看作是一个抽象的资源或者一个上下文，一个 P 绑定一个 OS 线程. 
-
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 在 golang 的实现里把 OS 线程抽象成一个数据结构：M，G 实际上是由 M 通过 P 来进行调度运行的，但是在 G 的层面来看，P 提供了 G 运行所需的一切资源和环境，因此在 G 看来 P 就是运行它的 “CPU”，由 G、P、M 这三种由 Go 抽象出来的实现，最终形成了 Go 调度器的基本结构：
 
 * G: 表示 Goroutine，每个 Goroutine 对应一个 G 结构体，G 存储 Goroutine 的运行堆栈、状态以及任务函数，可重用。G 并非执行体，每个 G 需要绑定到 P 才能被调度执行。
@@ -78,10 +64,7 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 
 在新的版本1.13.6中Go的GPM的模型的源码位于`src/runtime/runtime2.go`. 至于为什么M的的最大数量限制在10000,[在这里可以查看](https://github.com/golang/go/blob/master/src/runtime/proc.go#L540)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 关于 P, 其实在 Go 1.0 发布的时候，它的调度器其实 G-M 模型，也就是没有 P 的，调度过程全由 G 和 M 完成，这个模型暴露出一些问题：
 
 单一全局互斥锁(Sched.Lock)和集中状态存储的存在导致所有 goroutine 相关操作，比如：创建、重新调度等都要上锁；
@@ -92,10 +75,6 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 
 * 由于 syscall 调用而形成的剧烈的 worker thread 阻塞和解除阻塞，导致额外的性能损耗。
 
-<<<<<<< HEAD
-
-=======
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 这些问题实在太严重了，导致 Go1.0 虽然号称原生支持并发，却在并发性能上一直饱受诟病，于是Dmitry Vyukov在[Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#heading=h.mmq8lm48qfcw)提出该模型在并发伸缩性方面的问题，并通过加入P(Processors)来改进该问题。
 
 在重新设计和实现了 Go 调度器（在原有的 G-M 模型中引入了 P）并且实现了一个叫做 [work-stealing](https://en.wikipedia.org/wiki/Work_stealing) 的调度算法：
@@ -121,20 +100,12 @@ Go 调度器工作时会维护两种用来保存 G 的任务队列：一种是�
 当然上面提到的 `work-stealing`调度算法：当 M 执行完了当前 P 的 Local 队列里的所有 G 后，P 也不会就这么在那干等着啥都不干，它会先尝试从 Global 队列寻找 G 来执行，如果 Global 队列为空，它会随机挑选另外一个 P，从它的队列里中拿走一半的 G 到自己的队列中执行。
 
 ```go
-<<<<<<< HEAD
 
-=======
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 // go1.13.6 src/runtime/proc.go
 
 // 省略了GC检查等其它细节，只保留了主要流程
 // g:       G结构体定义
 // sched:   Global队列
-
-<<<<<<< HEAD
-
-=======
->>>>>>> baa239e6c0ba7e13739e7e0d91041f5243e56efe
 // 获取一个待执行的G
 // 尝试从其他P中steal，从全局队列中获取g，轮询网络。
 func findrunnable() (gp *g, inheritTime bool) {
@@ -237,7 +208,6 @@ top:
 
 stop:
 
-<<<<<<< HEAD
 	// 我们没事做如果我们处于GC标记阶段，可以安全地扫描和三色法标记对象为黑色并进行工作，请运行空闲时间标记，而不是放弃P
 	// 当没有G可被执行时，M会与P解绑，然后进入休眠(idle)状态。
     
@@ -372,7 +342,6 @@ stop:
 	goto top
 }
 ```
-
 #### GPM模型调度
 
 如果一切正常，调度器会以上述的那种方式顺畅地运行，但总是有特殊的情况存在, 下面分析 goroutine 在两种例外情况下的行为。
@@ -418,7 +387,6 @@ sysmon是一个由runtime启动的M，也叫监控线程，它无需P也可以�
 5. 收回因syscall长时间阻塞的P；
 
 `sysmon` 它通过retake实现对syscall和长时间运行的G进行调度:
-
 
 ```go 
 // src/runtime/proc.go:sysmon
@@ -674,8 +642,6 @@ func newstack() {
 	casgstatus(gp, _Gcopystack, _Grunning)
 	gogo(&gp.sched)
 }
-
-
 
 // Copies gp's stack to a new stack of a different size.
 // Caller must have changed gp status to Gcopystack.
