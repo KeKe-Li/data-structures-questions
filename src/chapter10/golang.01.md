@@ -170,10 +170,6 @@ Goroutine特点:
 
 该算法避免了在 goroutine 调度时使用全局锁。
 
-<p align="center">
-<img width="600" align="center" src="../images/121.jpg" />
-</p>
-
 #### GPM调度流程
 
 Go 调度器工作时会维护两种用来保存 G 的任务队列：一种是一个 Global 任务队列，一种是每个 P 维护的 Local 任务队列。
