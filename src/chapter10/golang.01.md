@@ -48,7 +48,7 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 <img width="500" align="center" src="../images/122.jpg" />
 </p>
 
-这样，我们分类一下，内核线程依然叫“线程(thread)”，用户线程叫“协程(co-routine)".
+这样，我们分类一下，内核线程依然叫“线程(thread)”，用户线程就叫“协程(co-routine)".
 
 线程的实现模型主要有 3 种：内核级线程模型、用户级线程模型和两级线程模型（也称混合型线程模型），它们之间最大的差异就在于用户线程与内核调度实体（KSE，Kernel Scheduling Entity）之间的对应关系上。而所谓的内核调度实体 KSE 就是指可以被操作系统内核调度器调度的对象实体。
 
