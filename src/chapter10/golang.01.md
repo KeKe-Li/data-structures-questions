@@ -48,7 +48,7 @@ Goroutine，Go 语言基于并发（并行）编程的核心。goroutine 是什�
 <img width="500" align="center" src="../images/122.jpg" />
 </p>
 
-这样，我们分类一下，内核线程依然叫“线程(thread)”，用户线程叫“协程(co-routine)".
+这样，我们分类一下，内核线程依然叫“线程(thread)”，用户线程就叫“协程(co-routine)".
 
 线程的实现模型主要有 3 种：内核级线程模型、用户级线程模型和两级线程模型（也称混合型线程模型），它们之间最大的差异就在于用户线程与内核调度实体（KSE，Kernel Scheduling Entity）之间的对应关系上。而所谓的内核调度实体 KSE 就是指可以被操作系统内核调度器调度的对象实体。
 
@@ -169,10 +169,6 @@ Goroutine特点:
 * 当一个 G 在 M 里执行结束后，P 会从队列中把该 G 取出；如果此时 P 的队列为空，即没有其他 G 可以执行， M 就随机选择另外一个 P，从其可执行的 G 队列中取走一半。
 
 该算法避免了在 goroutine 调度时使用全局锁。
-
-<p align="center">
-<img width="600" align="center" src="../images/121.jpg" />
-</p>
 
 #### GPM调度流程
 
