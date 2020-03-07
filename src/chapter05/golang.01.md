@@ -4793,6 +4793,8 @@ B+树，仍是m叉搜索树，在B树的基础上，做了一些改进：
 * 链地址法
 * 建立一个公共溢出区
 
+#### 118. 为什么使用通信来共享内存？
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
