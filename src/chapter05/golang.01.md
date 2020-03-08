@@ -4795,6 +4795,8 @@ B+树，仍是m叉搜索树，在B树的基础上，做了一些改进：
 
 #### 118. 为什么使用通信来共享内存？
 
+不要通过共享内存来通信，我们应该使用通信来共享内存，这是一句使用 Go 语言编程的人经常能听到的观点，然而我们可能从来都没有仔细地思考过 Go 语言为什么鼓励我们遵循这一设计哲学.
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
