@@ -24,6 +24,7 @@
 * [Redis为什么快](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter12/golang.01.md)
 * [Golang性能优化](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter13/golang.01.md)
 * [Golang的汇编过程](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter14/golang.01.md)
+* [Golang的defer优化](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter15/golang.01.md)
 
 
 ### data-structures-questions
