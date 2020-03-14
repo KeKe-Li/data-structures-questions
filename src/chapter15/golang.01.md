@@ -338,4 +338,4 @@ func walkstmt(n *Node) *Node {
 }
 ```
 
-因此 `open coded`的使用条件，defer最多8个，`return * defer < 15`，无循环，gcflags无 “N” 取消优化。
+因此 `open coded`的使用条件是,最多8个defer，而且 `return * defer < 15`，无循环，`gcflags`无 “N” 并且取消优化。
