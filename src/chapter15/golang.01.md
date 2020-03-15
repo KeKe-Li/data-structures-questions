@@ -1,8 +1,8 @@
 #### Golang 中的defer性能提升
 
-在Golang 1.14中新加入了开放编码（Open-coded）defer类型，编译器在ssa过程中会把被延迟的方法直接插入到函数的尾部，避免了运行时的deferproc及deferprocStack操作。
+在Golang 1.14中新加入了开放编码（Open-coded）`defer`类型，编译器在ssa过程中会把被延迟的方法直接插入到函数的尾部，避免了运行时的deferproc及`deferprocStack`操作。
 
-避免了在没有运行时判断下的deferreturn调用。如有运行时判断的逻辑，则deferreturn也进一步优化，开放编码下的deferreturn不会进行jmpdefer的尾递归调用，而直接在一个循环里遍历执行。
+避免了在没有运行时判断下的`deferreturn`调用。如有运行时判断的逻辑，则 `deferreturn` 也进一步优化，开放编码下的 `deferreturn` 不会进行`jmpdefer`的尾递归调用，而直接在一个循环里遍历执行。
 
 在1.14中defer的实现原理,共有三种defer模式类型，编译后一个函数里只会一种defer模式。
 
