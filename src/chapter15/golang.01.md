@@ -20,7 +20,7 @@
 
 #### 栈上分配
 
-在Golang 1.13 版本中新加入 deferprocStack 实现了在栈上分配的形式来取代 deferproc，相比后者，栈上分配在函数返回后 `_defer` 便得到释放，省去了内存分配时产生的性能开销，只需适当维护 `_defer` 的链表即可。
+在Golang 1.13 版本中新加入 `deferprocStack` 实现了在栈上分配的形式来取代 `deferproc`，相比后者，栈上分配在函数返回后 `_defer` 便得到释放，省去了内存分配时产生的性能开销，只需适当维护 `_defer` 的链表即可。
 
 编译器可以去选择使用`deferproc` 还是 `deferprocStack`，通常情况下都会使用`deferprocStack`，性能会提升约 30%。不过在 defer 语句出现在了循环语句里，或者无法执行更高阶的编译器优化时，亦或者同一个函数中使用了过多的 defer 时，依然会使用 `deferproc`。
 
@@ -204,7 +204,7 @@ func buildssa(fn *Node, worker int) *ssa.Func {
 	return s.f
 }
 ```
-如果在构建ssa时如发现`gcflags`有N禁止优化的参数 或者 `return数量 * defer数量`超过了15不适用open-coded模式。
+如果在构建ssa时如发现`gcflags`有N禁止优化的参数 或者 `return数量 * defer数量`超过了15不适用`open-coded`模式。
 
 此外逃逸分析会判断循序的层数，如果有轮询，那么强制使用栈分配模式。
 
