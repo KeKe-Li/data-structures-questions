@@ -14,9 +14,7 @@
 
 2. 在函数返回之前的位置插入 `runtime.deferreturn`，当被执行时，会将延迟调用从 Goroutine 链表中取出并执行，多个延迟调用则以 `jmpdefer` 尾递归调用方式连续执行。
 
-
 这种机制的主要性能问题存在于每个 defer 语句产生记录时的内存分配，以及记录参数和完成调用时参数移动的系统调用开销。
-
 
 #### 栈上分配
 
@@ -250,7 +248,6 @@ Golang 1.14 版本继续加入了开发编码（open coded），该机制会将�
 
 为了轻量，官方将延迟比特限制为 1 个字节，即 8 个比特，这就是为什么不能超过 8 个 defer 的原因，若超过依然会选择堆栈分配，但显然大部分情况不会超过 8 个。
 
-
 ```go
 // The constant is known to runtime.
 const tmpstringbufsize = 32
@@ -316,7 +313,7 @@ func walk(fn *Node) {
 
 ```
 
-在使用open code的模式的时候,默认open-coded最多支持8个defer，超过则取消。
+在使用open code的模式的时候,默认open coded最多支持8个defer，超过则取消。
                    
 ```go 
 const maxOpenDefers = 8
