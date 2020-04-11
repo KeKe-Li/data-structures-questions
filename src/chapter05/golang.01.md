@@ -179,6 +179,7 @@ exit status 2
 context 包主要是用来处理多个 goroutine 之间共享数据，及多个 goroutine 的管理。
 
 context 包的核心是 struct Context，接口声明如下：
+
 ```go
 // A Context carries a deadline, cancelation signal, and request-scoped values
 // across API boundaries. Its methods are safe for simultaneous use by multiple
@@ -186,32 +187,29 @@ context 包的核心是 struct Context，接口声明如下：
 type Context interface {
     // Done returns a channel that is closed when this `Context` is canceled
     // or times out.
+    // Done() 返回一个只能接受数据的channel类型，当该context关闭或者超时时间到了的时候，该channel就会有一个取消信号
     Done() <-chan struct{}
+
 
     // Err indicates why this Context was canceled, after the Done channel
     // is closed.
+    // Err() 在Done() 之后，返回context 取消的原因。
     Err() error
 
     // Deadline returns the time when this Context will be canceled, if any.
+    // Deadline() 设置该context cancel的时间点
     Deadline() (deadline time.Time, ok bool)
 
     // Value returns the value associated with key or nil if none.
+    // Value() 方法允许 Context 对象携带request作用域的数据，该数据必须是线程安全的。
     Value(key interface{}) interface{}
 }
 ```
 
-Done() 返回一个只能接受数据的channel类型，当该context关闭或者超时时间到了的时候，该channel就会有一个取消信号
-
-Err() 在Done() 之后，返回context 取消的原因。
-
-Deadline() 设置该context cancel的时间点
-
-Value() 方法允许 Context 对象携带request作用域的数据，该数据必须是线程安全的。
-
 Context 对象是线程安全的，你可以把一个 Context 对象传递给任意个数的 gorotuine，对它执行 取消 操作时，所有 goroutine 都会接收到取消信号。
 
-一个 Context 不能拥有 Cancel 方法，同时我们也只能 Done channel 接收数据。
-其中的原因是一致的：接收取消信号的函数和发送信号的函数通常不是一个。
+一个 Context 不能拥有 Cancel 方法，同时我们也只能 Done channel 接收数据。其中的原因是一致的：接收取消信号的函数和发送信号的函数通常不是一个。
+
 典型的场景是：父操作为子操作操作启动 goroutine，子操作也就不能取消父操作。
 
 #### 5. JSON 标准库对 nil slice 和 空 slice 的处理是一致的吗？　
