@@ -1176,29 +1176,32 @@ type Mutex struct {
    sema  uint32
 }
 ```
+
 sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
 ```go
-//Locker表示可以锁定和解锁的对象。
+// Locker表示可以锁定和解锁的对象。
 type Locker interface {
    Lock()
    Unlock()
 }
 
-//锁定当前的互斥量
-//如果锁已被使用，则调用goroutine
-//阻塞直到互斥锁可用。
+// 锁定当前的互斥量
+// 如果锁已被使用，则调用goroutine
+// 阻塞直到互斥锁可用。
 func (m *Mutex) Lock() 
 
-//对当前互斥量进行解锁
-//如果在进入解锁时未锁定m，则为运行时错误。
-//锁定的互斥锁与特定的goroutine无关。
-//允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
+// 对当前互斥量进行解锁
+// 如果在进入解锁时未锁定m，则为运行时错误。
+// 锁定的互斥锁与特定的goroutine无关。
+// 允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
 func (m *Mutex) Unlock()
 ```
+
 声明一个互斥锁：
 ```go
 var mutex sync.Mutex
 ```
+
 不像C或Java的锁类工具，我们可能会犯一个错误：忘记及时解开已被锁住的锁，从而导致流程异常。但Go由于存在defer，所以此类问题出现的概率极低。关于defer解锁的方式如下：
 ```go
 var mutex sync.Mutex
@@ -1207,6 +1210,7 @@ func Write()  {
    defer mutex.Unlock()
 }
 ```
+
 如果对一个已经上锁的对象再次上锁，那么就会导致该锁定操作被阻塞，直到该互斥锁回到被解锁状态.
 ```go
 fpackage main
@@ -1326,9 +1330,9 @@ exit status 2
 ```go
 // RWMutex是一个读/写互斥锁，可以由任意数量的读操作或单个写操作持有。
 // RWMutex的零值是未锁定的互斥锁。
-//首次使用后，不得复制RWMutex。
-//如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
-//特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
+// 首次使用后，不得复制RWMutex。
+// 如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
+// 特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
 type RWMutex struct {
    w           Mutex  //如果有待处理的写操作就持有
    writerSem   uint32 // 写操作等待读操作完成的信号量
