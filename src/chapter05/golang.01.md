@@ -98,6 +98,7 @@ func main() {
     fmt.Println("finished")
 }
 ```
+
 当主 goroutine 运行到 <-ch 接受 channel 的值的时候，如果该  channel 中没有数据，就会一直阻塞等待，直到有值。 这样就可以简单实现并发控制
 
 * 通过sync包中的WaitGroup实现并发控制
@@ -1175,29 +1176,32 @@ type Mutex struct {
    sema  uint32
 }
 ```
+
 sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
 ```go
-//Locker表示可以锁定和解锁的对象。
+// Locker表示可以锁定和解锁的对象。
 type Locker interface {
    Lock()
    Unlock()
 }
 
-//锁定当前的互斥量
-//如果锁已被使用，则调用goroutine
-//阻塞直到互斥锁可用。
+// 锁定当前的互斥量
+// 如果锁已被使用，则调用goroutine
+// 阻塞直到互斥锁可用。
 func (m *Mutex) Lock() 
 
-//对当前互斥量进行解锁
-//如果在进入解锁时未锁定m，则为运行时错误。
-//锁定的互斥锁与特定的goroutine无关。
-//允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
+// 对当前互斥量进行解锁
+// 如果在进入解锁时未锁定m，则为运行时错误。
+// 锁定的互斥锁与特定的goroutine无关。
+// 允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
 func (m *Mutex) Unlock()
 ```
+
 声明一个互斥锁：
 ```go
 var mutex sync.Mutex
 ```
+
 不像C或Java的锁类工具，我们可能会犯一个错误：忘记及时解开已被锁住的锁，从而导致流程异常。但Go由于存在defer，所以此类问题出现的概率极低。关于defer解锁的方式如下：
 ```go
 var mutex sync.Mutex
@@ -1206,6 +1210,7 @@ func Write()  {
    defer mutex.Unlock()
 }
 ```
+
 如果对一个已经上锁的对象再次上锁，那么就会导致该锁定操作被阻塞，直到该互斥锁回到被解锁状态.
 ```go
 fpackage main
@@ -1325,9 +1330,9 @@ exit status 2
 ```go
 // RWMutex是一个读/写互斥锁，可以由任意数量的读操作或单个写操作持有。
 // RWMutex的零值是未锁定的互斥锁。
-//首次使用后，不得复制RWMutex。
-//如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
-//特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
+// 首次使用后，不得复制RWMutex。
+// 如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
+// 特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
 type RWMutex struct {
    w           Mutex  //如果有待处理的写操作就持有
    writerSem   uint32 // 写操作等待读操作完成的信号量
@@ -2964,7 +2969,6 @@ select的源码在 (runtime/select.go)[https://github.com/golang/go/blob/master/
 * pollorder保存的是scase的序号，乱序是为了之后执行时的随机性。
 * lockorder保存了所有case中channel的地址，这里按照地址大小堆排了一下lockorder对应的这片连续内存。对chan排序是为了去重，保证之后对所有channel上锁时不会重复上锁。
 
-
 goroutine作为Golang并发的核心，我们不仅要关注它们的创建和管理，当然还要关注如何合理的退出这些协程，不（合理）退出不然可能会造成阻塞、panic、程序行为异常、数据结果不正确等问题。goroutine在退出方面，不像线程和进程，不能通过某种手段强制关闭它们，只能等待goroutine主动退出。
 
 goroutine的优雅退出方法有三种:
@@ -3905,7 +3909,6 @@ git rebase特点:
 4. 数据传输：输入、输出、赋值等运算.
 
 
-
 #### 77. 链表和数组相比, 有什么优缺点?
 
 #### 78. 如何判断两个无环单链表有没有交叉点?
@@ -4024,6 +4027,16 @@ func quickDescendingSort(arr []int, start, end int) {
 
 #### 92. Golang 的GC触发时机是什么?
 
+Go 语言中对 GC 的触发时机存在两种形式：
+
+* 主动触发，通过调用 runtime.GC 来触发 GC，此调用阻塞式地等待当前 GC 运行完毕。
+
+* 被动触发，分为两种方式：
+
+使用系统监控，当超过两分钟没有产生任何 GC 时，强制触发 GC。
+
+使用步调（Pacing）算法，其核心思想是控制内存增长的比例。
+
 #### 93. Redis 里数据结构的实现熟悉吗,调表的实现原理是什么?
 
 Redis中的set数据结构底层用的是调表实现的.
@@ -4042,6 +4055,7 @@ Redis中的set数据结构底层用的是调表实现的.
 为什么Redis选择使用跳表而不是红黑树来实现有序集合？(O(logN))
 
 首先，我们来分析下Redis的有序集合支持的操作：
+
 * 插入元素
 * 删除元素
 * 查找元素
