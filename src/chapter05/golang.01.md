@@ -2912,10 +2912,11 @@ func f1() (result int) {
 
 ```go
 func f2() (r int) {
-    defer func(r int) {
-        r = r + 5
-    }(r)
-    return 1
+   t := 5
+   defer func() {
+	t = t + 5
+   }()
+   return t
 }
 ```
 
