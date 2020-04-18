@@ -10,8 +10,6 @@ Golang面试问题汇总目录概览:
 * [4.Golang 中常用的并发模型？](#4.Golang中常用的并发模型？)
 
 
-
-
 #### 1.Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量？
 
 Golang中Goroutine 可以通过 Channel 进行安全读写共享变量。
