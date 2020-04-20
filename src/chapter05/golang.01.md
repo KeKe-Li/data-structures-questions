@@ -756,8 +756,8 @@ A highly-available key value store for shared configuration and service discover
 
 * 控制时序，即所有想要获得锁的用户都会被安排执行，但是获得锁的顺序也是全局唯一的，同时决定了执行顺序。etcd 为此也提供了一套 API（自动创建有序键），对一个目录建值时指定为POST动作，这样 etcd 会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用 API 按顺序列出所有当前目录下的键值。此时这些键的值就是客户端的时序，而这些键中存储的值可以是代表客户端的编号。
 
-在这里Ectd实现分布式锁基本实现原理为：
-1. 在ectd系统里创建一个key
+在这里etcd实现分布式锁基本实现原理为：
+1. 在etcd系统里创建一个key
 2. 如果创建失败，key存在，则监听该key的变化事件，直到该key被删除，回到1
 3. 如果创建成功，则认为我获得了锁
 
@@ -797,7 +797,7 @@ type Mutex struct {
 
 // New creates a Mutex with the given key which must be the same
 // across the cluster nodes.
-// machines are the ectd cluster addresses
+// machines are the etcd cluster addresses
 func New(key string, ttl int, machines []string) *Mutex {
 	cfg := client.Config{
 		Endpoints:               machines,
