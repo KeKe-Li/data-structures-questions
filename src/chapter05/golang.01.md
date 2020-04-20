@@ -2907,10 +2907,11 @@ func f1() (result int) {
 
 ```go
 func f2() (r int) {
-    defer func(r int) {
-        r = r + 5
-    }(r)
-    return 1
+    t := 5
+   defer func() {
+	t = t + 5
+   }()
+   return t
 }
 ```
 
@@ -4023,6 +4024,13 @@ func quickDescendingSort(arr []int, start, end int) {
 #### 91. 配置中心如何保证一致性？
 
 #### 92. Golang 的GC触发时机是什么?
+
+Go 语言中对 GC 的触发时机存在两种形式：
+* 主动触发，通过调用 runtime.GC 来触发 GC，此调用阻塞式地等待当前 GC 运行完毕。
+* 被动触发，分为两种方式：
+  a. 使用系统监控，当超过两分钟没有产生任何 GC 时，强制触发 GC。
+  b. 使用步调（Pacing）算法，其核心思想是控制内存增长的比例。
+
 
 #### 93. Redis 里数据结构的实现熟悉吗,调表的实现原理是什么?
 
