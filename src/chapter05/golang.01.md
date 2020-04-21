@@ -131,6 +131,7 @@ func main(){
 在Golang官网中对于WaitGroup介绍是`A WaitGroup must not be copied after first use`,在 WaitGroup 第一次使用后，不能被拷贝
 
 应用示例:
+
 ```go
 func main(){
  wg := sync.WaitGroup{}
