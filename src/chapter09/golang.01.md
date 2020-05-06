@@ -428,6 +428,6 @@ func mallocgc(size uintptr, typ *_type, flags uint32) unsafe.Pointer {
 
 Go也有happens-before ,go happens-before常用的三原则是：
 
-* 对于不带缓冲区的channel，对其写happens-before对其读
-* 对于带缓冲区的channel,对其读happens-before对其写
-* 对于不带缓冲的channel的接收操作 happens-before 相应channel的发送操作完成
+* 对于不带缓冲区的channel，对其写happens-before对其读.
+* 对于带缓冲区的channel,对其读happens-before对其写.
+* 对于不带缓冲的channel的接收操作 happens-before 相应channel的发送操作完成.
