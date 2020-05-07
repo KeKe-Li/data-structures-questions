@@ -220,6 +220,7 @@ Context 对象是线程安全的，你可以把一个 Context 对象传递给任
 首先JSON 标准库对 nil slice 和 空 slice 的处理是不一致.
 
 通常错误的用法，会报数组越界的错误，因为只是声明了slice，却没有给实例化的对象。
+
 ```go
 var slice []int
 slice[1] = 0
