@@ -4895,7 +4895,6 @@ Golang Runtime是Go语言运行所需要的基础设施.
 在go中,协程（coroutine）是Go语言中的轻量级线程实现，由Go运行时（runtime）管理。因此一个线程下可能会有很多个协程,因此不会阻塞线程.
 
 
-
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
