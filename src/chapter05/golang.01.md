@@ -4916,6 +4916,13 @@ Go中的内存分类并不像TCMalloc那样分成小、中、大对象，但是�
 
 * 栈上的内存有更好的局部性，堆上内存访问就不那么友好了，CPU访问的2块数据可能在不同的页上，CPU访问数据的时间可能就上去了。
 
+#### 125. 堆内存管理怎么分配的? 
+
+通常在Golang中,当我们谈论内存管理的时候，主要是指堆内存的管理，因为栈的内存管理不需要程序去操心。堆内存管理中主要是三部分, 1.分配内存块，2.回收内存块, 3.组织内存块。
+
+
+
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
