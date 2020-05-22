@@ -4947,12 +4947,13 @@ Go中的内存分类并不像TCMalloc那样分成小、中、大对象，但是�
 
 #### 126. map, channel, string等内置类型及反射的实现.
 
-
 #### 127.操作系统及CPU相关的操作的封装(信号处理, 系统调用, 寄存器操作, 原子操作等), CGO.
 
 #### 128.Internet常用协议,如HTTP,TCP/IP.
 
-#### 129. 熟悉CAP ,Quorum, Consistent Hashing 等原理和算法.
+#### 129. 对CAP ,Quorum, Consistent Hashing 等原理和算法熟悉吗?
+
+
 
 #### Golang面试参考
 
