@@ -4907,10 +4907,20 @@ Go中的内存分类并不像TCMalloc那样分成小、中、大对象，但是�
 Go在程序启动的时候，会先向操作系统申请一块内存（注意这时还只是一段虚拟的地址空间，并不会真正地分配内存），切成小块后自己进行管理。
 
 申请到的内存块被分配了三个区域，在X64上分别是512MB，16GB，512GB大小。
+<p align="center">
+<img width="300" align="center" src="../images/134.jpg" />
+</p>
+
 
 arena区域就是我们所谓的堆区，Go动态分配的内存都是在这个区域，它把内存分割成8KB大小的页，一些页组合起来称为mspan。
 bitmap区域标识arena区域哪些地址保存了对象，并且用4bit标志位表示对象是否包含指针、GC标记信息。bitmap中一个byte大小的内存对应arena区域中4个指针大小（指针大小为 8B ）的内存，所以bitmap区域的大小是512GB/(4*8B)=16GB。
+<p align="center">
+<img width="300" align="center" src="../images/135.jpg" />
+</p>
 
+<p align="center">
+<img width="300" align="center" src="../images/136.jpg" />
+</p>
 
 还可以看到bitmap的高地址部分指向arena区域的低地址部分，也就是说bitmap的地址是由高地址向低地址增长的。
 spans区域存放mspan（也就是一些arena分割的页组合起来的内存管理基本单元，后文会再讲）的指针，每个指针对应一页，所以spans区域的大小就是512GB/8KB*8B=512MB。除以8KB是计算arena区域的页数，而最后乘以8是计算spans区域所有指针的大小。创建mspan的时候，按页填充对应的spans区域，在回收object时，根据地址很容易就能找到它所属的mspan。
