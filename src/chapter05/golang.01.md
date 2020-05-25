@@ -4952,13 +4952,13 @@ spans区域存放mspan（也就是一些arena分割的页组合起来的内存�
 堆内存管理中主要是三部分, 1.分配内存块，2.回收内存块, 3.组织内存块。
 
 <p align="center">
-<img width="300" align="center" src="../images/131.jpg" />
+<img width="500" align="center" src="../images/131.jpg" />
 </p>
 
 一个内存块包含了3类信息，如下图所示，元数据、用户数据和对齐字段，内存对齐是为了提高访问效率。下图申请5Byte内存的时候，就需要进行内存对齐。
 
 <p align="center">
-<img width="300" align="center" src="../images/132.jpg" />
+<img width="500" align="center" src="../images/132.jpg" />
 </p>
 
 释放内存实质是把使用的内存块从链表中取出来，然后标记为未使用，当分配内存块的时候，可以从未使用内存块中有先查找大小相近的内存块，如果找不到，再从未分配的内存中分配内存。
