@@ -4759,8 +4759,6 @@ func isValid(root *TreeNode, min, max int) bool {
 
 
 * GC是怎样的?
-
-* Go GC什么时候开始?
 * Go GC啥时候结束?
 * Go GC会不会太慢, 跟不上内存分配的速度?
 * Go GC会不会暂停我们的应用? 暂停多久? 影不影响我的请求?
@@ -5058,6 +5056,9 @@ func main() {
 	}
 }
 ```
+
+
+#### 135. Go GC什么时候开始?
 
 
 #### Golang面试参考
