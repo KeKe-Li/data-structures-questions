@@ -4984,7 +4984,11 @@ spans区域存放mspan（是一些arena分割的页组合起来的内存管理�
 #### 127. 操作系统及CPU相关的操作的封装(信号处理, 系统调用, 寄存器操作, 原子操作等), CGO.
 
 
-#### 128. Internet常用协议,如HTTP协议、TCP/IP协议、UDP协议、Socket、Socket长连接、Socket连接池的区别
+#### 128. Internet常用协议,如HTTP协议、TCP/IP协议、UDP协议、Socket之间的区别?
+
+TPC/IP协议是传输层协议，主要解决数据如何在网络中传输，而HTTP是应用层协议，主要解决如何包装数据。而Socket则是对TCP/IP协议的封装和应用(面向开发者)。TCP/IP只是一个协议栈，就像操作系统的运行机制一样，必须要具体实现，同时还要提供对外的操作接口。就像操作系统会提供标准的编程接口，比如Win32编程接口一样，TCP/IP也必须对外提供编程接口，这就是Socket。现在我们知道，Socket跟TCP/IP并没有必然的联系。Socket编程接口在设计的时候，就希望也能适应其他的网络协议。所以，Socket的出现只是可以更方便的使用TCP/IP协议栈而已，其对TCP/IP进行了抽象，形成了几个最基本的函数接口。比如Create，Listen，Accept，Connect，Read和Write等等。
+
+
 
 
 #### 129. 对CAP ,Quorum, Consistent Hashing 等原理和算法熟悉吗?
@@ -5047,7 +5051,9 @@ GC，全称 GarbageCollection，即垃圾回收，是一种自动内存管理的
 Goroutine 作为一种逻辑上理解的轻量级线程，需要维护执行用户代码的上下文信息。在运行过程中也需要消耗一定的内存来保存这类信息，而这些内存在目前版本的 Go 中是不会被释放的。
 
 因此，如果一个程序持续不断地产生新的 goroutine、且不结束已经创建的 goroutine 并复用这部分内存，就会造成内存泄漏的现象.
+
 例如:
+
 ```go
 func main() {
 	for i := 0; i < 10000; i++ {
