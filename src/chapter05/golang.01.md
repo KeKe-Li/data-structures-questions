@@ -68,9 +68,9 @@ Golang的CSP并发模型，是通过Goroutine和Channel来实现的。
 Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。
 Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通常Channel，是各个Goroutine之间通信的”管道“，有点类似于Linux中的管道。
 
-通信机制channel也很方便，传数据用channel <- data，取数据用<-channel。
+通信机制channel也很方便，传数据用`channel <- data`，取数据用`<-channel`。
 
-在通信过程中，传数据channel <- data和取数据<-channel必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。
+在通信过程中，传数据`channel <- data`和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。
 
 而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。
 
@@ -101,7 +101,7 @@ func main() {
 }
 ```
 
-当主 goroutine 运行到 <-ch 接受 channel 的值的时候，如果该  channel 中没有数据，就会一直阻塞等待，直到有值。 这样就可以简单实现并发控制
+当主 goroutine 运行到 `<-ch` 接受 channel 的值的时候，如果该  channel 中没有数据，就会一直阻塞等待，直到有值。 这样就可以简单实现并发控制
 
 * 通过sync包中的WaitGroup实现并发控制
 
@@ -164,7 +164,7 @@ main.main()
         /home/keke/go/Test/wait.go:17 +0xab
 exit status 2
 ```
-它提示所有的 goroutine 都已经睡眠了，出现了死锁。这是因为 wg 给拷贝传递到了  goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。
+它提示所有的 goroutine 都已经睡眠了，出现了死锁。这是因为 wg 给拷贝传递到了 goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。
 
 因此 Wait 就会死锁。
 
