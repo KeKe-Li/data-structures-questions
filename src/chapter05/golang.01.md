@@ -5083,7 +5083,14 @@ func main() {
 
 * 建立连接（Initial connection）：HTTP 是基于 TCP 协议的，浏览器最快也要在第三次握手时才能捎带 HTTP 请求报文，达到真正的建立连接，但是这些连接无法复用会导致每次请求都经历三次握手和慢启动。三次握手在高延迟的场景下影响较明显，慢启动则对文件类大请求影响较大。
 
-然而,HTTP2.0和HTTP1相比的新特性包括:
+然而,HTTP2并不是对HTTP1协议的重写，相对于HTTP1，HTTP2 的侧重点主要在性能。其中请求方法，状态码和语义和HTTP1都是相同的，可以使用与 HTTP1相同的 API（可能有一些小的添加）来表示协议。
+
+HTTP2 主要有两个规范组成:
+
+* `Hypertext Transfer Protocol version 2` (超文本传输协议版本 2)
+* `HPACK - HTTP2` 的头压缩 （HPACK 是一种头部压缩算法）
+
+HTTP2.0和HTTP1相比的新特性包括:
 
 * 新的二进制格式（Binary Format） 
 
