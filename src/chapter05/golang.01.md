@@ -111,8 +111,7 @@ Goroutine是异步执行的，有的时候为了防止在结束main函数的时�
 * Done, 相当于Add(-1).
 * Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0.
 
-在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。
-在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回返回。
+在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回返回。
 
 ```go
 func main(){
@@ -172,7 +171,7 @@ exit status 2
 
 这个第二个修改方式:将匿名函数中的 wg 的传入参数去掉，因为Go支持闭包类型，在匿名函数中可以直接使用外面的 wg 变量
 
-* 在Go 1.7 以后引进的强大的Context上下文，实现并发控制
+* 在Go 1.7 以后引进的强大的Context上下文，实现并发控制.
 
 通常,在一些简单场景下使用 channel 和 WaitGroup 已经足够了，但是当面临一些复杂多变的网络并发场景下 channel 和 WaitGroup 显得有些力不从心了。
 比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine，比如数据库和RPC服务。
