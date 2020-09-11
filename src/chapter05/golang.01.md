@@ -5147,6 +5147,9 @@ Grpc的设计目标是在任何环境下运行，支持可插拔的负载均衡�
 
 #### 141. redis的哨兵和集群模式有什么区别?
 
+#### 142. Go中Grpc是如何传输的?
+
+
 #### Golang面试参考
 
 * [Golang面试](http://m.nowcoder.com/discuss/145338?type=2&order=0&pos=6&page=1&headNav=www&from=singlemessage&isappinstalled=0)
