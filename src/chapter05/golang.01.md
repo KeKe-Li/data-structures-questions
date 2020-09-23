@@ -44,9 +44,9 @@ Golang内部有三个对象： P对象(processor) 代表上下文（或者可以
 
 G（Goroutine） ：我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息.
 
-M（Machine） ：对内核级线程的封装，数量对应真实的CPU数（真正干活的对象）.
+M（Machine） ：对Os内核级线程的封装，数量对应真实的CPU数（真正干活的对象）.
 
-P（Processor） ：即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过GOMAXPROCS()来设置，默认为核心数.
+P（Processor） ：逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过GOMAXPROCS()来设置，默认为核心数.
 
 在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。
 
@@ -484,9 +484,9 @@ groutine能拥有强大的并发实现是通过GPM调度模型实现.
 
 Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
 
-* M:M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
-* G:代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
-* P:P全称是Processor，处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
+* M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
+* G: 代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
+* P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
 * Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等。
  
 调度实现:
