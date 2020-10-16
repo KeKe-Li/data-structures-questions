@@ -687,6 +687,7 @@ INSERT INTO method_lock (method_name, desc) VALUES ('methodName', '测试的meth
 因为我们对method_name做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。
 
 成功插入则获取锁，执行完成后删除对应的行数据释放锁：
+
 ```sql
 delete from method_lock where method_name ='methodName';
 ```
