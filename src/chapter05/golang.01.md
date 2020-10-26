@@ -766,6 +766,7 @@ A highly-available key value store for shared configuration and service discover
 * 控制时序，即所有想要获得锁的用户都会被安排执行，但是获得锁的顺序也是全局唯一的，同时决定了执行顺序。etcd 为此也提供了一套 API（自动创建有序键），对一个目录建值时指定为POST动作，这样 etcd 会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用 API 按顺序列出所有当前目录下的键值。此时这些键的值就是客户端的时序，而这些键中存储的值可以是代表客户端的编号。
 
 在这里etcd实现分布式锁基本实现原理为：
+
 1. 在etcd系统里创建一个key
 2. 如果创建失败，key存在，则监听该key的变化事件，直到该key被删除，回到1
 3. 如果创建成功，则认为我获得了锁
@@ -1350,7 +1351,9 @@ type RWMutex struct {
    readerWait  int32  // number of departing readers
 }
 ```
+
 sync中的RWMutex有以下几种方法：
+
 ```go
 //对读操作的锁定
 func (rw *RWMutex) RLock()
@@ -1364,6 +1367,7 @@ func (rw *RWMutex) Unlock()
 //返回一个实现了sync.Locker接口类型的值，实际上是回调rw.RLock and rw.RUnlock.
 func (rw *RWMutex) RLocker() Locker
 ```
+
 Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
 
 由于读写锁控制下的多个读操作之间不是互斥的，因此对于读解锁更容易被忽视。对于同一个读写锁，添加多少个读锁定，就必要有等量的读解锁，这样才能其他协程有机会进行操作。
@@ -1463,6 +1467,7 @@ func main() {
     })
 }
 ```
+
 运行 :
 ```go
 a
@@ -1471,6 +1476,7 @@ c
 1:a
 2:c
 ```
+
 sync.Map的数据结构:
 ```go
  type Map struct {
@@ -1484,6 +1490,7 @@ sync.Map的数据结构:
     misses int
 }
 ```
+
 
 read的数据结构是：
 ```go
@@ -1501,6 +1508,7 @@ type entry struct {
     p unsafe.Pointer // *interface{}
 }
 ```
+
 Delete 方法:
 ```go
 func (m *Map) Delete(key interface{}) {
