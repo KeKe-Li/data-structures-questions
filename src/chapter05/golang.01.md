@@ -113,7 +113,7 @@ Goroutine是异步执行的，有的时候为了防止在结束main函数的时�
 * Done, 相当于Add(-1).
 * Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0.
 
-在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回返回。
+在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回。
 
 ```go
 func main(){
@@ -171,7 +171,7 @@ exit status 2
 
 这个第一个修改方式:将匿名函数中 wg 的传入类型改为 *sync.WaitGrou,这样就能引用到正确的WaitGroup了。
 
-这个第二个修改方式:将匿名函数中的 wg 的传入参数去掉，因为Go支持闭包类型，在匿名函数中可以直接使用外面的 wg 变量
+这个第二个修改方式:将匿名函数中的 wg 的传入参数去掉，因为Go支持闭包类型，在匿名函数中可以直接使用外面的 wg 变量.
 
 * 在Go 1.7 以后引进的强大的Context上下文，实现并发控制.
 
@@ -766,6 +766,7 @@ A highly-available key value store for shared configuration and service discover
 * 控制时序，即所有想要获得锁的用户都会被安排执行，但是获得锁的顺序也是全局唯一的，同时决定了执行顺序。etcd 为此也提供了一套 API（自动创建有序键），对一个目录建值时指定为POST动作，这样 etcd 会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用 API 按顺序列出所有当前目录下的键值。此时这些键的值就是客户端的时序，而这些键中存储的值可以是代表客户端的编号。
 
 在这里etcd实现分布式锁基本实现原理为：
+
 1. 在etcd系统里创建一个key
 2. 如果创建失败，key存在，则监听该key的变化事件，直到该key被删除，回到1
 3. 如果创建成功，则认为我获得了锁
@@ -1350,7 +1351,9 @@ type RWMutex struct {
    readerWait  int32  // number of departing readers
 }
 ```
+
 sync中的RWMutex有以下几种方法：
+
 ```go
 //对读操作的锁定
 func (rw *RWMutex) RLock()
@@ -1364,6 +1367,7 @@ func (rw *RWMutex) Unlock()
 //返回一个实现了sync.Locker接口类型的值，实际上是回调rw.RLock and rw.RUnlock.
 func (rw *RWMutex) RLocker() Locker
 ```
+
 Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
 
 由于读写锁控制下的多个读操作之间不是互斥的，因此对于读解锁更容易被忽视。对于同一个读写锁，添加多少个读锁定，就必要有等量的读解锁，这样才能其他协程有机会进行操作。
@@ -1463,6 +1467,7 @@ func main() {
     })
 }
 ```
+
 运行 :
 ```go
 a
@@ -1471,6 +1476,7 @@ c
 1:a
 2:c
 ```
+
 sync.Map的数据结构:
 ```go
  type Map struct {
@@ -1484,6 +1490,7 @@ sync.Map的数据结构:
     misses int
 }
 ```
+
 
 read的数据结构是：
 ```go
@@ -1501,6 +1508,7 @@ type entry struct {
     p unsafe.Pointer // *interface{}
 }
 ```
+
 Delete 方法:
 ```go
 func (m *Map) Delete(key interface{}) {
@@ -1942,9 +1950,10 @@ CP中采用滑动窗口来进行传输控制，滑动窗口的大小意味着接
 
 弹性伸缩（Auto Scaling）根据您的业务需求和伸缩策略，为您自动调整计算资源。您可设置定时、周期或监控策略，恰到好处地增加或减少CVM实例，并完成实例配置，保证业务平稳健康运行。在需求高峰期时，弹性伸缩自动增加CVM实例的数量，以保证性能不受影响；当需求较低时，则会减少CVM实例数量以降低成本。弹性伸缩既适合需求稳定的应用程序，同时也适合每天、每周、每月使用量不停波动的应用程序。
 
-#### 34. 让你设计一个web框架，你要怎么设计，说一下步骤.
+#### 34. 让你设计一个web框架，你要怎么设计，说一下步骤
 
-#### 35. 说一下中间件原理.
+#### 35. 说一下中间件原理
+
 中间件（middleware）是基础软件的一大类，属于可复用软件的范畴。中间件处于操作系统软件与用户的应用软件的中间。中间件在操作系统、网络和数据库之上，应用软件的下层，总的作用是为处于自己上层的应用软件提供运行与开发的环境，帮助用户灵活、高效地开发和集成复杂的应用软件 
 IDC的定义是：中间件是一种独立的系统软件或服务程序，分布式应用软件借助这种软件在不同的技术之间共享资源，中间件位于客户机服务器的操作系统之上，管理计算资源和网络通信。
 
@@ -2966,13 +2975,68 @@ func call() {
 
 有没有得出结果？例1的答案不是 0，例2的答案不是 10，例3的答案也不是 6。
 
+defer是在return之前执行的。这个在[官方文档](https://golang.org/ref/spec#defer_statements)中是明确说明了的。要使用defer时不踩坑，最重要的一点就是要明白，`return xxx`这一条语句并不是一条原子指令!
+
+```markdown
+函数返回的过程是这样的：先给返回值赋值，然后调用defer表达式，最后才是返回到调用函数中。
+
+defer表达式可能会在设置函数返回值之后，在返回到调用函数之前，修改返回值，使最终的函数返回值与你想象的不一致。
+
+其实使用defer时，用一个简单的转换规则改写一下，就不会迷糊了。改写规则是将return语句拆成两句写，return xxx会被改写成:
+
+返回值 = xxx
+调用defer函数
+空的return
+```
+
 f1: 比较简单，参考结论2，将 0 赋给 result，defer 延迟函数修改 result，最后返回给调用函数。正确答案是 1。
+
+f1可以修改成长这样的:
+```go
+func f() (result int) {
+     result = 0  // return语句不是一条原子调用，return xxx其实是赋值＋ret指令
+     func() { // defer被插入到return之前执行，也就是赋返回值和ret指令之间
+         result++
+     }()
+     return
+}
+```
+所以这个返回值是1。
+
 
 f2: defer 是在 t 赋值给 r 之后执行的，而 defer 延迟函数只改变了 t 的值，r 不变。正确答案 5。
 
+f2可以修改成这样的:
+```go
+func f() (r int) {
+     t := 5
+     r = t // 赋值指令
+     func() {        // defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过
+         t = t + 5
+     }
+     return        // 空的return指令
+}
+```
+所以这个的结果是5。
+
 f3: 这里将 r 作为参数传入了 defer 表达式。故 func (r int) 中的 r 非 func f() (r int) 中的 r，只是参数命名相同而已。正确答案 1。
 
+f3可以修改成这样的:
+```go
+func f() (r int) {
+     r = 1  // 给返回值赋值
+     func(r int) {        // 这里改的r是传值传进去的r，不会改变要返回的那个r值
+          r = r + 5
+     }(r)
+     return        // 空的return
+}
+
+```
+所以这个例子的结果是1。
+
 f4: 这里将发生 panic。将方法传给 deferExec，实际上在传的过程中对方法求了值。而此时的 t 任然为 nil。
+
+因此, defer确实是在return之前调用的。但表现形式上却可能不像。根本原因是 `return xxx` 语句并不是一条原子指令，defer被插入到了赋值 与 ret之间，因此可能有机会改变最终的返回值。
 
 #### 55. select可以用于什么?
 
