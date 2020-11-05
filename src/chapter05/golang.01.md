@@ -5271,6 +5271,55 @@ binlog由Mysql的Server层实现,是逻辑日志,记录的是sql语句的原始�
 
 #### Golang中CAS是怎么回事?
 
+CAS算法（compare and swap）,CAS算法是一种有名的无锁算法。无锁编程，即不使用锁的情况下实现多线程之间的变量同步，也就是在没有线程被阻塞的情况下实现变量的同步，所以也叫非阻塞同步（Non-blocking Synchronization）。
+
+go中的Cas操作是借用了CPU提供的原子性指令来实现。CAS操作修改共享变量时候不需要对共享变量加锁，而是通过类似乐观锁的方式进行检查，本质还是不断的占用CPU 资源换取加锁带来的开销（比如上下文切换开销）。
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"sync/atomic"
+)
+
+var (
+	counter int32          //计数器
+	wg      sync.WaitGroup //信号量
+)
+
+func main() {
+	threadNum := 5
+	wg.Add(threadNum)
+	for i := 0; i < threadNum; i++ {
+		go incCounter(i)
+	}
+	wg.Wait()
+}
+
+func incCounter(index int) {
+	defer wg.Done()
+
+	spinNum := 0
+	for {
+		// 原子操作
+		old := counter
+		ok := atomic.CompareAndSwapInt32(&counter, old, old+1)
+		if ok {
+			break
+		} else {
+			spinNum++
+		}
+	}
+	fmt.Printf("thread,%d,spinnum,%d\n", index, spinNum)
+}
+```
+
+当主函数main首先创建了5个信号量，然后开启五个线程执行incCounter方法,incCounter内部执行, 使用cas操作递增counter的值，atomic.CompareAndSwapInt32具有三个参数，第一个是变量的地址，第二个是变量当前值，第三个是要修改变量为多少，该函数如果发现传递的old值等于当前变量的值，则使用第三个变量替换变量的值并返回true，否则返回false。
+
+这里之所以使用无限循环是因为在高并发下每个线程执行CAS并不是每次都成功，失败了的线程需要重写获取变量当前的值，然后重新执行CAS操作。读者可以把线程数改为10000或者更多会发现输出thread,5329,spinnum,1其中1说明该线程尝试了两个CAS操作，第二次才成功。
+
+
 #### Go GC会不会太慢, 跟不上内存分配的速度?
 
 #### Golang面试参考
