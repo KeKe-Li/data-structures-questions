@@ -5382,6 +5382,27 @@ TCP快速打开（TCP Fast Open，TFO）是对TCP的一种简化握手手续的�
 
 #### 150. Mysql联合索引最左匹配原则
 
+官方对这个解释:
+```markdown
+MySQL can create composite indexes (that is, indexes on multiple columns).
+An index may consist of up to 16 columns. For certain data types,
+you can index a prefix of the column (see
+Section 8.3.5, “Column Indexes”).
+```
+MySQL可以创建联合索引(即, 多列的索引). 一个索引可以包含最多16列. 对于 某些数据类型, 你可以索引列的前缀(这里说的是对于Blob和Text类型, 索引列的前几位就可以, 如INDEX(blob_col(10)), 详见[索引文档](https://dev.mysql.com/doc/refman/8.0/en/column-indexes.html))
+
+MySQL的联合索引可以用于包含索引中所有列的查询条件的语句, 或者包含索引中的第一列的查询条件的语句, 以及索引中前两列, 索引中的前三列, 以此类推. 如果你在索引定义中以正确的顺序指定列, 那么联合索引就可以加速同一张表中的多个不同类型的查询.
+
+一个联合索引可以看作是一个有序队列, 里面有值的列是根据连接索引列的值创建的.作为联合索引的一个替代项, 你可以采用一个Hash值列, 这个列的Hash值来自其他的列. 如果该列简短, 合理唯一, 且被索引, 那该列就可能比一个很"宽"的由多个列构成的索引 更快. 
+
+如果一个联合索引存在于col1和col2, 相应的列会被直接抓取. 如果是分为单独的索引分别存在于col1和col2, 优化器会尝试利用索引联合优化(详见8.2.1.3, "索引联合优化"),或者尝试去寻找包含最多列, 最大限制的索引, 并利用该索引去抓取列.
+
+如果创建了一个三列的联合索引包含(col1, col2, col3), 你的索引会生效于(col1),(col1, col2), 以及(col1, col2, col3).
+
+如果查询的列不是索引的最左前缀, 那MySQL不会将索引用于执行查询.
+
+如果索引存在于(col1, col2, col3), 那只有头两个查询语句用到了索引. 第三个和 第四个查询包含索引的列, 但是不会用索引去执行查询. 因为(col2)和(col2, col3) 不是(col1, col2, col3)的最左前缀.
+
 
 #### Golang面试参考
 
