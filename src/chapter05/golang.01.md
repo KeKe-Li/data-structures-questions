@@ -9,7 +9,39 @@ Golang面试问题汇总, 这里主要分为:
 |           题号               |            题目                                                                                             |
 |-----------------------------|------------------------------------------------------------------------------------------------------------|
 |           1                 |     [Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量](#Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量)         |
-|           2                 |     [无缓冲Chan的发送和接收是否同步](#无缓冲Chan的发送和接收是否同步)                                                |        
+|           2                 |     [无缓冲Chan的发送和接收是否同步](#无缓冲Chan的发送和接收是否同步)                                                 |        
+|           3                 |     [Golang并发机制以及它所使用的CSP并发模型](#Golang并发机制以及它所使用的CSP并发模型)                                |        
+|           4                 |     [Golang中常用的并发模型](#Golang中常用的并发模型)                                                            |        
+|           5                 |     [JSON标准库对nil slice和空slice的处理是一致的吗](#JSON标准库对nil slice和空slice的处理是一致的吗)                 |        
+|           6                 |     [协程和线程和进程的区别](#协程和线程和进程的区别)                                                               |        
+|           7                 |     [Golang的内存模型中为什么小对象多了会造成GC压力](#Golang的内存模型中为什么小对象多了会造成gc压力)                     |        
+|           8                 |     [Data Race问题怎么解决](#Data Race问题怎么解决)                                                             |        
+|           9                 |     [什么是channel，为什么它可以做到线程安全](#什么是channel，为什么它可以做到线程安全)                                 |        
+|           10                |     [Golang垃圾回收算法](#Golang垃圾回收算法)                                                                   |        
+|           11                |     [GC的触发条件](#GC的触发条件)                                                                              |        
+|           12                |     [Go的GPM如何调度](#Go的GPM如何调度)                                                                        |        
+|           13                |     [并发编程概念是什么](#并发编程概念是什么)                                                                     |        
+|           14                |     [Go语言的栈空间管理是怎么样的](#Go语言的栈空间管理是怎么样的)                                                    |        
+|           15                |     [Goroutine和Channel的作用分别是什么](#Goroutine和Channel的作用分别是什么)                                     |        
+|           16                |     [怎么查看Goroutine的数量](#怎么查看Goroutine的数量)                                                                              |        
+|           17                |     [Go中的锁有哪些](#Go中的锁有哪些)                                                                              |        
+|           18                |     [怎么限制Goroutine的数量](#怎么限制Goroutine的数量)                                                                              |        
+|           19                |     [Channel是同步的还是异步的](#Channel是同步的还是异步的)                                                                              |        
+|           20                |     [Goroutine和线程的区别](#Goroutine和线程的区别)                                                                              |        
+|           21                |     [Go的Struct能不能比较](#Go的Struct能不能比较)                                                                              |        
+|           22                |     [Go的defer原理是什么](#Go的defer原理是什么)                                                                              |        
+|           23                |     [Go的select可以用于什么](#Go的select可以用于什么)                                                                              |        
+|           24                |     [Go的Context包的用途是什么](#Go的Context包的用途是什么)                                                                              |        
+|           25                |     [Go主协程如何等其余协程完再操作](#Go主协程如何等其余协程完再操作)                                                                              |        
+|           26                |     [Go的Slice如何扩容](#Go的Slice如何扩容)                                                                              |        
+|           27                |     [Go中的map如何实现顺序读取](#Go中的map如何实现顺序读取)                                                                              |        
+|           28                |     [Go中CAS是怎么回事](#Go中CAS是怎么回事)                                                                              |        
+|           29                |     [Go中的逃逸分析是什么](#Go中的逃逸分析是什么)                                                                              |        
+|           30                |     [Go主协程如何等其余协程完再操作](#Go主协程如何等其余协程完再操作)                                                                              |        
+
+
+
+
 
 
 
@@ -25,15 +57,18 @@ Golang面试问题汇总, 这里主要分为:
 
 * structrues
 
+* 网络
+
+* linux
+
+* 协议
 
 
-
-
-#### Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量
+1. #### Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量
 
 Golang中Goroutine 可以通过 Channel 进行安全读写共享变量,还可以通过原子性操作进行.
 
-#### 无缓冲Chan的发送和接收是否同步
+2. #### 无缓冲Chan的发送和接收是否同步
 
 ```go
 ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需要同步.
@@ -42,7 +77,7 @@ ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步.
 * channel无缓冲时，发送阻塞直到数据被接收，接收阻塞直到读到数据。
 * channel有缓冲时，当缓冲满时发送阻塞，当缓冲空时接收阻塞。
 
-#### 3. Golang语言的并发机制以及它所使用的CSP并发模型．
+3. #### Golang并发机制以及它所使用的CSP并发模型．
 
 在计算机科学中，通信顺序过程（communicating sequential processes，CSP）是一种描述并发系统中交互模式的正式语言，它是并发数学理论家族中的一个成员，被称为过程算法（process algebras），或者说过程计算（process calculate），是基于消息的通道传递的数学理论。
 
@@ -103,7 +138,7 @@ Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通
 
 因此GPM的简要概括即为:事件循环,线程池,工作队列.
 
-#### 4. Golang中常用的并发模型?
+4. #### Golang中常用的并发模型
 
 Golang 中常用的并发模型有三种:
 
@@ -243,7 +278,7 @@ Context 对象是线程安全的，你可以把一个 Context 对象传递给任
 
 典型的场景是：父操作为子操作操作启动 goroutine，子操作也就不能取消父操作。
 
-#### 5.JSON 标准库对nil slice和 空 slice 的处理是一致的吗?　
+5. #### JSON标准库对nil slice和空slice的处理是一致的吗　
 
 首先JSON 标准库对 `nil slice` 和 空 `slice` 的处理是不一致.
 
@@ -265,7 +300,7 @@ slice := []int{}
 
 总之，`nil slice` 和 `empty slice`是不同的东西,需要我们加以区分的.
 
-#### 6. 协程，线程，进程的区别。
+6. #### 协程和线程和进程的区别
 
 * 进程
 
@@ -279,7 +314,1777 @@ slice := []int{}
 
 协程是一种用户态的轻量级线程，协程的调度完全由用户控制。协程拥有自己的寄存器上下文和栈。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈，直接操作栈则基本没有内核切换的开销，可以不加锁的访问全局变量，所以上下文的切换非常快。
 
-#### 7. 互斥锁，读写锁，死锁问题是怎么解决。
+
+7. #### Golang的内存模型中为什么小对象多了会造成GC压力
+
+通常小对象过多会导致GC三色法消耗过多的GPU。优化思路是，减少对象分配.
+
+
+8. #### Data Race问题怎么解决
+
+Data Race问题可以使用互斥锁sync.Mutex, 或者也可以通过CAS无锁并发解决.
+
+其中使用同步访问共享数据或者CAS无锁并发是处理数据竞争的一种有效的方法. 
+ 
+golang在1.1之后引入了竞争检测机制，可以使用 `go run -race` 或者 `go build -race`来进行静态检测。 
+
+其在内部的实现是,开启多个协程执行同一个命令， 并且记录下每个变量的状态.
+
+竞争检测器基于C/C++的`ThreadSanitizer`运行时库，该库在Google内部代码基地和Chromium找到许多错误。这个技术在2012年九月集成到Go中，从那时开始，它已经在标准库中检测到42个竞争条件。现在，它已经是我们持续构建过程的一部分，当竞争条件出现时，它会继续捕捉到这些错误。
+
+竞争检测器已经完全集成到Go工具链中，仅仅添加-race标志到命令行就使用了检测器。
+```go
+$ go test -race mypkg    // 测试包
+$ go run -race mysrc.go  // 编译和运行程序
+$ go build -race mycmd   // 构建程序
+$ go install -race mypkg // 安装程序
+```
+要想解决数据竞争的问题可以使用互斥锁sync.Mutex,解决数据竞争(Data race),也可以使用管道解决,使用管道的效率要比互斥锁高.
+
+9. #### 什么是channel，为什么它可以做到线程安全
+
+Channel是Go中的一个核心类型，可以把它看成一个管道，通过它并发核心单元就可以发送或者接收数据进行通讯(communication),Channel也可以理解是一个先进先出的队列，通过管道进行通信。
+
+Golang的Channel,发送一个数据到Channel 和 从Channel接收一个数据 都是 原子性的。
+
+Go的设计思想就是, 不要通过共享内存来通信，而是通过通信来共享内存，前者就是传统的加锁，后者就是Channel。
+
+也就是说，设计Channel的主要目的就是在多任务间传递数据的，本身就是安全的。
+
+10. #### Golang垃圾回收算法
+
+首先我们先来了解下垃圾回收.什么是垃圾回收？
+
+内存管理是程序员开发应用的一大难题。传统的系统级编程语言（主要指C/C++）中，程序开发者必须对内存小心的进行管理操作，控制内存的申请及释放。因为稍有不慎，就可能产生内存泄露问题，这种问题不易发现并且难以定位，一直成为困扰程序开发者的噩梦。
+
+如何解决这个头疼的问题呢？
+
+过去一般采用两种办法：
+
+* 内存泄露检测工具。这种工具的原理一般是静态代码扫描，通过扫描程序检测可能出现内存泄露的代码段。然而检测工具难免有疏漏和不足，只能起到辅助作用。
+
+* 智能指针。这是 c++ 中引入的自动内存管理方法，通过拥有自动内存管理功能的指针对象来引用对象，是程序员不用太关注内存的释放，而达到内存自动释放的目的。这种方法是采用最广泛的做法，但是对程序开发者有一定的学习成本（并非语言层面的原生支持），而且一旦有忘记使用的场景依然无法避免内存泄露。
+
+为了解决这个问题，后来开发出来的几乎所有新语言（java，python，php等等）都引入了语言层面的自动内存管理 – 也就是语言的使用者只用关注内存的申请而不必关心内存的释放，内存释放由虚拟机（virtual machine）或运行时（runtime）来自动进行管理。而这种对不再使用的内存资源进行自动回收的行为就被称为垃圾回收。
+
+常用的垃圾回收的方法:
+
+* 引用计数（reference counting）
+
+这是最简单的一种垃圾回收算法，和之前提到的智能指针异曲同工。对每个对象维护一个引用计数，当引用该对象的对象被销毁或更新时被引用对象的引用计数自动减一，当被引用对象被创建或被赋值给其他对象时引用计数自动加一。当引用计数为0时则立即回收对象。
+
+这种方法的优点是实现简单，并且内存的回收很及时。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，php，python等。
+
+但是简单引用计数算法也有明显的缺点：
+
+1. 频繁更新引用计数降低了性能。
+
+一种简单的解决方法就是编译器将相邻的引用计数更新操作合并到一次更新；还有一种方法是针对频繁发生的临时变量引用不进行计数，而是在引用达到0时通过扫描堆栈确认是否还有临时对象引用而决定是否释放。等等还有很多其他方法，具体可以参考这里。
+
+2. 循环引用。
+
+当对象间发生循环引用时引用链中的对象都无法得到释放。最明显的解决办法是避免产生循环引用，如cocoa引入了strong指针和weak指针两种指针类型。或者系统检测循环引用并主动打破循环链。当然这也增加了垃圾回收的复杂度。
+
+* 标记-清除（mark and sweep）
+
+标记-清除（mark and sweep）分为两步，标记从根变量开始迭代得遍历所有被引用的对象，对能够通过应用遍历访问到的对象都进行标记为“被引用”；标记完成后进行清除操作，对没有标记过的内存进行回收（回收同时可能伴有碎片整理操作）。这种方法解决了引用计数的不足，但是也有比较明显的问题：每次启动垃圾回收都会暂停当前所有的正常代码执行，回收时,系统响应能力大大降低 ！当然后续也出现了很多mark&sweep算法的变种（如三色标记法）优化了这个问题。
+
+* 分代搜集（generation）
+
+java的jvm 就使用的分代回收的思路。在面向对象编程语言中，绝大多数对象的生命周期都非常短。分代收集的基本思想是，将堆划分为两个或多个称为代（generation）的空间。新创建的对象存放在称为新生代（young generation）中（一般来说，新生代的大小会比 老年代小很多），随着垃圾回收的重复执行，生命周期较长的对象会被提升（promotion）到老年代中（这里用到了一个分类的思路，这个是也是科学思考的一个基本思路）。
+
+因此，新生代垃圾回收和老年代垃圾回收两种不同的垃圾回收方式应运而生，分别用于对各自空间中的对象执行垃圾回收。新生代垃圾回收的速度非常快，比老年代快几个数量级，即使新生代垃圾回收的频率更高，执行效率也仍然比老年代垃圾回收强，这是因为大多数对象的生命周期都很短，根本无需提升到老年代。
+
+Golang GC 时会发生什么?
+
+Golang 1.5后，采取的是“非分代的、非移动的、并发的、三色的”标记清除垃圾回收算法。
+
+golang 中的 gc 基本上是标记清除的过程：
+
+<p align="center">
+<img width="500" align="center" src="https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/images/2.jpg" />
+</p>
+
+golang 的垃圾回收是基于标记清扫算法，这种算法需要进行 STW（stop the world)，这个过程就会导致程序是卡顿的，频繁的 GC 会严重影响程序性能. 
+
+golang 在此基础上进行了改进，通过三色标记清扫法与写屏障来减少 STW 的时间.
+
+
+gc的过程一共分为四个阶段： 
+
+1. 栈扫描（开始时STW） 所有对象最开始都是白色.
+2. 从 root 开始找到所有可达对象，标记为灰色，放入待处理队列。
+3. 遍历灰色对象队列，将其引用对象标记为灰色放入待处理队列，自身标记为黑色。
+4. 清除（并发） 循环步骤3直到灰色队列为空为止，此时所有引用对象都被标记为黑色，所有不可达的对象依然为白色，白色的就是需要进行回收的对象。
+三色标记法相对于普通标记清扫，减少了 STW 时间. 这主要得益于标记过程是 "on-the-fly" 的，在标记过程中是不需要 STW 的，它与程序是并发执行的，这就大大缩短了STW的时间.
+
+Golang gc 优化的核心就是尽量使得 STW(Stop The World) 的时间越来越短。
+
+详细的Golang的GC介绍可以参看[Golang垃圾回收](https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/spec/02.0.md).
+
+写屏障:
+
+当标记和程序是并发执行的，这就会造成一个问题. 在标记过程中，有新的引用产生，可能会导致误清扫. 
+
+清扫开始前，标记为黑色的对象引用了一个新申请的对象，它肯定是白色的，而黑色对象不会被再次扫描，那么这个白色对象无法被扫描变成灰色、黑色，它就会最终被清扫，而实际它不应该被清扫. 
+
+这就需要用到屏障技术，golang 采用了写屏障，作用就是为了避免这类误清扫问题. 写屏障即在内存写操作前，维护一个约束，从而确保清扫开始前，黑色的对象不能引用白色对象.
+
+
+11. #### GC的触发条件
+
+Go中对 GC 的触发时机存在两种形式：
+
+* 主动触发(手动触发)，通过调用`runtime.GC` 来触发`GC`，此调用阻塞式地等待当前`GC`运行完毕。
+* 被动触发，分为两种方式：
+  a. 使用系统监控，当超过两分钟没有产生任何`GC`时，强制触发 `GC`。
+  b. 使用步调（Pacing）算法，其核心思想是控制内存增长的比例,当前内存分配达到一定比例则触发.。
+
+
+12. #### Go的GPM如何调度
+
+Goroutine协程:
+
+协程拥有自己的寄存器上下文和栈。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈。
+因此，协程能保留上一次调用时的状态（即所有局部状态的一个特定组合），每次过程重入时，就相当于进入上一次调用的状态，换种说法：进入上一次离开时所处逻辑流的位置。
+
+线程和进程的操作是由程序触发系统接口，最后的执行者是系统；协程的操作执行者则是用户自身程序，goroutine也是协程。
+
+groutine能拥有强大的并发实现是通过GPM调度模型实现.
+
+<p align="center">
+<img width="300" align="center" src="../images/59.jpg" />
+</p>
+
+Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
+
+* M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
+* G: 代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
+* P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
+* Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等。
+ 
+
+Go中的GPM调度:
+
+新创建的Goroutine会先存放在Global全局队列中，等待Go调度器进行调度，随后Goroutine被分配给其中的一个逻辑处理器P，并放到这个逻辑处理器对应的Local本地运行队列中，最终等待被逻辑处理器P执行即可。
+在M与P绑定后，M会不断从P的Local队列中无锁地取出G，并切换到G的堆栈执行，当P的Local队列中没有G时，再从Global队列中获取一个G，当Global队列中也没有待运行的G时，则尝试从其它的P窃取部分G来执行相当于P之间的负载均衡。
+
+<p align="center">
+<img width="300" align="center" src="../images/65.jpg" />
+</p>
+
+从上图中可以看到，有2个物理线程M，每一个M都拥有一个处理器P，每一个也都有一个正在运行的goroutine。P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。
+
+图中灰色的那些goroutine并没有运行，而是出于ready的就绪态，正在等待被调度。P维护着这个队列（称之为runqueue），Go语言里，启动一个goroutine很容易：go function 就行，所以每有一个go语句被执行，runqueue队列就在其末尾加入一个goroutine，在下一个调度点，就从runqueue中取出（如何决定取哪个goroutine？）一个goroutine执行。
+
+当一个OS线程M0陷入阻塞时，P转而在运行M1，图中的M1可能是正被创建，或者从线程缓存中取出。
+
+<p align="center">
+<img width="300" align="center" src="../images/60.jpg" />
+</p>
+
+当MO返回时，它必须尝试取得一个P来运行goroutine，一般情况下，它会从其他的OS线程那里拿一个P过来，
+如果没有拿到的话，它就把goroutine放在一个`global runqueue`里，然后自己睡眠（放入线程缓存里）。所有的P也会周期性的检查`global runqueue`并运行其中的goroutine，否则`global runqueue`上的goroutine永远无法执行。
+ 
+另一种情况是P所分配的任务G很快就执行完了（分配不均），这就导致了这个处理器P处于空闲的状态，但是此时其他的P还有任务，此时如果global runqueue没有任务G了，那么这个P就会从其他的P里偷取一些G来执行。
+
+<p align="center">
+<img width="500" align="center" src="../images/64.jpg" />
+</p>
+
+通常来说，如果P从其他的P那里要拿任务的话，一般就拿`run queue`的一半，这就确保了每个OS线程都能充分的使用。
+
+13. #### 并发编程概念是什么
+
+并行是指两个或者多个事件在同一时刻发生；并发是指两个或多个事件在同一时间间隔发生。
+
+并行是在不同实体上的多个事件，并发是在同一实体上的多个事件。在一台处理器上“同时”处理多个任务，在多台处理器上同时处理多个任务。如hadoop分布式集群
+
+并发偏重于多个任务交替执行，而多个任务之间有可能还是串行的。而并行是真正意义上的“同时执行”。
+
+并发编程是指在一台处理器上“同时”处理多个任务。并发是在同一实体上的多个事件。多个事件在同一时间间隔发生。并发编程的目标是充分的利用处理器的每一个核，以达到最高的处理性能。
+
+14. #### Go语言的栈空间管理是怎么样的
+
+Go语言的运行环境（runtime）会在goroutine需要的时候动态地分配栈空间，而不是给每个goroutine分配固定大小的内存空间。这样就避免了需要程序员来决定栈的大小。
+
+分块式的栈是最初Go语言组织栈的方式。当创建一个goroutine的时候，它会分配一个8KB的内存空间来给goroutine的栈使用。我们可能会考虑当这8KB的栈空间被用完的时候该怎么办? 
+
+为了处理这种情况，每个Go函数的开头都有一小段检测代码。这段代码会检查我们是否已经用完了分配的栈空间。如果是的话，它会调用`morestack`函数。`morestack`函数分配一块新的内存作为栈空间，并且在这块栈空间的底部填入各种信息（包括之前的那块栈地址）。在分配了这块新的栈空间之后，它会重试刚才造成栈空间不足的函数。这个过程叫做栈分裂（stack split）。
+
+在新分配的栈底部，还插入了一个叫做`lessstack`的函数指针。这个函数还没有被调用。这样设置是为了从刚才造成栈空间不足的那个函数返回时做准备的。当我们从那个函数返回时，它会跳转到`lessstack`。`lessstack`函数会查看在栈底部存放的数据结构里的信息，然后调整栈指针（stack pointer）。这样就完成了从新的栈块到老的栈块的跳转。接下来，新分配的这个块栈空间就可以被释放掉了。
+
+`分块式的栈`让我们能够按照需求来扩展和收缩栈的大小。 Go开发者不需要花精力去估计goroutine会用到多大的栈。创建一个新的goroutine的开销也不大。当 Go开发者不知道栈会扩展到多少大时，它也能很好的处理这种情况。
+
+这一直是之前Go语言管理栈的的方法。但这个方法有一个问题。缩减栈空间是一个开销相对较大的操作。如果在一个循环里有栈分裂，那么它的开销就变得不可忽略了。一个函数会扩展，然后分裂栈。当它返回的时候又会释放之前分配的内存块。如果这些都发生在一个循环里的话，代价是相当大的。
+这就是所谓的热分裂问题（hot split problem）。它是Go语言开发者选择新的栈管理方法的主要原因。新的方法叫做`栈复制法（stack copying）`。
+
+栈复制法一开始和分块式的栈很像。当goroutine运行并用完栈空间的时候，与之前的方法一样，栈溢出检查会被触发。但是，不像之前的方法那样分配一个新的内存块并链接到老的栈内存块，新的方法会分配一个两倍大的内存块并把老的内存块内容复制到新的内存块里。这样做意味着当栈缩减回之前大小时，我们不需要做任何事情。栈的缩减没有任何代价。而且，当栈再次扩展时，运行环境也不需要再做任何事。它可以重用之前分配的空间。
+
+栈的复制听起来很容易，但实际操作并非那么简单。存储在栈上的变量的地址可能已经被使用到。也就是说程序使用到了一些指向栈的指针。当移动栈的时候，所有指向栈里内容的指针都会变得无效。然而，指向栈内容的指针自身也必定是保存在栈上的。这是为了保证内存安全的必要条件。否则一个程序就有可能访问一段已经无效的栈空间了。
+
+因为垃圾回收的需要，我们必须知道栈的哪些部分是被用作指针了。当我们移动栈的时候，我们可以更新栈里的指针让它们指向新的地址。所有相关的指针都会被更新。我们使用了垃圾回收的信息来复制栈，但并不是任何使用栈的函数都有这些信息。因为很大一部分运行环境是用C语言写的，很多被调用的运行环境里的函数并没有指针的信息，所以也就不能够被复制了。当遇到这种情况时，我们只能退回到分块式的栈并支付相应的开销。
+
+这也是为什么现在运行环境的开发者正在用Go语言重写运行环境的大部分代码。无法用Go语言重写的部分（比如调度器的核心代码和垃圾回收器）会在特殊的栈上运行。这个特殊栈的大小由运行环境的开发者设置。
+
+这些改变除了使栈复制成为可能，它也允许我们在将来实现并行垃圾回收。
+
+另外一种不同的栈处理方式就是在虚拟内存中分配大内存段。由于物理内存只是在真正使用时才会被分配，因此看起来好似你可以分配一个大内存段并让操 作系统处理它。下面是这种方法的一些问题
+
+首先，32位系统只能支持4G字节虚拟内存，并且应用只能用到其中的3G空间。由于同时运行百万goroutines的情况并不少见，因此你很可 能用光虚拟内存，即便我们假设每个goroutine的stack只有8K。
+
+第二，然而我们可以在64位系统中分配大内存，它依赖于过量内存使用。所谓过量使用是指当你分配的内存大小超出物理内存大小时，依赖操作系统保证 在需要时能够分配出物理内存。然而，允许过量使用可能会导致一些风险。由于一些进程分配了超出机器物理内存大小的内存，如果这些进程使用更多内存 时，操作系统将不得不为它们补充分配内存。这会导致操作系统将一些内存段放入磁盘缓存，这常常会增加不可预测的处理延迟。正是考虑到这个原因，一 些新系统关闭了对过量使用的支持。
+
+15. #### Goroutine和Channel的作用分别是什么
+
+进程是内存资源管理和cpu调度的执行单元。为了有效利用多核处理器的优势，将进程进一步细分，允许一个进程里存在多个线程，这多个线程还是共享同一片内存空间，但cpu调度的最小单元变成了线程。
+
+那协程又是什么呢，以及与线程的差异性??
+
+协程，可以看作是轻量级的线程。但与线程不同的是，线程的切换是由操作系统控制的，而协程的切换则是由用户控制的。
+
+最早支持协程的程序语言应该是lisp方言scheme里的continuation（续延），续延允许scheme保存任意函数调用的现场，保存起来并重新执行。Lua,C#,python等语言也有自己的协程实现。
+
+Go中的goroutinue就是协程,可以实现并行，多个协程可以在多个处理器同时跑。而协程同一时刻只能在一个处理器上跑（可以把宿主语言想象成单线程的就好了）。
+然而,多个goroutine之间的通信是通过channel，而协程的通信是通过yield和resume()操作。
+
+goroutine非常简单，只需要在函数的调用前面加关键字go即可，例如:
+
+```go
+go elegance()
+```
+
+我们也可以启动5个goroutines分别打印索引:
+
+```go
+func main() {
+for i:=1;i<5;i++ {
+    go func(i int) {
+        fmt.Println(i)
+    }(i)
+}
+// 停歇5s，保证打印全部结束
+time.Sleep(5*time.Second)
+}
+```
+在分析goroutine执行的随机性和并发性，启动了5个goroutine，再加上main函数的主goroutine，总共有6个goroutines。由于goroutine类似于”守护线程“，异步执行的,如果主goroutine不等待片刻，可能程序就没有输出打印了。
+
+在Golang中channel则是goroutinues之间进行通信的渠道。
+
+可以把channel形象比喻为工厂里的传送带,一头的生产者goroutine往传输带放东西,另一头的消费者goroutinue则从输送带取东西。channel实际上是一个有类型的消息队列,遵循先进先出的特点。
+
+1. channel的操作符号
+
+ch <- data 表示data被发送给channel ch；
+
+data <- ch 表示从channel ch取一个值，然后赋给data。
+
+2. 阻塞式channel
+
+channel默认是没有缓冲区的，也就是说，通信是阻塞的。send操作必须等到有消费者accept才算完成。
+
+应用示例:
+```go
+func main() {
+ch1 := make(chan int)
+go pump(ch1) // pump hangs
+fmt.Println(<-ch1) // prints only 1
+}
+
+func pump(ch chan int) {
+for i:= 1; ; i++ {
+    ch <- i
+}
+}
+```
+
+在函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1。
+
+没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
+
+16. #### 怎么查看Goroutine的数量
+
+在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
+
+17. ####  Go中的锁有哪些
+
+Go中的三种锁包括:互斥锁,读写锁,sync.Map的安全的锁.
+         
+* 互斥锁
+
+Go并发程序对共享资源进行访问控制的主要手段，由标准库代码包中sync中的Mutex结构体表示。
+
+```go
+//Mutex 是互斥锁， 零值是解锁的互斥锁， 首次使用后不得复制互斥锁。
+type Mutex struct {
+state int32
+sema  uint32
+}
+```         
+       
+ sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
+          
+ ```go
+ // Locker表示可以锁定和解锁的对象。
+ type Locker interface {
+    Lock()
+    Unlock()
+ }
+ 
+ // 锁定当前的互斥量
+ // 如果锁已被使用，则调用goroutine
+ // 阻塞直到互斥锁可用。
+ func (m *Mutex) Lock() 
+ 
+ // 对当前互斥量进行解锁
+ // 如果在进入解锁时未锁定m，则为运行时错误。
+ // 锁定的互斥锁与特定的goroutine无关。
+ // 允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
+ func (m *Mutex) Unlock()
+ ```
+         
+声明一个互斥锁：     
+ ```go
+ var mutex sync.Mutex
+ ```
+ 
+ 不像C或Java的锁类工具，我们可能会犯一个错误：忘记及时解开已被锁住的锁，从而导致流程异常。但Go由于存在defer，所以此类问题出现的概率极低。关于defer解锁的方式如下：
+ ```go
+ var mutex sync.Mutex
+ func Write()  {
+    mutex.Lock()
+    defer mutex.Unlock()
+ }
+ ``` 
+         
+如果对一个已经上锁的对象再次上锁，那么就会导致该锁定操作被阻塞，直到该互斥锁回到被解锁状态.
+
+```go
+fpackage main
+
+import (
+"fmt"
+"sync"
+"time"
+)
+
+func main() {
+
+var mutex sync.Mutex
+fmt.Println("begin lock")
+mutex.Lock()
+fmt.Println("get locked")
+for i := 1; i <= 3; i++ {
+    go func(i int) {
+        fmt.Println("begin lock ", i)
+        mutex.Lock()
+        fmt.Println("get locked ", i)
+    }(i)
+}
+
+time.Sleep(time.Second)
+fmt.Println("Unlock the lock")
+mutex.Unlock()
+fmt.Println("get unlocked")
+time.Sleep(time.Second)
+}
+```
+
+我们在for循环之前开始加锁，然后在每一次循环中创建一个协程，并对其加锁，但是由于之前已经加锁了，所以这个for循环中的加锁会陷入阻塞直到main中的锁被解锁， time.Sleep(time.Second) 是为了能让系统有足够的时间运行for循环，输出结果如下：
+
+```go
+> go run mutex.go 
+begin lock
+get locked
+begin lock  3
+begin lock  1
+begin lock  2
+Unlock the lock
+get unlocked
+get locked  3
+```
+
+这里可以看到解锁后，三个协程会重新抢夺互斥锁权，最终协程3获胜。
+
+互斥锁锁定操作的逆操作并不会导致协程阻塞，但是有可能导致引发一个无法恢复的运行时的panic，比如对一个未锁定的互斥锁进行解锁时就会发生panic。避免这种情况的最有效方式就是使用defer。
+
+我们知道如果遇到panic，可以使用recover方法进行恢复，但是如果对重复解锁互斥锁引发的panic却是无用的（Go 1.8及以后）。
+```go
+package main
+
+import (
+"fmt"
+"sync"
+)
+
+func main() {
+defer func() {
+    fmt.Println("Try to recover the panic")
+    if p := recover(); p != nil {
+        fmt.Println("recover the panic : ", p)
+    }
+}()
+var mutex sync.Mutex
+fmt.Println("begin lock")
+mutex.Lock()
+fmt.Println("get locked")
+fmt.Println("unlock lock")
+mutex.Unlock()
+fmt.Println("lock is unlocked")
+fmt.Println("unlock lock again")
+mutex.Unlock()
+}
+```
+
+运行:
+
+```go
+> go run mutex.go 
+begin lock
+get locked
+unlock lock
+lock is unlocked
+unlock lock again
+fatal error: sync: unlock of unlocked mutex
+
+goroutine 1 [running]:
+runtime.throw(0x4bc1a8, 0x1e)
+     /home/keke/soft/go/src/runtime/panic.go:617 +0x72 fp=0xc000084ea8 sp=0xc000084e78 pc=0x427ba2
+sync.throw(0x4bc1a8, 0x1e)
+     /home/keke/soft/go/src/runtime/panic.go:603 +0x35 fp=0xc000084ec8 sp=0xc000084ea8 pc=0x427b25
+sync.(*Mutex).Unlock(0xc00001a0c8)
+     /home/keke/soft/go/src/sync/mutex.go:184 +0xc1 fp=0xc000084ef0 sp=0xc000084ec8 pc=0x45f821
+main.main()
+     /home/keke/go/Test/mutex.go:25 +0x25f fp=0xc000084f98 sp=0xc000084ef0 pc=0x486c1f
+runtime.main()
+     /home/keke/soft/go/src/runtime/proc.go:200 +0x20c fp=0xc000084fe0 sp=0xc000084f98 pc=0x4294ec
+runtime.goexit()
+     /home/keke/soft/go/src/runtime/asm_amd64.s:1337 +0x1 fp=0xc000084fe8 sp=0xc000084fe0 pc=0x450ad1
+exit status 2
+```
+这里试图对重复解锁引发的panic进行recover，但是我们发现操作失败，虽然互斥锁可以被多个协程共享，但还是建议将对同一个互斥锁的加锁解锁操作放在同一个层次的代码中。
+
+* 读写锁
+
+读写锁是针对读写操作的互斥锁，可以分别针对读操作与写操作进行锁定和解锁操作 。
+
+读写锁的访问控制规则如下：
+
+① 多个写操作之间是互斥的
+② 写操作与读操作之间也是互斥的
+③ 多个读操作之间不是互斥的
+
+在这样的控制规则下，读写锁可以大大降低性能损耗。
+
+在Go的标准库代码包中sync中的RWMutex结构体表示为:
+
+```go
+// RWMutex是一个读/写互斥锁，可以由任意数量的读操作或单个写操作持有。
+// RWMutex的零值是未锁定的互斥锁。
+// 首次使用后，不得复制RWMutex。
+// 如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
+// 特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
+type RWMutex struct {
+w           Mutex  //如果有待处理的写操作就持有
+writerSem   uint32 // 写操作等待读操作完成的信号量
+readerSem   uint32 //读操作等待写操作完成的信号量
+readerCount int32  // 待处理的读操作数量
+readerWait  int32  // number of departing readers
+}
+```
+
+sync中的RWMutex有以下几种方法：
+
+```go
+//对读操作的锁定
+func (rw *RWMutex) RLock()
+
+//对读操作的解锁
+func (rw *RWMutex) RUnlock()
+
+//对写操作的锁定
+func (rw *RWMutex) Lock()
+
+//对写操作的解锁
+func (rw *RWMutex) Unlock()
+
+//返回一个实现了sync.Locker接口类型的值，实际上是回调rw.RLock and rw.RUnlock.
+func (rw *RWMutex) RLocker() Locker
+```
+
+Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
+
+由于读写锁控制下的多个读操作之间不是互斥的，因此对于读解锁更容易被忽视。对于同一个读写锁，添加多少个读锁定，就必要有等量的读解锁，这样才能其他协程有机会进行操作。
+
+```go
+package main
+
+import (
+"fmt"
+"sync"
+"time"
+)
+
+func main() {
+
+var rwm sync.RWMutex
+
+for i := 0; i < 5; i++ {
+    go func(i int) {
+        fmt.Println("try to lock read ", i)
+        rwm.RLock()
+        fmt.Println("get locked ", i)
+        time.Sleep(time.Second * 2)
+        fmt.Println("try to unlock for reading ", i)
+        rwm.RUnlock()
+        fmt.Println("unlocked for reading ", i)
+    }(i)
+}
+
+time.Sleep(time.Millisecond * 1000)
+fmt.Println("try to lock for writing")
+
+rwm.Lock()
+fmt.Println("locked for writing")
+}
+```
+
+运行:
+
+```go
+> go run rwmutex.go 
+try to lock read  0
+get locked  0
+try to lock read  4
+get locked  4
+try to lock read  3
+get locked  3
+try to lock read  1
+get locked  1
+try to lock read  2
+get locked  2
+try to lock for writing
+try to unlock for reading  0
+unlocked for reading  0
+try to unlock for reading  2
+unlocked for reading  2
+try to unlock for reading  1
+unlocked for reading  1
+try to unlock for reading  3
+unlocked for reading  3
+try to unlock for reading  4
+unlocked for reading  4
+locked for writing
+```
+
+这里可以看到创建了五个协程用于对读写锁的读锁定与读解锁操作。在 rwm.Lock()种会对main中协程进行写锁定，但是for循环中的读解锁尚未完成，因此会造成main中的协程阻塞。当for循环中的读解锁操作都完成后就会试图唤醒main中阻塞的协程，main中的写锁定才会完成。
+
+* sync.Map安全锁
+
+golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
+
+应用示例:
+
+```go
+package main
+import (
+ "sync"
+ "fmt"
+)
+
+func main() {
+ //开箱即用
+ var sm sync.Map
+
+ //store 方法,添加元素
+ sm.Store(1,"a")
+
+ //Load 方法，获得value
+ if v,ok:=sm.Load(1);ok{
+     fmt.Println(v)
+ }
+
+ //LoadOrStore方法，获取或者保存
+ //参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
+ if vv,ok:=sm.LoadOrStore(1,"c");ok{
+     fmt.Println(vv)
+ }
+ if vv,ok:=sm.LoadOrStore(2,"c");!ok{
+     fmt.Println(vv)
+ }
+
+ //遍历该map，参数是个函数，该函数参的两个参数是遍历获得的key和value，返回一个bool值，当返回false时，遍历立刻结束。
+ sm.Range(func(k,v interface{})bool{
+     fmt.Print(k)
+     fmt.Print(":")
+     fmt.Print(v)
+     fmt.Println()
+     return true
+ })
+}
+```
+
+运行 :
+```go
+a
+a
+c
+1:a
+2:c
+```
+
+sync.Map的数据结构:
+```go
+type Map struct {
+ // 该锁用来保护dirty
+ mu Mutex
+ // 存读的数据，因为是atomic.value类型，只读类型，所以它的读是并发安全的
+ read atomic.Value // readOnly
+ //包含最新的写入的数据，并且在写的时候，会把read 中未被删除的数据拷贝到该dirty中，因为是普通的map存在并发安全问题，需要用到上面的mu字段。
+ dirty map[interface{}]*entry
+ // 从read读数据的时候，会将该字段+1，当等于len（dirty）的时候，会将dirty拷贝到read中（从而提升读的性能）。
+ misses int
+}
+```
+read的数据结构是：
+```go
+type readOnly struct {
+ m  map[interface{}]*entry
+ // 如果Map.dirty的数据和m 中的数据不一样是为true
+ amended bool 
+}
+```
+entry的数据结构：
+```go
+type entry struct {
+ //可见value是个指针类型，虽然read和dirty存在冗余情况（amended=false），但是由于是指针类型，存储的空间应该不是问题
+ p unsafe.Pointer // *interface{}
+}
+```
+
+Delete 方法:
+```go
+func (m *Map) Delete(key interface{}) {
+ read, _ := m.read.Load().(readOnly)
+ e, ok := read.m[key]
+ //如果read中没有，并且dirty中有新元素，那么就去dirty中去找
+ if !ok && read.amended {
+     m.mu.Lock()
+     //这是双检查（上面的if判断和锁不是一个原子性操作）
+     read, _ = m.read.Load().(readOnly)
+     e, ok = read.m[key]
+     if !ok && read.amended {
+         //直接删除
+         delete(m.dirty, key)
+     }
+     m.mu.Unlock()
+ }
+ if ok {
+ //如果read中存在该key，则将该value 赋值nil（采用标记的方式删除！）
+     e.delete()
+ }
+}
+
+func (e *entry) delete() (hadValue bool) {
+ for {
+     p := atomic.LoadPointer(&e.p)
+     if p == nil || p == expunged {
+         return false
+     }
+     if atomic.CompareAndSwapPointer(&e.p, p, nil) {
+         return true
+     }
+ }
+}
+```
+
+Store 方法:
+```go
+func (m *Map) Store(key, value interface{}) {
+ // 如果m.read存在这个key，并且没有被标记删除，则尝试更新。
+ read, _ := m.read.Load().(readOnly)
+ if e, ok := read.m[key]; ok && e.tryStore(&value) {
+     return
+ }
+ // 如果read不存在或者已经被标记删除
+ m.mu.Lock()
+ read, _ = m.read.Load().(readOnly)
+ if e, ok := read.m[key]; ok {
+ //如果entry被标记expunge，则表明dirty没有key，可添加入dirty，并更新entry
+     if e.unexpungeLocked() { 
+         //加入dirty中
+         m.dirty[key] = e
+     }
+     //更新value值
+     e.storeLocked(&value) 
+     //dirty 存在该key，更新
+ } else if e, ok := m.dirty[key]; ok { 
+     e.storeLocked(&value)
+     //read 和dirty都没有，新添加一条
+ } else {
+  //dirty中没有新的数据，往dirty中增加第一个新键
+     if !read.amended { 
+         //将read中未删除的数据加入到dirty中
+         m.dirtyLocked() 
+         m.read.Store(readOnly{m: read.m, amended: true})
+     }
+     m.dirty[key] = newEntry(value) 
+ }
+ m.mu.Unlock()
+}
+
+//将read中未删除的数据加入到dirty中
+func (m *Map) dirtyLocked() {
+ if m.dirty != nil {
+     return
+ }
+ read, _ := m.read.Load().(readOnly)
+ m.dirty = make(map[interface{}]*entry, len(read.m))
+ //read如果较大的话，可能影响性能
+ for k, e := range read.m {
+ //通过此次操作，dirty中的元素都是未被删除的，可见expunge的元素不在dirty中
+     if !e.tryExpungeLocked() {
+         m.dirty[k] = e
+     }
+ }
+}
+
+//判断entry是否被标记删除，并且将标记为nil的entry更新标记为expunge
+func (e *entry) tryExpungeLocked() (isExpunged bool) {
+ p := atomic.LoadPointer(&e.p)
+ for p == nil {
+     // 将已经删除标记为nil的数据标记为expunged
+     if atomic.CompareAndSwapPointer(&e.p, nil, expunged) {
+         return true
+     }
+     p = atomic.LoadPointer(&e.p)
+ }
+ return p == expunged
+}
+
+//对entry 尝试更新
+func (e *entry) tryStore(i *interface{}) bool {
+ p := atomic.LoadPointer(&e.p)
+ if p == expunged {
+     return false
+ }
+ for {
+     if atomic.CompareAndSwapPointer(&e.p, p, unsafe.Pointer(i)) {
+         return true
+     }
+     p = atomic.LoadPointer(&e.p)
+     if p == expunged {
+         return false
+     }
+ }
+}
+
+//read里 将标记为expunge的更新为nil
+func (e *entry) unexpungeLocked() (wasExpunged bool) {
+ return atomic.CompareAndSwapPointer(&e.p, expunged, nil)
+}
+
+//更新entry
+func (e *entry) storeLocked(i *interface{}) {
+ atomic.StorePointer(&e.p, unsafe.Pointer(i))
+}
+```
+因此，每次操作先检查read，因为read 并发安全，性能好些；read不满足，则加锁检查dirty，一旦是新的键值，dirty会被read更新。
+
+Load方法:
+
+Load方法是一个加载方法，查找key。
+```go
+func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
+ //因read只读，线程安全，先查看是否满足条件
+ read, _ := m.read.Load().(readOnly)
+ e, ok := read.m[key]
+ //如果read没有，并且dirty有新数据，那从dirty中查找，由于dirty是普通map，线程不安全，这个时候用到互斥锁了
+ if !ok && read.amended {
+     m.mu.Lock()
+     // 双重检查
+     read, _ = m.read.Load().(readOnly)
+     e, ok = read.m[key]
+     // 如果read中还是不存在，并且dirty中有新数据
+     if !ok && read.amended {
+         e, ok = m.dirty[key]
+         // mssLocked（）函数是性能是sync.Map 性能得以保证的重要函数，目的讲有锁的dirty数据，替换到只读线程安全的read里
+         m.missLocked()
+     }
+     m.mu.Unlock()
+ }
+ if !ok {
+     return nil, false
+ }
+ return e.load()
+}
+
+//dirty 提升至read 关键函数，当misses 经过多次因为load之后，大小等于len（dirty）时候，讲dirty替换到read里，以此达到性能提升。
+func (m *Map) missLocked() {
+ misses++
+ if m.misses < len(m.dirty) {
+     return
+ }
+ //原子操作，耗时很小
+ m.read.Store(readOnly{m: m.dirty})
+ m.dirty = nil
+ m.misses = 0
+}
+```
+sync.Map是通过冗余的两个数据结构(read、dirty),实现性能的提升。
+
+为了提升性能，load、delete、store等操作尽量使用只读的read；为了提高read的key击中概率，采用动态调整，将dirty数据提升为read；对于数据的删除，采用延迟标记删除法，只有在提升dirty的时候才删除。
+
+18. #### 怎么限制Goroutine的数量
+
+在Golang中，Goroutine虽然很好，但是数量太多了，往往会带来很多麻烦，比如耗尽系统资源导致程序崩溃，或者CPU使用率过高导致系统忙不过来。
+
+所以我们可以限制下Goroutine的数量,这样就需要在每一次执行go之前判断goroutine的数量，如果数量超了，就要阻塞go的执行。
+
+所以通常我们第一时间想到的就是使用通道。每次执行的go之前向通道写入值，直到通道满的时候就阻塞了，
+
+```go
+package main
+
+import "fmt"
+
+var ch chan  int
+
+func elegance(){
+	<-ch
+	fmt.Println("the ch value receive",ch)
+}
+
+func main(){
+	ch = make(chan int,5)
+	for i:=0;i<10;i++{
+		ch <-1
+		fmt.Println("the ch value send",ch)
+		go elegance()
+		fmt.Println("the result i",i)
+	}
+
+}
+```
+运行:
+```go
+> go run goroutine.go 
+the ch value send 0xc00009c000
+the result i 0
+the ch value send 0xc00009c000
+the result i 1
+the ch value send 0xc00009c000
+the result i 2
+the ch value send 0xc00009c000
+the result i 3
+the ch value send 0xc00009c000
+the result i 4
+the ch value send 0xc00009c000
+the result i 5
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 6
+the ch value receive 0xc00009c000
+the ch value send 0xc00009c000
+the result i 7
+the ch value send 0xc00009c000
+the result i 8
+the ch value send 0xc00009c000
+the result i 9
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 10
+the ch value send 0xc00009c000
+the result i 11
+the ch value send 0xc00009c000
+the result i 12
+the ch value send 0xc00009c000
+the result i 13
+the ch value send 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the ch value receive 0xc00009c000
+the result i 14
+the ch value receive 0xc00009c000
+```
+```
+> go run goroutine.go 
+the ch value send 0xc00007e000
+the result i 0
+the ch value send 0xc00007e000
+the result i 1
+the ch value send 0xc00007e000
+the result i 2
+the ch value send 0xc00007e000
+the result i 3
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 4
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 5
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 6
+the ch value send 0xc00007e000
+the result i 7
+the ch value send 0xc00007e000
+the ch value receive 0xc00007e000
+the ch value receive 0xc00007e000
+the ch value receive 0xc00007e000
+the result i 8
+the ch value send 0xc00007e000
+the result i 9
+```
+这样每次同时运行的goroutine就被限制为5个了。但是新的问题于是就出现了，因为并不是所有的goroutine都执行完了，在main函数退出之后，还有一些goroutine没有执行完就被强制结束了。这个时候我们就需要用到sync.WaitGroup。使用WaitGroup等待所有的goroutine退出。
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+	"sync"
+	"time"
+)
+
+// Pool Goroutine Pool
+type Pool struct {
+	queue chan int
+	wg *sync.WaitGroup
+}
+
+// New 新建一个协程池
+func NewPool(size int) *Pool{
+	if size <=0{
+		size = 1
+	}
+	return &Pool{
+		queue:make(chan int,size),
+		wg:&sync.WaitGroup{},
+	}
+}
+
+// Add 新增一个执行
+func (p *Pool)Add(delta int){
+	// delta为正数就添加
+	for i :=0;i<delta;i++{
+		p.queue <-1
+	}
+	// delta为负数就减少
+	for i:=0;i>delta;i--{
+		<-p.queue
+	}
+	p.wg.Add(delta)
+}
+
+// Done 执行完成减一
+func (p *Pool) Done(){
+	<-p.queue
+	p.wg.Done()
+}
+
+// Wait 等待Goroutine执行完毕
+func (p *Pool) Wait(){
+	p.wg.Wait()
+}
+
+func main(){
+	// 这里限制5个并发
+	pool := NewPool(5)
+	fmt.Println("the NumGoroutine begin is:",runtime.NumGoroutine())
+	for i:=0;i<20;i++{
+		pool.Add(1)
+		go func(i int) {
+			time.Sleep(time.Second)
+			fmt.Println("the NumGoroutine continue is:",runtime.NumGoroutine())
+			pool.Done()
+		}(i)
+	}
+	pool.Wait()
+	fmt.Println("the NumGoroutine done is:",runtime.NumGoroutine())
+}
+```
+
+运行:
+
+```go
+the NumGoroutine begin is: 1
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 7
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 6
+the NumGoroutine continue is: 3
+the NumGoroutine continue is: 2
+the NumGoroutine done is: 1
+```
+
+其中，Go的GOMAXPROCS默认值已经设置为CPU的核数， 这里允许我们的Go程序充分使用机器的每一个CPU,最大程度的提高我们程序的并发性能。`runtime.NumGoroutine`函数在被调用后，会返回系统中的处于特定状态的Goroutine的数量。这里的特指是指`Grunnable\Gruning\Gsyscall\Gwaition`。处于这些状态的Groutine即被看做是活跃的或者说正在被调度。
+
+这里需要注意下：垃圾回收所在Groutine的状态也处于这个范围内的话，也会被纳入该计数器。
+
+19. #### Channel是同步的还是异步的
+
+Channel是异步进行的, channel存在3种状态：
+
+* nil，未初始化的状态，只进行了声明，或者手动赋值为nil
+* active，正常的channel，可读或者可写
+* closed，已关闭，千万不要误认为关闭channel后，channel的值是nil
+
+
+20. #### Goroutine和线程的区别
+
+从调度上看，goroutine的调度开销远远小于线程调度开销。
+
+OS的线程由OS内核调度，每隔几毫秒，一个硬件时钟中断发到CPU，CPU调用一个调度器内核函数。这个函数暂停当前正在运行的线程，把他的寄存器信息保存到内存中，查看线程列表并决定接下来运行哪一个线程，再从内存中恢复线程的注册表信息，最后继续执行选中的线程。这种线程切换需要一个完整的上下文切换：即保存一个线程的状态到内存，再恢复另外一个线程的状态，最后更新调度器的数据结构。某种意义上，这种操作还是很慢的。
+
+Go运行的时候包涵一个自己的调度器，这个调度器使用一个称为一个M:N调度技术，m个goroutine到n个os线程（可以用GOMAXPROCS来控制n的数量），Go的调度器不是由硬件时钟来定期触发的，而是由特定的go语言结构来触发的，他不需要切换到内核语境，所以调度一个goroutine比调度一个线程的成本低很多。
+
+从栈空间上，goroutine的栈空间更加动态灵活。
+
+每个OS的线程都有一个固定大小的栈内存，通常是2MB，栈内存用于保存在其他函数调用期间哪些正在执行或者临时暂停的函数的局部变量。这个固定的栈大小，如果对于goroutine来说，可能是一种巨大的浪费。作为对比goroutine在生命周期开始只有一个很小的栈，典型情况是2KB, 在go程序中，一次创建十万左右的goroutine也不罕见（2KB*100,000=200MB）。而且goroutine的栈不是固定大小，它可以按需增大和缩小，最大限制可以到1GB。
+
+goroutine没有一个特定的标识。
+
+在大部分支持多线程的操作系统和编程语言中，线程有一个独特的标识，通常是一个整数或者指针，这个特性可以让我们构建一个线程的局部存储，本质是一个全局的map，以线程的标识作为键，这样每个线程可以独立使用这个map存储和获取值，不受其他线程干扰。
+
+goroutine中没有可供程序员访问的标识，原因是一种纯函数的理念，不希望滥用线程局部存储导致一个不健康的超距作用，即函数的行为不仅取决于它的参数，还取决于运行它的线程标识。
+
+21. #### Go的Struct能不能比较
+
+* 相同struct类型的可以比较
+
+* 不同struct类型的不可以比较,编译都不过，类型不匹配
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    type A struct {
+        a int
+    }
+    type B struct {
+        a int
+    }
+    a := A{1}
+    //b := A{1}
+    b := B{1}
+    if a == b {
+        fmt.Println("a == b")
+    }else{
+        fmt.Println("a != b")
+    }
+} 
+
+output:
+
+> command-line-arguments [command-line-arguments.test]
+> ./.go:14:7: invalid operation: a == b (mismatched types A and B) 
+```
+
+22. #### Go的defer原理是什么
+
+什么是defer？如何理解 defer 关键字？Go 中使用 defer 的一些坑。
+
+defer 意为延迟，在 golang 中用于延迟执行一个函数。它可以帮助我们处理容易忽略的问题，如资源释放、连接关闭等。但在实际使用过程中，有一些需要注意的地方.
+
+1. 若函数中有多个 defer，其执行顺序为 先进后出，可以理解为栈。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+  for i := 0; i < 5; i++ {
+    defer fmt.Println(i)
+  }
+}
+
+```
+运行:
+
+```go
+4
+3
+2
+1
+0
+```
+2. return 会做什么呢?
+
+Go 的函数返回值是通过堆栈返回的, return 语句不是原子操作，而是被拆成了两步.
+
+* 给返回值赋值 (rval)
+* 调用 defer 表达式
+* 返回给调用函数(ret)
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(increase(1))
+}
+
+func increase(d int) (ret int) {
+  defer func() {
+    ret++
+  }()
+
+  return d
+}
+```
+运行输出:
+```go
+2
+```
+
+3. 若 defer 表达式有返回值，将会被丢弃。
+
+闭包与匿名函数.
+
+* 匿名函数：没有函数名的函数。
+* 闭包：可以使用另外一个函数作用域中的变量的函数。
+
+在实际开发中，defer 的使用经常伴随着闭包与匿名函数的使用。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    for i := 0; i < 5; i++ {
+        defer func() {
+            fmt.Println(i)
+        }()
+    }
+}
+
+```
+运行输出:
+```go
+5
+5
+5
+5
+5
+```
+之所以这样是因为,defer 表达式中的 i 是对 for 循环中 i 的引用。到最后，i 加到 5，故最后全部打印 5。
+
+如果将 i 作为参数传入 defer 表达式中，在传入最初就会进行求值保存，只是没有执行延迟函数而已。
+
+应用示例:
+
+```go
+func f1() (result int) {
+    defer func() {
+        result++
+    }()
+    return 0
+}
+```
+
+```go
+func f2() (r int) {
+    t := 5
+   defer func() {
+    t = t + 5
+   }()
+   return t
+}
+```
+
+```go
+func f3() (r int) {
+    defer func(r int) {
+        r = r + 5
+    }(r)
+    return 1
+}
+```
+
+```go
+type Test struct {
+    Max int
+}
+
+func (t *Test) Println() {
+    fmt.Println(t.Max)
+}
+
+func deferExec(f func()) {
+    f()
+}
+
+func call() {
+    var t *Test
+    defer deferExec(t.Println)
+
+    t = new(Test)
+}
+
+```
+
+有没有得出结果？例1的答案不是 0，例2的答案不是 10，例3的答案也不是 6。
+
+defer是在return之前执行的。这个在[官方文档](https://golang.org/ref/spec#defer_statements)中是明确说明了的。要使用defer时不踩坑，最重要的一点就是要明白，`return xxx`这一条语句并不是一条原子指令!
+
+```markdown
+函数返回的过程是这样的：先给返回值赋值，然后调用defer表达式，最后才是返回到调用函数中。
+
+defer表达式可能会在设置函数返回值之后，在返回到调用函数之前，修改返回值，使最终的函数返回值与你想象的不一致。
+
+其实使用defer时，用一个简单的转换规则改写一下，就不会迷糊了。改写规则是将return语句拆成两句写，return xxx会被改写成:
+
+返回值 = xxx
+调用defer函数
+空的return
+```
+
+f1: 比较简单，参考结论2，将 0 赋给 result，defer 延迟函数修改 result，最后返回给调用函数。正确答案是 1。
+
+f1可以修改成长这样的:
+```go
+func f() (result int) {
+     result = 0  // return语句不是一条原子调用，return xxx其实是赋值＋ret指令
+     func() { // defer被插入到return之前执行，也就是赋返回值和ret指令之间
+         result++
+     }()
+     return
+}
+```
+所以这个返回值是1。
+
+
+f2: defer 是在 t 赋值给 r 之后执行的，而 defer 延迟函数只改变了 t 的值，r 不变。正确答案 5。
+
+f2可以修改成这样的:
+```go
+func f() (r int) {
+     t := 5
+     r = t // 赋值指令
+     func() {        // defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过
+         t = t + 5
+     }
+     return        // 空的return指令
+}
+```
+所以这个的结果是5。
+
+f3: 这里将 r 作为参数传入了 defer 表达式。故 func (r int) 中的 r 非 func f() (r int) 中的 r，只是参数命名相同而已。正确答案 1。
+
+f3可以修改成这样的:
+```go
+func f() (r int) {
+     r = 1  // 给返回值赋值
+     func(r int) {        // 这里改的r是传值传进去的r，不会改变要返回的那个r值
+          r = r + 5
+     }(r)
+     return        // 空的return
+}
+
+```
+所以这个例子的结果是1。
+
+f4: 这里将发生 panic。将方法传给 deferExec，实际上在传的过程中对方法求了值。而此时的 t 任然为 nil。
+
+因此, defer确实是在return之前调用的。但表现形式上却可能不像。根本原因是 `return xxx` 语句并不是一条原子指令，defer被插入到了赋值 与 ret之间，因此可能有机会改变最终的返回值。
+
+
+defer关键字的实现跟go关键字很类似，不同的是它调用的是`runtime.deferproc`而不是`runtime.newproc`。
+
+在defer出现的地方，插入了指令`call runtime.deferproc`，然后在函数返回之前的地方，插入指令`call runtime.deferreturn`。
+
+普通的函数返回时，汇编代码类似:
+```go
+add xx SP
+return
+```
+如果其中包含了defer语句，则汇编代码是：
+```go 
+call runtime.deferreturn，
+add xx SP
+return
+```
+
+goroutine的控制结构中，有一张表记录defer，调用`runtime.deferproc`时会将需要defer的表达式记录在表中，而在调用`runtime.deferreturn`的时候，则会依次从defer表中出栈并执行。
+
+23. #### Go的select可以用于什么
+
+Golang 的 select 机制可以理解为是在语言层面实现了和 select, poll, epoll 相似的功能：监听多个描述符的读/写等事件，一旦某个描述符就绪（一般是读或者写事件发生了），就能够将发生的事件通知给关心的应用程序去处理该事件。 golang 的 select 机制是，监听多个channel，每一个 case 是一个事件，可以是读事件也可以是写事件，随机选择一个执行，可以设置default，它的作用是：当监听的多个事件都阻塞住会执行default的逻辑。
+
+select的源码在 (runtime/select.go)[https://github.com/golang/go/blob/master/src/runtime/select.go] ，看的时候建议是重点关注 pollorder 和 lockorder.
+
+* pollorder保存的是scase的序号，乱序是为了之后执行时的随机性。
+* lockorder保存了所有case中channel的地址，这里按照地址大小堆排了一下lockorder对应的这片连续内存。对chan排序是为了去重，保证之后对所有channel上锁时不会重复上锁。
+
+
+goroutine作为Golang并发的核心，我们不仅要关注它们的创建和管理，当然还要关注如何合理的退出这些协程，不（合理）退出不然可能会造成阻塞、panic、程序行为异常、数据结果不正确等问题。goroutine在退出方面，不像线程和进程，不能通过某种手段强制关闭它们，只能等待goroutine主动退出。
+
+goroutine的优雅退出方法有三种:
+
+1. 使用for-range退出
+
+for-range是使用频率很高的结构，常用它来遍历数据，range能够感知channel的关闭，当channel被发送数据的协程关闭时，range就会结束，接着退出for循环。
+
+它在并发中的使用场景是：当协程只从1个channel读取数据，然后进行处理，处理后协程退出。下面这个示例程序，当in通道被关闭时，协程可自动退出。
+
+```go
+go func(in <-chan int) {
+    // Using for-range to exit goroutine
+    // range has the ability to detect the close/end of a channel
+    for x := range in {
+        fmt.Printf("Process %d\n", x)
+    }
+}(in)
+```
+2. 使用select case ,ok退出
+
+for-select也是使用频率很高的结构，select提供了多路复用的能力，所以for-select可以让函数具有持续多路处理多个channel的能力。但select没有感知channel的关闭，这引出了2个问题：
+
+继续在关闭的通道上读，会读到通道传输数据类型的零值，如果是指针类型，读到nil，继续处理还会产生nil。
+继续在关闭的通道上写，将会panic。
+
+问题2可以这样解决，通道只由发送方关闭，接收方不可关闭，即某个写通道只由使用该select的协程关闭，select中就不存在继续在关闭的通道上写数据的问题。
+
+问题1可以使用,ok来检测通道的关闭，使用情况有2种。
+
+第一种：如果某个通道关闭后，需要退出协程，直接return即可。示例代码中，该协程需要从in通道读数据，还需要定时打印已经处理的数量，有2件事要做，所有不能使用for-range，需要使用for-select，当in关闭时，ok=false，我们直接返回。
+
+```go
+go func() {
+	// in for-select using ok to exit goroutine
+	for {
+		select {
+		case x, ok := <-in:
+			if !ok {
+				return
+			}
+			fmt.Printf("Process %d\n", x)
+			processedCnt++
+		case <-t.C:
+			fmt.Printf("Working, processedCnt = %d\n", processedCnt)
+		}
+	}
+}()
+```
+
+第二种：如果某个通道关闭了，不再处理该通道，而是继续处理其他case，退出是等待所有的可读通道关闭。我们需要使用select的一个特征：select不会在nil的通道上进行等待。这种情况，把只读通道设置为nil即可解决。
+
+```go
+go func() {
+	// in for-select using ok to exit goroutine
+	for {
+		select {
+		case x, ok := <-in1:
+			if !ok {
+				in1 = nil
+			}
+			// Process
+		case y, ok := <-in2:
+			if !ok {
+				in2 = nil
+			}
+			// Process
+		case <-t.C:
+			fmt.Printf("Working, processedCnt = %d\n", processedCnt)
+		}
+
+		// If both in channel are closed, goroutine exit
+		if in1 == nil && in2 == nil {
+			return
+		}
+	}
+}()
+```
+3. 使用退出通道退出
+
+使用,ok来退出使用for-select协程，解决是当读入数据的通道关闭时，没数据读时程序的正常结束。想想下面这2种场景，,ok还能适用吗？
+
+接收的协程要退出了，如果它直接退出，不告知发送协程，发送协程将阻塞。启动了一个工作协程处理数据，如何通知它退出？
+
+使用一个专门的通道，发送退出的信号，可以解决这类问题。以第2个场景为例，协程入参包含一个停止通道stopCh，当stopCh被关闭，case <-stopCh会执行，直接返回即可。
+
+当我启动了100个worker时，只要main()执行关闭stopCh，每一个worker都会都到信号，进而关闭。如果main()向stopCh发送100个数据，这种就低效了。
+
+```go
+func worker(stopCh <-chan struct{}) {
+	go func() {
+		defer fmt.Println("worker exit")
+		// Using stop channel explicit exit
+		for {
+			select {
+			case <-stopCh:
+				fmt.Println("Recv stop signal")
+				return
+			case <-t.C:
+				fmt.Println("Working .")
+			}
+		}
+	}()
+	return
+}
+```
+
+通过channel控制子goroutine的方法可以总结为：循环监听一个channel，一般来说是for循环里放一个select监听channel以达到通知子goroutine的效果。再借助Waitgroup，主进程可以等待所有协程优雅退出后再结束自己的运行，这就通过channel实现了优雅控制goroutine并发的开始和结束。
+
+因此在退出协程的时候需要注意:
+
+* 发送协程主动关闭通道，接收协程不关闭通道。使用技巧：把接收方的通道入参声明为只读，如果接收协程关闭只读协程，编译时就会报错。
+* 协程处理1个通道，并且是读时，协程优先使用for-range，因为range可以关闭通道的关闭自动退出协程。
+* ok可以处理多个读通道关闭，需要关闭当前使用for-select的协程。
+* 显式关闭通道stopCh可以处理主动通知协程退出的场景。
+
+
+24. #### Context包的用途是什么
+
+在 Go http包的Server中，每一个请求在都有一个对应的 goroutine 去处理。请求处理函数通常会启动额外的 goroutine 用来访问后端服务，比如数据库和RPC服务。用来处理一个请求的 goroutine 通常需要访问一些与请求特定的数据，比如终端用户的身份认证信息、验证相关的token、请求的截止时间。 当一个请求被取消或超时时，所有用来处理该请求的 goroutine 都应该迅速退出，然后系统才能释放这些 goroutine 占用的资源。
+
+在Google 内部，我们开发了 Context 包，专门用来简化 对于处理单个请求的多个 goroutine 之间与请求域的数据、取消信号、截止时间等相关操作，这些操作可能涉及多个 API 调用。
+
+context的数据结构是:
+```go
+// A Context carries a deadline, cancelation signal, and request-scoped values
+// across API boundaries. Its methods are safe for simultaneous use by multiple
+// goroutines.
+type Context interface {
+    // Done returns a channel that is closed when this `Context` is canceled
+    // or times out.
+    Done() <-chan struct{}
+
+    // Err indicates why this Context was canceled, after the Done channel
+    // is closed.
+    Err() error
+
+    // Deadline returns the time when this Context will be canceled, if any.
+    Deadline() (deadline time.Time, ok bool)
+
+    // Value returns the value associated with key or nil if none.
+    Value(key interface{}) interface{}
+}
+```
+
+Context中的方法:
+
+- Done会返回一个channel，当该context被取消的时候，该channel会被关闭，同时对应的使用该context的routine也应该结束并返回。
+- Context中的方法是协程安全的，这也就代表了在父routine中创建的context，可以传递给任意数量的routine并让他们同时访问。
+- Deadline会返回一个超时时间，routine获得了超时时间后，可以对某些io操作设定超时时间。
+- Value可以让routine共享一些数据，当然获得数据是协程安全的。
+
+这里需要注意一点的是在goroutine中使用context包的时候,通常我们需要在goroutine中新创建一个上下文的context,原因是:如果直接传递外部context到协层中,一个请求可能在主函数中已经结束,在goroutine中如果还没有结束的话,会直接导致goroutine中的运行的被取消.
+
+```go
+go func() {
+   _, ctx, _ := log.FromContextOrNew(context.Background(), nil)
+}()
+```
+
+context.Background函数的返回值是一个空的context，经常作为树的根结点，它一般由接收请求的第一个routine创建，不能被取消、没有值、也没有过期时间。
+
+Background函数的声明如下：
+
+```go
+// Background returns an empty Context. It is never canceled, has no deadline,
+// and has no values. Background is typically used in main, init, and tests,
+// and as the top-level `Context` for incoming requests.
+func Background() Context
+```
+WithCancel 和 WithTimeout 函数 会返回继承的 Context 对象， 这些对象可以比它们的父 Context 更早地取消。
+
+当请求处理函数返回时，与该请求关联的 Context 会被取消。 当使用多个副本发送请求时，可以使用 WithCancel取消多余的请求。 WithTimeout 在设置对后端服务器请求截止时间时非常有用。 下面是这三个函数的声明：
+```go
+// WithCancel returns a copy of parent whose Done channel is closed as soon as
+// parent.Done is closed or cancel is called.
+func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
+
+// A CancelFunc cancels a Context.
+type CancelFunc func()
+
+// WithTimeout returns a copy of parent whose Done channel is closed as soon as
+// parent.Done is closed, cancel is called, or timeout elapses. The new
+// Context's Deadline is the sooner of now+timeout and the parent's deadline, if
+// any. If the timer is still running, the cancel function releases its
+// resources.
+func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+```
+调用CancelFunc对象将撤销对应的Context对象，这样父结点的所在的环境中，获得了撤销子节点context的权利，当触发某些条件时，可以调用CancelFunc对象来终止子结点树的所有routine。在子节点的routine中，需要判断何时退出routine：
+
+```go
+select {
+    case <-cxt.Done():
+        // do some cleaning and return
+}
+```
+根据cxt.Done()判断是否结束。当顶层的Request请求处理结束，或者外部取消了这次请求，就可以cancel掉顶层context，从而使整个请求的routine树得以退出。
+
+WithDeadline和WithTimeout比WithCancel多了一个时间参数，它指示context存活的最长时间。如果超过了过期时间，会自动撤销它的子context。所以context的生命期是由父context的routine和deadline共同决定的。
+
+
+WithValue 函数能够将请求作用域的数据与 Context 对象建立关系。声明如下：
+
+```go
+type valueCtx struct {
+    Context
+    key, val interface{}
+}
+
+func WithValue(parent Context, key, val interface{}) Context {
+    if key == nil {
+        panic("nil key")
+    }
+    ......
+    return &valueCtx{parent, key, val}
+}
+
+func (c *valueCtx) Value(key interface{}) interface{} {
+    if c.key == key {
+        return c.val
+    }
+    return c.Context.Value(key)
+}
+```
+
+WithValue返回parent的一个副本，该副本保存了传入的key/value，而调用Context接口的Value(key)方法就可以得到val。注意在同一个context中设置key/value，若key相同，值会被覆盖。
+
+Context上下文数据的存储就像一个树，每个结点只存储一个key/value对。WithValue()保存一个key/value对，它将父context嵌入到新的子context，并在节点中保存了key/value数据。Value()查询key对应的value数据，会从当前context中查询，如果查不到，会递归查询父context中的数据。
+
+值得注意的是，context中的上下文数据并不是全局的，它只查询本节点及父节点们的数据，不能查询兄弟节点的数据。
+
+Context 使用原则:
+
+* 不要把Context放在结构体中，要以参数的方式传递。
+* 以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位。
+* 给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO。
+* Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递。
+* Context是线程安全的，可以放心的在多个goroutine中传递。
+
+25. #### Go主协程如何等其余协程完再操作
+
+Go提供了更简单的方法——使用`sync.WaitGroup`。`WaitGroup`，就是用来等待一组操作完成的。`WaitGroup`内部实现了一个计数器，用来记录未完成的操作个数.
+
+它提供了三个方法，`Add()`用来添加计数。`Done()`用来在操作结束时调用，使计数减一。`Wait()`用来等待所有的操作结束，即计数变为0，该函数会在计数不为0时等待，在计数为0时立即返回。
+
+应用示例:
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+
+    var wg sync.WaitGroup
+
+    wg.Add(2) // 因为有两个动作，所以增加2个计数
+    go func() {
+        fmt.Println("Goroutine 1")
+        wg.Done() // 操作完成，减少一个计数
+    }()
+
+    go func() {
+        fmt.Println("Goroutine 2")
+        wg.Done() // 操作完成，减少一个计数
+    }()
+
+    wg.Wait() // 等待，直到计数为0
+}
+```
+运行输出:
+```go
+Goroutine 2
+Goroutine 1
+```
+
+26. #### Go的Slice如何扩容
+
+slice是 Go 中的一种基本的数据结构，使用这种结构可以用来管理数据集合。但是slice本身并不是动态数据或者数组指针。slice常见的操作有 reslice、append、copy。
+
+slice自身并不是动态数组或者数组指针。它内部实现的数据结构通过指针引用底层数组，设定相关属性将数据读写操作限定在指定的区域内。slice本身是一个只读对象，其工作机制类似数组指针的一种封装。
+
+slice是对数组一个连续片段的引用，所以切片是一个引用类型（因此更类似于 C/C++ 中的数组类型，或者 Python 中的 list类型）。这个片段可以是整个数组，或者是由起始和终止索引标识的一些项的子集。
+
+这里需要注意的是，终止索引标识的项不包括在切片内。切片提供了一个与指向数组的动态窗口。
+
+slice是可以看做是一个长度可变的数组。
+
+slice数据结构如下:
+
+```go
+type slice struct {
+	array unsafe.Pointer
+	len   int
+	cap   int
+}
+```
+
+slice的结构体由3部分构成，Pointer 是指向一个数组的指针，len 代表当前切片的长度，cap 是当前切片的容量。cap 总是大于等于 len 的。
+
+通常我们在对slice进行append等操作时，可能会造成slice的自动扩容。
+
+其扩容时的大小增长规则是：
+
+* 如果切片的容量小于1024个元素，那么扩容的时候slice的cap就翻番，乘以2；一旦元素个数超过1024个元素，增长因子就变成1.25，即每次增加原来容量的四分之一。
+
+* 如果扩容之后，还没有触及原数组的容量，那么，切片中的指针指向的位置，就还是原数组，如果扩容之后，超过了原数组的容量，那么，Go就会开辟一块新的内存，把原来的值拷贝过来，这种情况丝毫不会影响到原数组。
+
+通过slice源码可以看到,append的实现只是简单的在内存中将旧slice复制给新slice.
+
+```go
+
+newcap := old.cap
+
+if newcap+newcap < cap {
+    newcap = cap
+} else {
+    for {
+        if old.len < 1024 {
+            newcap += newcap
+        } else {
+            newcap += newcap / 4
+        }
+        if newcap >= cap {
+            break
+        }
+    }
+}
+```
+
+27. #### Go中的map如何实现顺序读取
+
+Go中map如果要实现顺序读取的话,可以先把map中的key,通过sort包排序.
+
+通过sort中的排序包进行对map中的key进行排序.
+
+```go
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    var m = map[string]int{
+        "hello":         0,
+        "morning":       1,
+        "my":            2,
+        "girl":   		3,
+    }
+    var keys []string
+    for k := range m {
+        keys = append(keys, k)
+    }
+    sort.Strings(keys)
+    for _, k := range keys {
+        fmt.Println("Key:", k, "Value:", m[k])
+    }
+}
+```
+28. #### Go中CAS是怎么回事
+
+CAS算法（Compare And Swap）,是原子操作的一种, CAS算法是一种有名的无锁算法。无锁编程，即不使用锁的情况下实现多线程之间的变量同步，也就是在没有线程被阻塞的情况下实现变量的同步，所以也叫非阻塞同步（Non-blocking Synchronization）。可用于在多线程编程中实现不被打断的数据交换操作，从而避免多线程同时改写某一数据时由于执行顺序不确定性以及中断的不可预知性产生的数据不一致问题。
+
+该操作通过将内存中的值与指定数据进行比较，当数值一样时将内存中的数据替换为新的值。
+
+Go中的CAS操作是借用了CPU提供的原子性指令来实现。CAS操作修改共享变量时候不需要对共享变量加锁，而是通过类似乐观锁的方式进行检查，本质还是不断的占用CPU 资源换取加锁带来的开销（比如上下文切换开销）。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"sync/atomic"
+)
+
+var (
+	counter int32          //计数器
+	wg      sync.WaitGroup //信号量
+)
+
+func main() {
+	threadNum := 5
+	wg.Add(threadNum)
+	for i := 0; i < threadNum; i++ {
+		go incCounter(i)
+	}
+	wg.Wait()
+}
+
+func incCounter(index int) {
+	defer wg.Done()
+
+	spinNum := 0
+	for {
+		// 原子操作
+		old := counter
+		ok := atomic.CompareAndSwapInt32(&counter, old, old+1)
+		if ok {
+			break
+		} else {
+			spinNum++
+		}
+	}
+	fmt.Printf("thread,%d,spinnum,%d\n", index, spinNum)
+}
+```
+
+当主函数main首先创建了5个信号量，然后开启五个线程执行incCounter方法,incCounter内部执行, 使用cas操作递增counter的值，atomic.CompareAndSwapInt32具有三个参数，第一个是变量的地址，第二个是变量当前值，第三个是要修改变量为多少，该函数如果发现传递的old值等于当前变量的值，则使用第三个变量替换变量的值并返回true，否则返回false。
+
+这里之所以使用无限循环是因为在高并发下每个线程执行CAS并不是每次都成功，失败了的线程需要重写获取变量当前的值，然后重新执行CAS操作。读者可以把线程数改为10000或者更多就会发现输出`thread,5329,spinnum,1` 其中这个1就说明该线程尝试了两个CAS操作，第二次才成功。
+
+因此呢, go中CAS操作可以有效的减少使用锁所带来的开销，但是需要注意在高并发下这是使用cpu资源做交换的。
+
+29. #### Go中的逃逸分析是什么
+
+在Go中逃逸分析是一种确定指针动态范围的方法，可以分析在程序的哪些地方可以访问到指针。它涉及到指针分析和形状分析。当一个变量(或对象)在子程序中被分配时，一个指向变量的指针可能逃逸到其它执行线程中，或者去调用子程序。如果使用尾递归优化（通常在函数编程语言中是需要的），对象也可能逃逸到被调用的子程序中。 如果一个子程序分配一个对象并返回一个该对象的指针，该对象可能在程序中的任何一个地方被访问到——这样指针就成功“逃逸”了。如果指针存储在全局变量或者其它数据结构中，它们也可能发生逃逸，这种情况是当前程序中的指针逃逸。 逃逸分析需要确定指针所有可以存储的地方，保证指针的生命周期只在当前进程或线程中。
+
+导致内存逃逸的情况比较多，有些可能还是官方未能够实现精确的分析逃逸情况的 bug，通常来讲就是如果变量的作用域不会扩大并且其行为或者大小能够在编译的时候确定，一般情况下都是分配到栈上，否则就可能发生内存逃逸分配到堆上。
+
+内存逃逸的五种情况:
+
+1. 发送指针的指针或值包含了指针到`channel` 中，由于在编译阶段无法确定其作用域与传递的路径，所以一般都会逃逸到堆上分配。
+
+2. slices 中的值是指针的指针或包含指针字段。一个例子是类似`[]*string` 的类型。这总是导致 slice 的逃逸。即使切片的底层存储数组仍可能位于堆栈上，数据的引用也会转移到堆中。
+
+3. slice 由于 append 操作超出其容量，因此会导致 slice 重新分配。这种情况下，由于在编译时 slice 的初始大小的已知情况下，将会在栈上分配。如果 slice 的底层存储必须基于仅在运行时数据进行扩展，则它将分配在堆上。
+
+4. 调用接口类型的方法。接口类型的方法调用是动态调度,实际使用的具体实现只能在运行时确定。考虑一个接口类型为 io.Reader 的变量 r。对 r.Read(b) 的调用将导致 r 的值和字节片b的后续转义并因此分配到堆上。
+
+5. 尽管能够符合分配到栈的场景，但是其大小不能够在在编译时候确定的情况，也会分配到堆上.
+
+有效的避免上述的五种逃逸的情况,可以避免内存逃逸.
+
+30. #### 
+
+
+
+
+  ####  互斥锁，读写锁，死锁问题是怎么解决
 
 * 互斥锁
 
@@ -339,32 +2144,6 @@ f. 撤消进程
 
 可以直接撤消死锁进程或撤消代价最小的进程，直至有足够的资源可用，死锁状态.消除为止.所谓代价是指优先级、运行代价、进程的重要性和价值等。
 
-#### 8. Golang的内存模型，为什么小对象多了会造成gc压力。
-
-通常小对象过多会导致GC三色法消耗过多的GPU。优化思路是，减少对象分配.
-
-#### 9. Data Race问题怎么解决？能不能不加锁解决这个问题？
-
-同步访问共享数据是处理数据竞争的一种有效的方法. golang在1.1之后引入了竞争检测机制，可以使用 `go run -race` 或者 `go build -race`来进行静态检测。 
-其在内部的实现是,开启多个协程执行同一个命令， 并且记录下每个变量的状态.
-
-竞争检测器基于C/C++的`ThreadSanitizer`运行时库，该库在Google内部代码基地和Chromium找到许多错误。这个技术在2012年九月集成到Go中，从那时开始，它已经在标准库中检测到42个竞争条件。现在，它已经是我们持续构建过程的一部分，当竞争条件出现时，它会继续捕捉到这些错误。
-
-竞争检测器已经完全集成到Go工具链中，仅仅添加-race标志到命令行就使用了检测器。
-```go
-$ go test -race mypkg    // 测试包
-$ go run -race mysrc.go  // 编译和运行程序
-$ go build -race mycmd   // 构建程序
-$ go install -race mypkg // 安装程序
-```
-要想解决数据竞争的问题可以使用互斥锁sync.Mutex,解决数据竞争(Data race),也可以使用管道解决,使用管道的效率要比互斥锁高.
-
-#### 10. 什么是channel，为什么它可以做到线程安全？
-
-Channel是Go中的一个核心类型，可以把它看成一个管道，通过它并发核心单元就可以发送或者接收数据进行通讯(communication),Channel也可以理解是一个先进先出的队列，通过管道进行通信。
-
-Golang的Channel,发送一个数据到Channel 和 从Channel接收一个数据 都是 原子性的。而且Go的设计思想就是:不要通过共享内存来通信，而是通过通信来共享内存，前者就是传统的加锁，后者就是Channel。也就是说，设计Channel的主要目的就是在多任务间传递数据的，这当然是安全的。
-
 #### 11. Epoll原理.
 
 开发高性能网络程序时，windows开发者们言必称Iocp，linux开发者们则言必称Epoll。大家都明白Epoll是一种IO多路复用技术，可以非常高效的处理数以百万计的Socket句柄，比起以前的Select和Poll效率提高了很多。
@@ -418,142 +2197,6 @@ epoll的高效就在于，当我们调用`epoll_ctl`往里塞入百万个句柄�
 当一个socket句柄上有事件时，内核会把该句柄插入上面所说的准备就绪list链表，这时我们调用`epoll_wait`，会把准备就绪的socket拷贝到用户态内存，然后清空准备就绪list链表，最后，`epoll_wait`需要做的事情，就是检查这些socket，如果不是ET模式（就是LT模式的句柄了），并且这些socket上确实有未处理的事件时，又把该句柄放回到刚刚清空的准备就绪链表了。所以，非ET的句柄，只要它上面还有事件，epoll_wait每次都会返回。而ET模式的句柄，除非有新中断到，即使socket上的事件没有处理完，也是不会每次从epoll_wait返回的。
 
 因此epoll比select的提高实际上是一个用空间换时间思想的具体应用.对比阻塞IO的处理模型, 可以看到采用了多路复用IO之后, 程序可以自由的进行自己除了IO操作之外的工作, 只有到IO状态发生变化的时候由多路复用IO进行通知, 然后再采取相应的操作, 而不用一直阻塞等待IO状态发生变化,提高效率.
-
-#### 12. Golang GC 时会发生什么?
-
-首先我们先来了解下垃圾回收.什么是垃圾回收？
-
-内存管理是程序员开发应用的一大难题。传统的系统级编程语言（主要指C/C++）中，程序开发者必须对内存小心的进行管理操作，控制内存的申请及释放。因为稍有不慎，就可能产生内存泄露问题，这种问题不易发现并且难以定位，一直成为困扰程序开发者的噩梦。如何解决这个头疼的问题呢？
-
-过去一般采用两种办法：
-
-* 内存泄露检测工具。这种工具的原理一般是静态代码扫描，通过扫描程序检测可能出现内存泄露的代码段。然而检测工具难免有疏漏和不足，只能起到辅助作用。
-
-* 智能指针。这是 c++ 中引入的自动内存管理方法，通过拥有自动内存管理功能的指针对象来引用对象，是程序员不用太关注内存的释放，而达到内存自动释放的目的。这种方法是采用最广泛的做法，但是对程序开发者有一定的学习成本（并非语言层面的原生支持），而且一旦有忘记使用的场景依然无法避免内存泄露。
-
-为了解决这个问题，后来开发出来的几乎所有新语言（java，python，php等等）都引入了语言层面的自动内存管理 – 也就是语言的使用者只用关注内存的申请而不必关心内存的释放，内存释放由虚拟机（virtual machine）或运行时（runtime）来自动进行管理。而这种对不再使用的内存资源进行自动回收的行为就被称为垃圾回收。
-
-常用的垃圾回收的方法:
-
-* 引用计数（reference counting）
-
-这是最简单的一种垃圾回收算法，和之前提到的智能指针异曲同工。对每个对象维护一个引用计数，当引用该对象的对象被销毁或更新时被引用对象的引用计数自动减一，当被引用对象被创建或被赋值给其他对象时引用计数自动加一。当引用计数为0时则立即回收对象。
-
-这种方法的优点是实现简单，并且内存的回收很及时。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，php，python等。
-
-但是简单引用计数算法也有明显的缺点：
-
-1. 频繁更新引用计数降低了性能。
-
-一种简单的解决方法就是编译器将相邻的引用计数更新操作合并到一次更新；还有一种方法是针对频繁发生的临时变量引用不进行计数，而是在引用达到0时通过扫描堆栈确认是否还有临时对象引用而决定是否释放。等等还有很多其他方法，具体可以参考这里。
-
-2. 循环引用。
-
-当对象间发生循环引用时引用链中的对象都无法得到释放。最明显的解决办法是避免产生循环引用，如cocoa引入了strong指针和weak指针两种指针类型。或者系统检测循环引用并主动打破循环链。当然这也增加了垃圾回收的复杂度。
-
-* 标记-清除（mark and sweep）
-
-标记-清除（mark and sweep）分为两步，标记从根变量开始迭代得遍历所有被引用的对象，对能够通过应用遍历访问到的对象都进行标记为“被引用”；标记完成后进行清除操作，对没有标记过的内存进行回收（回收同时可能伴有碎片整理操作）。这种方法解决了引用计数的不足，但是也有比较明显的问题：每次启动垃圾回收都会暂停当前所有的正常代码执行，回收时,系统响应能力大大降低 ！当然后续也出现了很多mark&sweep算法的变种（如三色标记法）优化了这个问题。
-
-* 分代搜集（generation）
-
-java的jvm 就使用的分代回收的思路。在面向对象编程语言中，绝大多数对象的生命周期都非常短。分代收集的基本思想是，将堆划分为两个或多个称为代（generation）的空间。新创建的对象存放在称为新生代（young generation）中（一般来说，新生代的大小会比 老年代小很多），随着垃圾回收的重复执行，生命周期较长的对象会被提升（promotion）到老年代中（这里用到了一个分类的思路，这个是也是科学思考的一个基本思路）。
-
-因此，新生代垃圾回收和老年代垃圾回收两种不同的垃圾回收方式应运而生，分别用于对各自空间中的对象执行垃圾回收。新生代垃圾回收的速度非常快，比老年代快几个数量级，即使新生代垃圾回收的频率更高，执行效率也仍然比老年代垃圾回收强，这是因为大多数对象的生命周期都很短，根本无需提升到老年代。
-
-Golang GC 时会发生什么?
-
-Golang 1.5后，采取的是“非分代的、非移动的、并发的、三色的”标记清除垃圾回收算法。
-
-golang 中的 gc 基本上是标记清除的过程：
-
-<p align="center">
-<img width="500" align="center" src="https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/images/2.jpg" />
-</p>
-
-gc的过程一共分为四个阶段： 
-
-1. 栈扫描（开始时STW） 
-2. 第一次标记（并发） 
-3. 第二次标记（STW） 
-4. 清除（并发）
-
-整个进程空间里申请每个对象占据的内存可以视为一个图，初始状态下每个内存对象都是白色标记。 
-
-1. 先STW，做一些准备工作，比如 enable write barrier。然后取消STW，将扫描任务作为多个并发的goroutine立即入队给调度器，进而被CPU处理 
-2. 第一轮先扫描root对象，包括全局指针和 goroutine 栈上的指针，标记为灰色放入队列 
-3. 第二轮将第一步队列中的对象引用的对象置为灰色加入队列，一个对象引用的所有对象都置灰并加入队列后，这个对象才能置为黑色并从队列之中取出。循环往复，最后队列为空时，整个图剩下的白色内存空间即不可到达的对象，即没有被引用的对象； 
-4. 第三轮再次STW，将第二轮过程中新增对象申请的内存进行标记（灰色），这里使用了write barrier（写屏障）去记录
-
-Golang gc 优化的核心就是尽量使得 STW(Stop The World) 的时间越来越短。
-
-详细的Golang的GC介绍可以参看[Golang垃圾回收](https://github.com/KeKe-Li/For-learning-Go-Tutorial/blob/master/src/spec/02.0.md).
-
-#### 13. Golang 中 Goroutine 如何调度?
-
-goroutine是Golang语言中最经典的设计，也是其魅力所在，goroutine的本质是协程，是实现并行计算的核心。
-
-goroutine使用方式非常的简单，只需使用go关键字即可启动一个协程，并且它是处于异步方式运行，你不需要等它运行完成以后在执行以后的代码。
-
-```go
-go func()//通过go关键字启动一个协程来运行函数
-```
-协程:
-
-协程拥有自己的寄存器上下文和栈。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈。
-因此，协程能保留上一次调用时的状态（即所有局部状态的一个特定组合），每次过程重入时，就相当于进入上一次调用的状态，换种说法：进入上一次离开时所处逻辑流的位置。
-
-线程和进程的操作是由程序触发系统接口，最后的执行者是系统；协程的操作执行者则是用户自身程序，goroutine也是协程。
-
-groutine能拥有强大的并发实现是通过GPM调度模型实现.
-
-<p align="center">
-<img width="300" align="center" src="../images/59.jpg" />
-</p>
-
-Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
-
-* M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
-* G: 代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
-* P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
-* Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等。
- 
-调度实现:
-
-<p align="center">
-<img width="300" align="center" src="../images/65.jpg" />
-</p>
-
-从上图中可以看到，有2个物理线程M，每一个M都拥有一个处理器P，每一个也都有一个正在运行的goroutine。P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。
-
-图中灰色的那些goroutine并没有运行，而是出于ready的就绪态，正在等待被调度。P维护着这个队列（称之为runqueue），Go语言里，启动一个goroutine很容易：go function 就行，所以每有一个go语句被执行，runqueue队列就在其末尾加入一个goroutine，在下一个调度点，就从runqueue中取出（如何决定取哪个goroutine？）一个goroutine执行。
-
-当一个OS线程M0陷入阻塞时，P转而在运行M1，图中的M1可能是正被创建，或者从线程缓存中取出。
-
-<p align="center">
-<img width="300" align="center" src="../images/60.jpg" />
-</p>
-
-当MO返回时，它必须尝试取得一个P来运行goroutine，一般情况下，它会从其他的OS线程那里拿一个P过来，
-如果没有拿到的话，它就把goroutine放在一个`global runqueue`里，然后自己睡眠（放入线程缓存里）。所有的P也会周期性的检查`global runqueue`并运行其中的goroutine，否则`global runqueue`上的goroutine永远无法执行。
- 
-另一种情况是P所分配的任务G很快就执行完了（分配不均），这就导致了这个处理器P处于空闲的状态，但是此时其他的P还有任务，此时如果global runqueue没有任务G了，那么这个P就会从其他的P里偷取一些G来执行。
-
-<p align="center">
-<img width="500" align="center" src="../images/64.jpg" />
-</p>
-
-通常来说，如果P从其他的P那里要拿任务的话，一般就拿run queue的一半，这就确保了每个OS线程都能充分的使用。
-
-#### 14. 并发编程概念是什么？
-
-并行是指两个或者多个事件在同一时刻发生；并发是指两个或多个事件在同一时间间隔发生。
-
-并行是在不同实体上的多个事件，并发是在同一实体上的多个事件。在一台处理器上“同时”处理多个任务，在多台处理器上同时处理多个任务。如hadoop分布式集群
-
-并发偏重于多个任务交替执行，而多个任务之间有可能还是串行的。而并行是真正意义上的“同时执行”。
-
-并发编程是指在一台处理器上“同时”处理多个任务。并发是在同一实体上的多个事件。多个事件在同一时间间隔发生。并发编程的目标是充分的利用处理器的每一个核，以达到最高的处理性能。
 
 #### 15. 负载均衡原理是什么?
 
@@ -1098,613 +2741,8 @@ MMM提供了MySQL主主复制配置的监控、故障转移和管理的一套可
 
 国内用NDB集群的公司非常少，貌似有些银行有用。NDB集群不需要依赖第三方组件，全部都使用官方组件，能保证数据的一致性，某个数据节点挂掉，其他数据节点依然可以提供服务，管理节点需要做冗余以防挂掉。缺点是：管理和配置都很复杂，而且某些SQL语句例如join语句需要避免。
 
-#### 22. Go语言的栈空间管理是怎么样的?
 
-Go语言的运行环境（runtime）会在goroutine需要的时候动态地分配栈空间，而不是给每个goroutine分配固定大小的内存空间。这样就避免了需要程序员来决定栈的大小。
-
-分块式的栈是最初Go语言组织栈的方式。当创建一个goroutine的时候，它会分配一个8KB的内存空间来给goroutine的栈使用。我们可能会考虑当这8KB的栈空间被用完的时候该怎么办? 
-
-为了处理这种情况，每个Go函数的开头都有一小段检测代码。这段代码会检查我们是否已经用完了分配的栈空间。如果是的话，它会调用`morestack`函数。`morestack`函数分配一块新的内存作为栈空间，并且在这块栈空间的底部填入各种信息（包括之前的那块栈地址）。在分配了这块新的栈空间之后，它会重试刚才造成栈空间不足的函数。这个过程叫做栈分裂（stack split）。
-
-在新分配的栈底部，还插入了一个叫做`lessstack`的函数指针。这个函数还没有被调用。这样设置是为了从刚才造成栈空间不足的那个函数返回时做准备的。当我们从那个函数返回时，它会跳转到`lessstack`。`lessstack`函数会查看在栈底部存放的数据结构里的信息，然后调整栈指针（stack pointer）。这样就完成了从新的栈块到老的栈块的跳转。接下来，新分配的这个块栈空间就可以被释放掉了。
-
-`分块式的栈`让我们能够按照需求来扩展和收缩栈的大小。 Go开发者不需要花精力去估计goroutine会用到多大的栈。创建一个新的goroutine的开销也不大。当 Go开发者不知道栈会扩展到多少大时，它也能很好的处理这种情况。
-
-这一直是之前Go语言管理栈的的方法。但这个方法有一个问题。缩减栈空间是一个开销相对较大的操作。如果在一个循环里有栈分裂，那么它的开销就变得不可忽略了。一个函数会扩展，然后分裂栈。当它返回的时候又会释放之前分配的内存块。如果这些都发生在一个循环里的话，代价是相当大的。
-这就是所谓的热分裂问题（hot split problem）。它是Go语言开发者选择新的栈管理方法的主要原因。新的方法叫做`栈复制法（stack copying）`。
-
-栈复制法一开始和分块式的栈很像。当goroutine运行并用完栈空间的时候，与之前的方法一样，栈溢出检查会被触发。但是，不像之前的方法那样分配一个新的内存块并链接到老的栈内存块，新的方法会分配一个两倍大的内存块并把老的内存块内容复制到新的内存块里。这样做意味着当栈缩减回之前大小时，我们不需要做任何事情。栈的缩减没有任何代价。而且，当栈再次扩展时，运行环境也不需要再做任何事。它可以重用之前分配的空间。
-
-栈的复制听起来很容易，但实际操作并非那么简单。存储在栈上的变量的地址可能已经被使用到。也就是说程序使用到了一些指向栈的指针。当移动栈的时候，所有指向栈里内容的指针都会变得无效。然而，指向栈内容的指针自身也必定是保存在栈上的。这是为了保证内存安全的必要条件。否则一个程序就有可能访问一段已经无效的栈空间了。
-
-因为垃圾回收的需要，我们必须知道栈的哪些部分是被用作指针了。当我们移动栈的时候，我们可以更新栈里的指针让它们指向新的地址。所有相关的指针都会被更新。我们使用了垃圾回收的信息来复制栈，但并不是任何使用栈的函数都有这些信息。因为很大一部分运行环境是用C语言写的，很多被调用的运行环境里的函数并没有指针的信息，所以也就不能够被复制了。当遇到这种情况时，我们只能退回到分块式的栈并支付相应的开销。
-
-这也是为什么现在运行环境的开发者正在用Go语言重写运行环境的大部分代码。无法用Go语言重写的部分（比如调度器的核心代码和垃圾回收器）会在特殊的栈上运行。这个特殊栈的大小由运行环境的开发者设置。
-
-这些改变除了使栈复制成为可能，它也允许我们在将来实现并行垃圾回收。
-
-另外一种不同的栈处理方式就是在虚拟内存中分配大内存段。由于物理内存只是在真正使用时才会被分配，因此看起来好似你可以分配一个大内存段并让操 作系统处理它。下面是这种方法的一些问题
-
-首先，32位系统只能支持4G字节虚拟内存，并且应用只能用到其中的3G空间。由于同时运行百万goroutines的情况并不少见，因此你很可 能用光虚拟内存，即便我们假设每个goroutine的stack只有8K。
-
-第二，然而我们可以在64位系统中分配大内存，它依赖于过量内存使用。所谓过量使用是指当你分配的内存大小超出物理内存大小时，依赖操作系统保证 在需要时能够分配出物理内存。然而，允许过量使用可能会导致一些风险。由于一些进程分配了超出机器物理内存大小的内存，如果这些进程使用更多内存 时，操作系统将不得不为它们补充分配内存。这会导致操作系统将一些内存段放入磁盘缓存，这常常会增加不可预测的处理延迟。正是考虑到这个原因，一 些新系统关闭了对过量使用的支持。
-
-#### 23. Goroutine和Channel的作用分别是什么?
-
-进程是内存资源管理和cpu调度的执行单元。为了有效利用多核处理器的优势，将进程进一步细分，允许一个进程里存在多个线程，这多个线程还是共享同一片内存空间，但cpu调度的最小单元变成了线程。
-
-那协程又是什么呢，以及与线程的差异性??
-
-协程，可以看作是轻量级的线程。但与线程不同的是，线程的切换是由操作系统控制的，而协程的切换则是由用户控制的。
-
-最早支持协程的程序语言应该是lisp方言scheme里的continuation（续延），续延允许scheme保存任意函数调用的现场，保存起来并重新执行。Lua,C#,python等语言也有自己的协程实现。
-
-Go中的goroutinue就是协程,可以实现并行，多个协程可以在多个处理器同时跑。而协程同一时刻只能在一个处理器上跑（可以把宿主语言想象成单线程的就好了）。
-然而,多个goroutine之间的通信是通过channel，而协程的通信是通过yield和resume()操作。
-
-goroutine非常简单，只需要在函数的调用前面加关键字go即可，例如:
-```go
-go elegance()
-```
-我们也可以启动5个goroutines分别打印索引。
-```go
-func main() {
-	for i:=1;i<5;i++ {
-		go func(i int) {
-			fmt.Println(i)
-		}(i)
-	}
-	// 停歇5s，保证打印全部结束
-	time.Sleep(5*time.Second)
-}
-```
-在分析goroutine执行的随机性和并发性，启动了5个goroutine，再加上main函数的主goroutine，总共有6个goroutines。由于goroutine类似于”守护线程“，异步执行的,如果主goroutine不等待片刻，可能程序就没有输出打印了。
-
-在Golang中channel则是goroutinues之间进行通信的渠道。
-
-可以把channel形象比喻为工厂里的传送带,一头的生产者goroutine往传输带放东西,另一头的消费者goroutinue则从输送带取东西。channel实际上是一个有类型的消息队列,遵循先进先出的特点。
-
-1. channel的操作符号
-
-ch <- data 表示data被发送给channel ch；
-
-data <- ch 表示从channel ch取一个值，然后赋给data。
-
-2. 阻塞式channel
-
-channel默认是没有缓冲区的，也就是说，通信是阻塞的。send操作必须等到有消费者accept才算完成。
-
-应用示例:
-```go
-func main() {
-	ch1 := make(chan int)
-	go pump(ch1) // pump hangs
-	fmt.Println(<-ch1) // prints only 1
-}
-
-func pump(ch chan int) {
-	for i:= 1; ; i++ {
-		ch <- i
-	}
-}
-```
-
-在函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1。
-
-没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
-
-#### 24. 怎么查看Goroutine的数量?
-
-在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
-
-#### 25. 说下Go中的锁有哪些?三种锁，读写锁，互斥锁，还有map的安全的锁?
-
-Go中的三种锁包括:互斥锁,读写锁,sync.Map的安全的锁.
-
-* 互斥锁
-
-Go并发程序对共享资源进行访问控制的主要手段，由标准库代码包中sync中的Mutex结构体表示。
-
-```go
-//Mutex 是互斥锁， 零值是解锁的互斥锁， 首次使用后不得复制互斥锁。
-type Mutex struct {
-   state int32
-   sema  uint32
-}
-```
-
-sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
-```go
-// Locker表示可以锁定和解锁的对象。
-type Locker interface {
-   Lock()
-   Unlock()
-}
-
-// 锁定当前的互斥量
-// 如果锁已被使用，则调用goroutine
-// 阻塞直到互斥锁可用。
-func (m *Mutex) Lock() 
-
-// 对当前互斥量进行解锁
-// 如果在进入解锁时未锁定m，则为运行时错误。
-// 锁定的互斥锁与特定的goroutine无关。
-// 允许一个goroutine锁定Mutex然后安排另一个goroutine来解锁它。
-func (m *Mutex) Unlock()
-```
-
-声明一个互斥锁：
-```go
-var mutex sync.Mutex
-```
-
-不像C或Java的锁类工具，我们可能会犯一个错误：忘记及时解开已被锁住的锁，从而导致流程异常。但Go由于存在defer，所以此类问题出现的概率极低。关于defer解锁的方式如下：
-```go
-var mutex sync.Mutex
-func Write()  {
-   mutex.Lock()
-   defer mutex.Unlock()
-}
-```
-
-如果对一个已经上锁的对象再次上锁，那么就会导致该锁定操作被阻塞，直到该互斥锁回到被解锁状态.
-```go
-fpackage main
-
-import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-func main() {
-
-	var mutex sync.Mutex
-	fmt.Println("begin lock")
-	mutex.Lock()
-	fmt.Println("get locked")
-	for i := 1; i <= 3; i++ {
-		go func(i int) {
-			fmt.Println("begin lock ", i)
-			mutex.Lock()
-			fmt.Println("get locked ", i)
-		}(i)
-	}
-
-	time.Sleep(time.Second)
-	fmt.Println("Unlock the lock")
-	mutex.Unlock()
-	fmt.Println("get unlocked")
-	time.Sleep(time.Second)
-}
-```
-
-我们在for循环之前开始加锁，然后在每一次循环中创建一个协程，并对其加锁，但是由于之前已经加锁了，所以这个for循环中的加锁会陷入阻塞直到main中的锁被解锁， time.Sleep(time.Second) 是为了能让系统有足够的时间运行for循环，输出结果如下：
-```go
-> go run mutex.go 
-begin lock
-get locked
-begin lock  3
-begin lock  1
-begin lock  2
-Unlock the lock
-get unlocked
-get locked  3
-```
-这里可以看到解锁后，三个协程会重新抢夺互斥锁权，最终协程3获胜。
-
-互斥锁锁定操作的逆操作并不会导致协程阻塞，但是有可能导致引发一个无法恢复的运行时的panic，比如对一个未锁定的互斥锁进行解锁时就会发生panic。避免这种情况的最有效方式就是使用defer。
-
-我们知道如果遇到panic，可以使用recover方法进行恢复，但是如果对重复解锁互斥锁引发的panic却是无用的（Go 1.8及以后）。
-```go
-package main
-
-import (
-	"fmt"
-	"sync"
-)
-
-func main() {
-	defer func() {
-		fmt.Println("Try to recover the panic")
-		if p := recover(); p != nil {
-			fmt.Println("recover the panic : ", p)
-		}
-	}()
-	var mutex sync.Mutex
-	fmt.Println("begin lock")
-	mutex.Lock()
-	fmt.Println("get locked")
-	fmt.Println("unlock lock")
-	mutex.Unlock()
-	fmt.Println("lock is unlocked")
-	fmt.Println("unlock lock again")
-	mutex.Unlock()
-}
-```
-运行:
-```go
-> go run mutex.go 
-begin lock
-get locked
-unlock lock
-lock is unlocked
-unlock lock again
-fatal error: sync: unlock of unlocked mutex
-
-goroutine 1 [running]:
-runtime.throw(0x4bc1a8, 0x1e)
-        /home/keke/soft/go/src/runtime/panic.go:617 +0x72 fp=0xc000084ea8 sp=0xc000084e78 pc=0x427ba2
-sync.throw(0x4bc1a8, 0x1e)
-        /home/keke/soft/go/src/runtime/panic.go:603 +0x35 fp=0xc000084ec8 sp=0xc000084ea8 pc=0x427b25
-sync.(*Mutex).Unlock(0xc00001a0c8)
-        /home/keke/soft/go/src/sync/mutex.go:184 +0xc1 fp=0xc000084ef0 sp=0xc000084ec8 pc=0x45f821
-main.main()
-        /home/keke/go/Test/mutex.go:25 +0x25f fp=0xc000084f98 sp=0xc000084ef0 pc=0x486c1f
-runtime.main()
-        /home/keke/soft/go/src/runtime/proc.go:200 +0x20c fp=0xc000084fe0 sp=0xc000084f98 pc=0x4294ec
-runtime.goexit()
-        /home/keke/soft/go/src/runtime/asm_amd64.s:1337 +0x1 fp=0xc000084fe8 sp=0xc000084fe0 pc=0x450ad1
-exit status 2
-```
-这里试图对重复解锁引发的panic进行recover，但是我们发现操作失败，虽然互斥锁可以被多个协程共享，但还是建议将对同一个互斥锁的加锁解锁操作放在同一个层次的代码中。
-
-* 读写锁
-
-读写锁是针对读写操作的互斥锁，可以分别针对读操作与写操作进行锁定和解锁操作 。
-
-读写锁的访问控制规则如下：
-
-① 多个写操作之间是互斥的
-② 写操作与读操作之间也是互斥的
-③ 多个读操作之间不是互斥的
-
-在这样的控制规则下，读写锁可以大大降低性能损耗。
-
-在Go的标准库代码包中sync中的RWMutex结构体表示为:
-
-```go
-// RWMutex是一个读/写互斥锁，可以由任意数量的读操作或单个写操作持有。
-// RWMutex的零值是未锁定的互斥锁。
-// 首次使用后，不得复制RWMutex。
-// 如果goroutine持有RWMutex进行读取而另一个goroutine可能会调用Lock，那么在释放初始读锁之前，goroutine不应该期望能够获取读锁定。 
-// 特别是，这种禁止递归读锁定。 这是为了确保锁最终变得可用; 阻止的锁定会阻止新读操作获取锁定。
-type RWMutex struct {
-   w           Mutex  //如果有待处理的写操作就持有
-   writerSem   uint32 // 写操作等待读操作完成的信号量
-   readerSem   uint32 //读操作等待写操作完成的信号量
-   readerCount int32  // 待处理的读操作数量
-   readerWait  int32  // number of departing readers
-}
-```
-
-sync中的RWMutex有以下几种方法：
-
-```go
-//对读操作的锁定
-func (rw *RWMutex) RLock()
-//对读操作的解锁
-func (rw *RWMutex) RUnlock()
-//对写操作的锁定
-func (rw *RWMutex) Lock()
-//对写操作的解锁
-func (rw *RWMutex) Unlock()
-
-//返回一个实现了sync.Locker接口类型的值，实际上是回调rw.RLock and rw.RUnlock.
-func (rw *RWMutex) RLocker() Locker
-```
-
-Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
-
-由于读写锁控制下的多个读操作之间不是互斥的，因此对于读解锁更容易被忽视。对于同一个读写锁，添加多少个读锁定，就必要有等量的读解锁，这样才能其他协程有机会进行操作。
-
-```go
-package main
-
-import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-func main() {
-	var rwm sync.RWMutex
-	for i := 0; i < 5; i++ {
-		go func(i int) {
-			fmt.Println("try to lock read ", i)
-			rwm.RLock()
-			fmt.Println("get locked ", i)
-			time.Sleep(time.Second * 2)
-			fmt.Println("try to unlock for reading ", i)
-			rwm.RUnlock()
-			fmt.Println("unlocked for reading ", i)
-		}(i)
-	}
-	time.Sleep(time.Millisecond * 1000)
-	fmt.Println("try to lock for writing")
-	rwm.Lock()
-	fmt.Println("locked for writing")
-}
-```
-运行:
-```go
-> go run rwmutex.go 
-try to lock read  0
-get locked  0
-try to lock read  4
-get locked  4
-try to lock read  3
-get locked  3
-try to lock read  1
-get locked  1
-try to lock read  2
-get locked  2
-try to lock for writing
-try to unlock for reading  0
-unlocked for reading  0
-try to unlock for reading  2
-unlocked for reading  2
-try to unlock for reading  1
-unlocked for reading  1
-try to unlock for reading  3
-unlocked for reading  3
-try to unlock for reading  4
-unlocked for reading  4
-locked for writing
-```
-这里可以看到创建了五个协程用于对读写锁的读锁定与读解锁操作。在 rwm.Lock()种会对main中协程进行写锁定，但是for循环中的读解锁尚未完成，因此会造成main中的协程阻塞。当for循环中的读解锁操作都完成后就会试图唤醒main中阻塞的协程，main中的写锁定才会完成。
-
-* sync.Map安全锁
-
-golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
-
-应用示例:
-```go
-package main
-import (
-    "sync"
-    "fmt"
-)
-
-func main() {
-    //开箱即用
-    var sm sync.Map
-    //store 方法,添加元素
-    sm.Store(1,"a")
-    //Load 方法，获得value
-    if v,ok:=sm.Load(1);ok{
-        fmt.Println(v)
-    }
-    //LoadOrStore方法，获取或者保存
-    //参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
-    if vv,ok:=sm.LoadOrStore(1,"c");ok{
-        fmt.Println(vv)
-    }
-    if vv,ok:=sm.LoadOrStore(2,"c");!ok{
-        fmt.Println(vv)
-    }
-    //遍历该map，参数是个函数，该函数参的两个参数是遍历获得的key和value，返回一个bool值，当返回false时，遍历立刻结束。
-    sm.Range(func(k,v interface{})bool{
-        fmt.Print(k)
-        fmt.Print(":")
-        fmt.Print(v)
-        fmt.Println()
-        return true
-    })
-}
-```
-
-运行 :
-```go
-a
-a
-c
-1:a
-2:c
-```
-
-sync.Map的数据结构:
-```go
- type Map struct {
-    // 该锁用来保护dirty
-    mu Mutex
-    // 存读的数据，因为是atomic.value类型，只读类型，所以它的读是并发安全的
-    read atomic.Value // readOnly
-    //包含最新的写入的数据，并且在写的时候，会把read 中未被删除的数据拷贝到该dirty中，因为是普通的map存在并发安全问题，需要用到上面的mu字段。
-    dirty map[interface{}]*entry
-    // 从read读数据的时候，会将该字段+1，当等于len（dirty）的时候，会将dirty拷贝到read中（从而提升读的性能）。
-    misses int
-}
-```
-
-
-read的数据结构是：
-```go
-type readOnly struct {
-    m  map[interface{}]*entry
-    // 如果Map.dirty的数据和m 中的数据不一样是为true
-    amended bool 
-}
-```
-
-entry的数据结构：
-```go
-type entry struct {
-    //可见value是个指针类型，虽然read和dirty存在冗余情况（amended=false），但是由于是指针类型，存储的空间应该不是问题
-    p unsafe.Pointer // *interface{}
-}
-```
-
-Delete 方法:
-```go
-func (m *Map) Delete(key interface{}) {
-    read, _ := m.read.Load().(readOnly)
-    e, ok := read.m[key]
-    //如果read中没有，并且dirty中有新元素，那么就去dirty中去找
-    if !ok && read.amended {
-        m.mu.Lock()
-        //这是双检查（上面的if判断和锁不是一个原子性操作）
-        read, _ = m.read.Load().(readOnly)
-        e, ok = read.m[key]
-        if !ok && read.amended {
-            //直接删除
-            delete(m.dirty, key)
-        }
-        m.mu.Unlock()
-    }
-    if ok {
-    //如果read中存在该key，则将该value 赋值nil（采用标记的方式删除！）
-        e.delete()
-    }
-}
-
-func (e *entry) delete() (hadValue bool) {
-    for {
-        p := atomic.LoadPointer(&e.p)
-        if p == nil || p == expunged {
-            return false
-        }
-        if atomic.CompareAndSwapPointer(&e.p, p, nil) {
-            return true
-        }
-    }
-}
-```
-
-Store 方法:
-```go
-func (m *Map) Store(key, value interface{}) {
-    // 如果m.read存在这个key，并且没有被标记删除，则尝试更新。
-    read, _ := m.read.Load().(readOnly)
-    if e, ok := read.m[key]; ok && e.tryStore(&value) {
-        return
-    }
-    // 如果read不存在或者已经被标记删除
-    m.mu.Lock()
-    read, _ = m.read.Load().(readOnly)
-    if e, ok := read.m[key]; ok {
-    //如果entry被标记expunge，则表明dirty没有key，可添加入dirty，并更新entry
-        if e.unexpungeLocked() { 
-            //加入dirty中
-            m.dirty[key] = e
-        }
-        //更新value值
-        e.storeLocked(&value) 
-        //dirty 存在该key，更新
-    } else if e, ok := m.dirty[key]; ok { 
-        e.storeLocked(&value)
-        //read 和dirty都没有，新添加一条
-    } else {
-     //dirty中没有新的数据，往dirty中增加第一个新键
-        if !read.amended { 
-            //将read中未删除的数据加入到dirty中
-            m.dirtyLocked() 
-            m.read.Store(readOnly{m: read.m, amended: true})
-        }
-        m.dirty[key] = newEntry(value) 
-    }
-    m.mu.Unlock()
-}
-
-//将read中未删除的数据加入到dirty中
-func (m *Map) dirtyLocked() {
-    if m.dirty != nil {
-        return
-    }
-    read, _ := m.read.Load().(readOnly)
-    m.dirty = make(map[interface{}]*entry, len(read.m))
-    //read如果较大的话，可能影响性能
-    for k, e := range read.m {
-    //通过此次操作，dirty中的元素都是未被删除的，可见expunge的元素不在dirty中
-        if !e.tryExpungeLocked() {
-            m.dirty[k] = e
-        }
-    }
-}
-
-//判断entry是否被标记删除，并且将标记为nil的entry更新标记为expunge
-func (e *entry) tryExpungeLocked() (isExpunged bool) {
-    p := atomic.LoadPointer(&e.p)
-    for p == nil {
-        // 将已经删除标记为nil的数据标记为expunged
-        if atomic.CompareAndSwapPointer(&e.p, nil, expunged) {
-            return true
-        }
-        p = atomic.LoadPointer(&e.p)
-    }
-    return p == expunged
-}
-
-//对entry 尝试更新
-func (e *entry) tryStore(i *interface{}) bool {
-    p := atomic.LoadPointer(&e.p)
-    if p == expunged {
-        return false
-    }
-    for {
-        if atomic.CompareAndSwapPointer(&e.p, p, unsafe.Pointer(i)) {
-            return true
-        }
-        p = atomic.LoadPointer(&e.p)
-        if p == expunged {
-            return false
-        }
-    }
-}
-
-//read里 将标记为expunge的更新为nil
-func (e *entry) unexpungeLocked() (wasExpunged bool) {
-    return atomic.CompareAndSwapPointer(&e.p, expunged, nil)
-}
-
-//更新entry
-func (e *entry) storeLocked(i *interface{}) {
-    atomic.StorePointer(&e.p, unsafe.Pointer(i))
-}
-```
-因此，每次操作先检查read，因为read 并发安全，性能好些；read不满足，则加锁检查dirty，一旦是新的键值，dirty会被read更新。
-
-Load方法:
-
-Load方法是一个加载方法，查找key。
-```go
-func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
-    //因read只读，线程安全，先查看是否满足条件
-    read, _ := m.read.Load().(readOnly)
-    e, ok := read.m[key]
-    //如果read没有，并且dirty有新数据，那从dirty中查找，由于dirty是普通map，线程不安全，这个时候用到互斥锁了
-    if !ok && read.amended {
-        m.mu.Lock()
-        // 双重检查
-        read, _ = m.read.Load().(readOnly)
-        e, ok = read.m[key]
-        // 如果read中还是不存在，并且dirty中有新数据
-        if !ok && read.amended {
-            e, ok = m.dirty[key]
-            // mssLocked（）函数是性能是sync.Map 性能得以保证的重要函数，目的讲有锁的dirty数据，替换到只读线程安全的read里
-            m.missLocked()
-        }
-        m.mu.Unlock()
-    }
-    if !ok {
-        return nil, false
-    }
-    return e.load()
-}
-
-//dirty 提升至read 关键函数，当misses 经过多次因为load之后，大小等于len（dirty）时候，讲dirty替换到read里，以此达到性能提升。
-func (m *Map) missLocked() {
-    m.misses++
-    if m.misses < len(m.dirty) {
-        return
-    }
-    //原子操作，耗时很小
-    m.read.Store(readOnly{m: m.dirty})
-    m.dirty = nil
-    m.misses = 0
-}
-```
-sync.Map是通过冗余的两个数据结构(read、dirty),实现性能的提升。为了提升性能，load、delete、store等操作尽量使用只读的read；为了提高read的key击中概率，采用动态调整，将dirty数据提升为read；对于数据的删除，采用延迟标记删除法，只有在提升dirty的时候才删除。
+#### 25.
 
 #### 26. 读写锁或者互斥锁读的时候能写吗?
 
@@ -1713,6 +2751,7 @@ Go中读写锁包括读锁和写锁，多个读线程可以同时访问共享数
 #### 27. 怎么限制Goroutine的数量.
 
 在Golang中，Goroutine虽然很好，但是数量太多了，往往会带来很多麻烦，比如耗尽系统资源导致程序崩溃，或者CPU使用率过高导致系统忙不过来。所以我们可以限制下Goroutine的数量,这样就需要在每一次执行go之前判断goroutine的数量，如果数量超了，就要阻塞go的执行。第一时间想到的就是使用通道。每次执行的go之前向通道写入值，直到通道满的时候就阻塞了，
+
 ```go
 package main
 
@@ -1942,23 +2981,20 @@ Channel是异步进行的, channel存在3种状态：
 
 Golang的标准库提供了log的机制，但是该模块的功能较为简单（看似简单，其实他有他的设计思路）。在输出的位置做了线程安全的保护。
 
-#### 31. Goroutine和线程的区别?
+#### 31. Goroutine和线程的区别
 
-从调度上看，goroutine的调度开销远远小于线程调度开销。
+slice在Go的运行时库中就是一个C语言动态数组的实现:
+```go
+struct    Slice
+    {    // must not move anything
+        byte*    array;        // actual data
+        uintgo    len;        // number of elements
+        uintgo    cap;        // allocated number of elements
+    };
+```
 
-OS的线程由OS内核调度，每隔几毫秒，一个硬件时钟中断发到CPU，CPU调用一个调度器内核函数。这个函数暂停当前正在运行的线程，把他的寄存器信息保存到内存中，查看线程列表并决定接下来运行哪一个线程，再从内存中恢复线程的注册表信息，最后继续执行选中的线程。这种线程切换需要一个完整的上下文切换：即保存一个线程的状态到内存，再恢复另外一个线程的状态，最后更新调度器的数据结构。某种意义上，这种操作还是很慢的。
 
-Go运行的时候包涵一个自己的调度器，这个调度器使用一个称为一个M:N调度技术，m个goroutine到n个os线程（可以用GOMAXPROCS来控制n的数量），Go的调度器不是由硬件时钟来定期触发的，而是由特定的go语言结构来触发的，他不需要切换到内核语境，所以调度一个goroutine比调度一个线程的成本低很多。
 
-从栈空间上，goroutine的栈空间更加动态灵活。
-
-每个OS的线程都有一个固定大小的栈内存，通常是2MB，栈内存用于保存在其他函数调用期间哪些正在执行或者临时暂停的函数的局部变量。这个固定的栈大小，如果对于goroutine来说，可能是一种巨大的浪费。作为对比goroutine在生命周期开始只有一个很小的栈，典型情况是2KB, 在go程序中，一次创建十万左右的goroutine也不罕见（2KB*100,000=200MB）。而且goroutine的栈不是固定大小，它可以按需增大和缩小，最大限制可以到1GB。
-
-goroutine没有一个特定的标识。
-
-在大部分支持多线程的操作系统和编程语言中，线程有一个独特的标识，通常是一个整数或者指针，这个特性可以让我们构建一个线程的局部存储，本质是一个全局的map，以线程的标识作为键，这样每个线程可以独立使用这个map存储和获取值，不受其他线程干扰。
-
-goroutine中没有可供程序员访问的标识，原因是一种纯函数的理念，不希望滥用线程局部存储导致一个不健康的超距作用，即函数的行为不仅取决于它的参数，还取决于运行它的线程标识。
 
 #### 32. 滑动窗口的概念以及应用?
 
@@ -3352,108 +4388,7 @@ TCP的KeepAlive机制，首先它貌似默认是不打开的，要用setsockopt�
 <img width="600" align="center" src="../images/106.jpg" />
 </p>
 
-#### 58. 主协程如何等其余协程完再操作?
 
-Go提供了更简单的方法——使用sync.WaitGroup。WaitGroup，就是用来等待一组操作完成的。WaitGroup内部实现了一个计数器，用来记录未完成的操作个数，它提供了三个方法，Add()用来添加计数。Done()用来在操作结束时调用，使计数减一。Wait()用来等待所有的操作结束，即计数变为0，该函数会在计数不为0时等待，在计数为0时立即返回。
-
-应用示例:
-```go
-package main
-
-import (
-    "fmt"
-    "sync"
-)
-
-func main() {
-
-    var wg sync.WaitGroup
-
-    wg.Add(2) // 因为有两个动作，所以增加2个计数
-    go func() {
-        fmt.Println("Goroutine 1")
-        wg.Done() // 操作完成，减少一个计数
-    }()
-
-    go func() {
-        fmt.Println("Goroutine 2")
-        wg.Done() // 操作完成，减少一个计数
-    }()
-
-    wg.Wait() // 等待，直到计数为0
-}
-```
-运行输出:
-```go
-Goroutine 2
-Goroutine 1
-```
-#### 59. slice，len，cap，共享，扩容.
-
-slice在Go的运行时库中就是一个C语言动态数组的实现:
-```go
-struct    Slice
-    {    // must not move anything
-        byte*    array;        // actual data
-        uintgo    len;        // number of elements
-        uintgo    cap;        // allocated number of elements
-    };
-```
-这个结构有3个字段，第一个字段表示array的指针，就是真实数据的指针（这个一定要注意），所以才经常说slice是数组的引用，第二个是表示slice的长度，第三个是表示slice的容量，这里需要注意：len和cap都不是指针。
-
-在对slice进行append等操作时，可能会造成slice的自动扩容。其扩容时的大小增长规则是：
-
-* 如果切片的容量小于1024个元素，那么扩容的时候slice的cap就翻番，乘以2；一旦元素个数超过1024个元素，增长因子就变成1.25，即每次增加原来容量的四分之一。
-* 如果扩容之后，还没有触及原数组的容量，那么，切片中的指针指向的位置，就还是原数组，如果扩容之后，超过了原数组的容量，那么，Go就会开辟一块新的内存，把原来的值拷贝过来，这种情况丝毫不会影响到原数组。
-
-通过slice源码可以看到,append的实现只是简单的在内存中将旧slice复制给新slice.
-```go
-
-newcap := old.cap
-if newcap+newcap < cap {
-    newcap = cap
-} else {
-    for {
-        if old.len < 1024 {
-            newcap += newcap
-        } else {
-            newcap += newcap / 4
-        }
-        if newcap >= cap {
-            break
-        }
-    }
-}
-```
-#### 60. map如何顺序读取?
-
-可以通过sort中的排序包进行对map中的key进行排序.
-
-```go
-package main
-
-import (
-    "fmt"
-    "sort"
-)
-
-func main() {
-    var m = map[string]int{
-        "hello":         0,
-        "morning":       1,
-        "my":            2,
-        "girl":   		3,
-    }
-    var keys []string
-    for k := range m {
-        keys = append(keys, k)
-    }
-    sort.Strings(keys)
-    for _, k := range keys {
-        fmt.Println("Key:", k, "Value:", m[k])
-    }
-}
-```
 #### 61. 实现set
 
 根据go中map的keys的无序性和唯一性，可以将其作为set
@@ -3563,6 +4498,7 @@ func main() {
 	fmt.Println("有序的切片", s.SortList())
 }
 ```
+
 #### 62. 虚拟内存是什么?
 
 我们都知道一个进程是与其他进程共享CPU和内存资源的。正因如此，操作系统需要有一套完善的内存管理机制才能防止进程之间内存泄漏的问题.
@@ -4126,6 +5062,7 @@ func quickDescendingSort(arr []int, start, end int) {
 	}
 }
 ```
+
 #### 90. Golang 里的逃逸分析是什么？怎么避免内存逃逸？
 
 在golang中逃逸分析是一种确定指针动态范围的方法，可以分析在程序的哪些地方可以访问到指针。它涉及到指针分析和形状分析。当一个变量(或对象)在子程序中被分配时，一个指向变量的指针可能逃逸到其它执行线程中，或者去调用子程序。如果使用尾递归优化（通常在函数编程语言中是需要的），对象也可能逃逸到被调用的子程序中。 如果一个子程序分配一个对象并返回一个该对象的指针，该对象可能在程序中的任何一个地方被访问到——这样指针就成功“逃逸”了。如果指针存储在全局变量或者其它数据结构中，它们也可能发生逃逸，这种情况是当前程序中的指针逃逸。 逃逸分析需要确定指针所有可以存储的地方，保证指针的生命周期只在当前进程或线程中。
@@ -4148,14 +5085,6 @@ func quickDescendingSort(arr []int, start, end int) {
 
 #### 91. 配置中心如何保证一致性？
 
-#### 92. Golang 的GC触发时机是什么?
-
-Go 语言中对 GC 的触发时机存在两种形式：
-
-* 主动触发，通过调用 runtime.GC 来触发 GC，此调用阻塞式地等待当前 GC 运行完毕。
-* 被动触发，分为两种方式：
-  a. 使用系统监控，当超过两分钟没有产生任何 GC 时，强制触发 GC。
-  b. 使用步调（Pacing）算法，其核心思想是控制内存增长的比例。
 
 #### 93. Redis 里数据结构的实现熟悉吗,调表的实现原理是什么
 
@@ -4898,21 +5827,6 @@ B+树，仍是m叉搜索树，在B树的基础上，做了一些改进：
 
 因此可以了解到B+树是最适合做数据库索引的.
 
-#### 116. Data Race问题怎么解决？能不能不加锁解决这个问题？
-
-定义：①多个线程对于同一个变量、②同时地、③进行读/写操作的现象并且④至少有一个线程进行写操作。（也就是说，如果所有线程都是只进行读操作，那么将不构成数据争用）
-
-结果：如果发生了数据争用，读取该变量时得到的值将变得不可知，使得该多线程程序的运行结果将完全不可预测，可能直接崩溃。
-
-解决方式：对于有可能被多个线程同时访问的变量使用排他访问控制，具体方法包括使用mutex（互斥量）和monitor（监视器），或者使用atomic变量。
-
-相对于数据争用(data race)，竞态条件(race condition)指的是更加高层次的更加复杂的现象，一般需要在设计并行程序时进行细致入微的分析，才能确定。
-
-定义：受各线程上代码执行的顺序和时机的影响，程序的运行结果产生（预料之外）的变化。
-
-后果：如果存在竞态条件(race condition)，多次运行程序对于同一个输入将会有不同的结果，但结果并非完全不可预测，它将由输入数据和各线程的执行顺序共同决定。
-
-如何预防：竞态条件产生的原因很多是对于同一个资源的一系列连续操作并不是原子性的，也就是说有可能在执行的中途被其他线程抢占，同时这个“其他线程”刚好也要访问这个资源。解决方法通常是：将这一系列操作作为一个critical section（临界区）。
 
 #### 117. 解决hash冲突的办法?
 
@@ -5311,58 +6225,7 @@ binlog由Mysql的Server层实现,是逻辑日志,记录的是sql语句的原始�
 
 #### 144. Golang中CAS是怎么回事?
 
-CAS算法（compare and swap）,是原子操作的一种, CAS算法是一种有名的无锁算法。无锁编程，即不使用锁的情况下实现多线程之间的变量同步，也就是在没有线程被阻塞的情况下实现变量的同步，所以也叫非阻塞同步（Non-blocking Synchronization）。可用于在多线程编程中实现不被打断的数据交换操作，从而避免多线程同时改写某一数据时由于执行顺序不确定性以及中断的不可预知性产生的数据不一致问题。
 
-该操作通过将内存中的值与指定数据进行比较，当数值一样时将内存中的数据替换为新的值。
-
-go中的Cas操作是借用了CPU提供的原子性指令来实现。CAS操作修改共享变量时候不需要对共享变量加锁，而是通过类似乐观锁的方式进行检查，本质还是不断的占用CPU 资源换取加锁带来的开销（比如上下文切换开销）。
-
-```go
-package main
-
-import (
-	"fmt"
-	"sync"
-	"sync/atomic"
-)
-
-var (
-	counter int32          //计数器
-	wg      sync.WaitGroup //信号量
-)
-
-func main() {
-	threadNum := 5
-	wg.Add(threadNum)
-	for i := 0; i < threadNum; i++ {
-		go incCounter(i)
-	}
-	wg.Wait()
-}
-
-func incCounter(index int) {
-	defer wg.Done()
-
-	spinNum := 0
-	for {
-		// 原子操作
-		old := counter
-		ok := atomic.CompareAndSwapInt32(&counter, old, old+1)
-		if ok {
-			break
-		} else {
-			spinNum++
-		}
-	}
-	fmt.Printf("thread,%d,spinnum,%d\n", index, spinNum)
-}
-```
-
-当主函数main首先创建了5个信号量，然后开启五个线程执行incCounter方法,incCounter内部执行, 使用cas操作递增counter的值，atomic.CompareAndSwapInt32具有三个参数，第一个是变量的地址，第二个是变量当前值，第三个是要修改变量为多少，该函数如果发现传递的old值等于当前变量的值，则使用第三个变量替换变量的值并返回true，否则返回false。
-
-这里之所以使用无限循环是因为在高并发下每个线程执行CAS并不是每次都成功，失败了的线程需要重写获取变量当前的值，然后重新执行CAS操作。读者可以把线程数改为10000或者更多就会发现输出`thread,5329,spinnum,1` 其中这个1就说明该线程尝试了两个CAS操作，第二次才成功。
-
-因此呢, go中CAS操作可以有效的减少使用锁所带来的开销，但是需要注意在高并发下这是使用cpu资源做交换的。
 
 #### 145. Go GC会不会太慢, 跟不上内存分配的速度?
 
