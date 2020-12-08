@@ -2094,6 +2094,7 @@ func incCounter(index int) {
 有效的避免上述的五种逃逸的情况,可以避免内存逃逸.
 
 30. #### Go值接收者和指针接收者的区别
+<<<<<<< HEAD
 
 Go中的方法能给用户自定义的类型添加新的行为。它和函数的区别在于方法有一个接收者，给一个函数添加一个接收者，那么它就变成了方法。接收者可以是值接收者，也可以是指针接收者。
 
@@ -2227,8 +2228,103 @@ spans区域存放mspan（是一些arena分割的页组合起来的内存管理�
 33. #### 堆内存管理怎么分配的
 
 通常在Golang中,当我们谈论内存管理的时候，主要是指堆内存的管理，因为栈的内存管理不需要程序去操心。
+=======
 
+
+Go中的方法能给用户自定义的类型添加新的行为。它和函数的区别在于方法有一个接收者，给一个函数添加一个接收者，那么它就变成了方法。接收者可以是值接收者，也可以是指针接收者。
+
+在调用方法的时候，值类型既可以调用值接收者的方法，也可以调用指针接收者的方法；指针类型既可以调用指针接收者的方法，也可以调用值接收者的方法。
+
+也就是说，不管方法的接收者是什么类型，该类型的值和指针都可以调用，不必严格符合接收者的类型。
+
+```go
+package main
+
+import "fmt"
+
+type Person struct {
+    age int
+}
+
+func (p Person) Elegance() int {
+    return p.age
+}
+
+func (p *Person) GetAge() {
+    p.age += 1
+}
+
+func main() {
+    // p1 是值类型
+    p := Person{age: 18}
+
+    // 值类型 调用接收者也是值类型的方法
+    fmt.Println(p.howOld())
+
+    // 值类型 调用接收者是指针类型的方法
+    p.GetAge()
+    fmt.Println(p.GetAge())
+
+    // ----------------------
+
+    // p2 是指针类型
+    p2 := &Person{age: 100}
+
+    // 指针类型 调用接收者是值类型的方法
+    fmt.Println(p2.GetAge())
+
+    // 指针类型 调用接收者也是指针类型的方法
+    p2.GetAge()
+    fmt.Println(p2.GetAge())
+}
+```
+运行
+```go
+18
+19
+100
+101
+```
+
+| 函数和方法                  |值接收者	              | 指针接收者                    |
+| --------------------------| ----------------------| --------------------------- |
+|值类型调用者                 | 方法会使用调用者的一个副本，类似于“传值”	   | 使用值的引用来调用方法，上例中，p1.GetAge() 实际上是 (&p1).GetAge()|
+| 指针类型调用者              | 指针被解引用为值，上例中，p2.GetAge()实际上是 (*p1).GetAge()|实际上也是“传值”，方法里的操作会影响到调用者，类似于指针传参，拷贝了一份指针 |
+
+如果实现了接收者是值类型的方法，会隐含地也实现了接收者是指针类型的方法。
+
+如果方法的接收者是值类型，无论调用者是对象还是对象指针，修改的都是对象的副本，不影响调用者；如果方法的接收者是指针类型，则调用者修改的是指针指向的对象本身。
+
+通常我们使用指针作为方法的接收者的理由：
+
+* 使用指针方法能够修改接收者指向的值。
+
+* 可以避免在每次调用方法时复制该值，在值的类型为大型结构体时，这样做会更加高效。
+
+因而呢,我们是使用值接收者还是指针接收者，不是由该方法是否修改了调用者（也就是接收者）来决定，而是应该基于该类型的本质。
+
+如果类型具备“原始的本质”，也就是说它的成员都是由 Go 语言里内置的原始类型，如字符串，整型值等，那就定义值接收者类型的方法。像内置的引用类型，如 slice，map，interface，channel，这些类型比较特殊，声明他们的时候，实际上是创建了一个 header， 对于他们也是直接定义值接收者类型的方法。这样，调用函数时，是直接 copy 了这些类型的 header，而 header 本身就是为复制设计的。
+
+如果类型具备非原始的本质，不能被安全地复制，这种类型总是应该被共享，那就定义指针接收者的方法。比如 go 源码里的文件结构体（struct File）就不应该被复制，应该只有一份实体。
+
+接口值的零值是指动态类型和动态值都为 nil。当仅且当这两部分的值都为 nil 的情况下，这个接口值就才会被认为 接口值 == nil。
+
+31. #### Go的对象在内存中是怎样分配的
+
+Go中的内存分类并不像TCMalloc那样分成小、中、大对象，但是它的小对象里又细分了一个Tiny对象，Tiny对象指大小在1Byte到16Byte之间并且不包含指针的对象。
+
+小对象和大对象只用大小划定，无其他区分。
+
+大对象指大小大于32kb.小对象是在mcache中分配的，而大对象是直接从mheap分配的，从小对象的内存分配看起。
+
+Go的内存分配原则:
+
+Go在程序启动的时候，会先向操作系统申请一块内存（注意这时还只是一段虚拟的地址空间，并不会真正地分配内存），切成小块后自己进行管理。
+>>>>>>> master
+
+申请到的内存块被分配了三个区域，在X64上分别是512MB，16GB，512GB大小。
 <p align="center">
+<<<<<<< HEAD
 <img width="300" align="center" src="../images/130.jpg" />
 </p>
 
@@ -2875,11 +2971,180 @@ func makechan(t *chantype, size int) *hchan {
 }
 ```
 Channel 中根据收发元素的类型和缓冲区的大小初始化 `runtime.hchan` 结构体和缓冲区：
+=======
+<img width="300" align="center" src="../images/134.jpg" />
+</p>
+
+arena区域就是我们所谓的堆区，Go动态分配的内存都是在这个区域，它把内存分割成8KB大小的页，一些页组合起来称为mspan。
+
+bitmap区域标识arena区域哪些地址保存了对象，并且用4bit标志位表示对象是否包含指针、GC标记信息。bitmap中一个byte大小的内存对应arena区域中4个指针大小（指针大小为 8B ）的内存，所以bitmap区域的大小是512GB/(4*8B)=16GB。
+
+<p align="center">
+<img width="300" align="center" src="../images/135.jpg" />
+</p>
+
+<p align="center">
+<img width="300" align="center" src="../images/136.jpg" />
+</p>
+
+此外我们还可以看到bitmap的高地址部分指向arena区域的低地址部分，这里bitmap的地址是由高地址向低地址增长的。
+
+spans区域存放mspan（是一些arena分割的页组合起来的内存管理基本单元，后文会再讲）的指针，每个指针对应一页，所以spans区域的大小就是512GB/8KB*8B=512MB。
+
+除以8KB是计算arena区域的页数，而最后乘以8是计算spans区域所有指针的大小。创建mspan的时候，按页填充对应的spans区域，在回收object时，根据地址很容易就能找到它所属的mspan。
+
+32. #### 栈的内存是怎么分配的
+
+栈和堆只是虚拟内存上2块不同功能的内存区域：
+
+* 栈在高地址，从高地址向低地址增长。
+
+* 堆在低地址，从低地址向高地址增长。
+
+栈和堆相比优势：
+
+* 栈的内存管理简单，分配比堆上快。
+
+* 栈的内存不需要回收，而堆需要，无论是主动free，还是被动的垃圾回收，这都需要花费额外的CPU。
+
+* 栈上的内存有更好的局部性，堆上内存访问就不那么友好了，CPU访问的2块数据可能在不同的页上，CPU访问数据的时间可能就上去了。
+
+33. #### 堆内存管理怎么分配的
+
+通常在Golang中,当我们谈论内存管理的时候，主要是指堆内存的管理，因为栈的内存管理不需要程序去操心。
+
+<p align="center">
+<img width="300" align="center" src="../images/130.jpg" />
+</p>
+
+堆内存管理中主要是三部分, 1.分配内存块，2.回收内存块, 3.组织内存块。
+
+<p align="center">
+<img width="500" align="center" src="../images/131.jpg" />
+</p>
+
+一个内存块包含了3类信息，如下图所示，元数据、用户数据和对齐字段，内存对齐是为了提高访问效率。下图申请5Byte内存的时候，就需要进行内存对齐。
+
+<p align="center">
+<img width="500" align="center" src="../images/132.jpg" />
+</p>
+
+释放内存实质是把使用的内存块从链表中取出来，然后标记为未使用，当分配内存块的时候，可以从未使用内存块中有先查找大小相近的内存块，如果找不到，再从未分配的内存中分配内存。
+
+上面这个简单的设计中还没考虑内存碎片的问题，因为随着内存不断的申请和释放，内存上会存在大量的碎片，降低内存的使用率。为了解决内存碎片，可以将2个连续的未使用的内存块合并，减少碎片。
+
+想要深入了解可以看下这个文章,《Writing a Memory Allocator》.
+
+34. ####  Go中的defer函数使用下面的两种情况下结果是什么
+
+我们看看下面两种defer函数的返回的是什么:
+
+```go
+	a := 1
+	defer fmt.Println("the value of a1:",a)
+	a++
+
+	defer func() {
+		fmt.Println("the value of a2:",a)
+	}()
+
+```
+运行:
+```go
+the value of a1: 1
+the value of a1: 2
+```
+第一种情况：
+```go
+defer fmt.Println("the value of a1:",a)
+```
+defer延迟函数调用的fmt.Println(a)函数的参数值在defer语句出现时就已经确定了，所以无论后面如何修改a变量都不会影响延迟函数。
+
+第二种情况:
+```go
+defer func() {
+		fmt.Println("the value of a2:",a)
+	}()
+```
+defer延迟函数调用的函数参数的值在defer定义时候就确定了，而defer延迟函数内部所使用的值需要在这个函数运行时候才确定。
+
+35. ####  在Go函数中为什么会发生内存泄露
+
+通常内存泄漏，指的是能够预期的能很快被释放的内存由于附着在了长期存活的内存上、或生命期意外地被延长，导致预计能够立即回收的内存而长时间得不到回收。
+
+
+在 Go 中，由于 goroutine 的存在，因此,内存泄漏除了附着在长期对象上之外，还存在多种不同的形式。
+
+* 预期能被快速释放的内存因被根对象引用而没有得到迅速释放.
+
+当有一个全局对象时，可能不经意间将某个变量附着在其上，且忽略的将其进行释放，则该内存永远不会得到释放。
+
+* goroutine 泄漏
+
+Goroutine 作为一种逻辑上理解的轻量级线程，需要维护执行用户代码的上下文信息。在运行过程中也需要消耗一定的内存来保存这类信息，而这些内存在目前版本的 Go 中是不会被释放的。
+
+因此，如果一个程序持续不断地产生新的 goroutine、且不结束已经创建的 goroutine 并复用这部分内存，就会造成内存泄漏的现象.
+
+例如:
+
+```go
+func main() {
+	for i := 0; i < 10000; i++ {
+		go func() {
+			select {}
+		}()
+	}
+}
+```
+
+36. #### Go中new和make的区别
+
+在Go中,的值类型和引用类型:
+```markdown
+值类型：int，float，bool，string，struct和array.
+变量直接存储值，分配栈区的内存空间，这些变量所占据的空间在函数被调用完后会自动释放。
+     
+引用类型：slice，map，chan和值类型对应的指针.
+变量存储的是一个地址（或者理解为指针），指针指向内存中真正存储数据的首地址。内存通常在堆上分配，通过GC回收。
+```     
+这里需要注意的是: 对于引用类型的变量，我们不仅要声明变量，更重要的是，我们得手动为它分配空间.
+
+因此new该方法的参数要求传入一个类型，而不是一个值，它会申请一个该类型大小的内存空间，并会初始化为对应的零值，返回指向该内存空间的一个指针。     
+```go
+// The new built-in function allocates memory. The first argument is a type,
+// not a value, and the value returned is a pointer to a newly
+// allocated zero value of that type.
+func new(Type) *Type
+```
+
+而make也是用于内存分配，但是和new不同，只用来引用对象slice、map和channel的内存创建，它返回的类型就是类型本身，而不是它们的指针类型。
+```go 
+// The make built-in function allocates and initializes an object of type
+// slice, map, or chan (only). Like new, the first argument is a type, not a
+// value. Unlike new, make's return type is the same as the type of its
+// argument, not a pointer to it. The specification of the result depends on
+// the type:
+//	Slice: The size specifies the length. The capacity of the slice is
+//	equal to its length. A second integer argument may be provided to
+//	specify a different capacity; it must be no smaller than the
+//	length. For example, make([]int, 0, 10) allocates an underlying array
+//	of size 10 and returns a slice of length 0 and capacity 10 that is
+//	backed by this underlying array.
+//	Map: An empty map is allocated with enough space to hold the
+//	specified number of elements. The size may be omitted, in which case
+//	a small starting size is allocated.
+//	Channel: The channel's buffer is initialized with the specified
+//	buffer capacity. If zero, or the size is omitted, the channel is
+//	unbuffered.
+func make(t Type, size ...IntegerType) Type
+```
+>>>>>>> master
 
 * 如果当前 Channel 中不存在缓冲区，那么就只会为 `runtime.hchan` 分配一段内存空间；
 * 如果当前 Channel 中存储的类型不是指针类型，就会为当前的 Channel 和底层的数组分配一块连续的内存空间；
 * 在默认情况下会单独为 `runtime.hchan` 和缓冲区分配内存；
 
+<<<<<<< HEAD
 发送数据:
 
 当我们想要向 Channel 发送数据时，就需要使用 ch <- i 语句.
