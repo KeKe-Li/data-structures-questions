@@ -469,7 +469,6 @@ Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所�
 * P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
 * Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等。
  
-
 Go中的GPM调度:
 
 新创建的Goroutine会先存放在Global全局队列中，等待Go调度器进行调度，随后Goroutine被分配给其中的一个逻辑处理器P，并放到这个逻辑处理器对应的Local本地运行队列中，最终等待被逻辑处理器P执行即可。
@@ -608,13 +607,13 @@ for i:= 1; ; i++ {
 }
 ```
 
-在函数pump()里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1。
+在函数`pump()`里的channel在接受到第一个元素后就被阻塞了，直到主goroutinue取走了数据。最终channel阻塞在接受第二个元素，程序只打印 1。
 
 没有缓冲(buffer)的channel只能容纳一个元素，而带有缓冲(buffer)channel则可以非阻塞容纳N个元素。发送数据到缓冲(buffer) channel不会被阻塞，除非channel已满；同样的，从缓冲(buffer) channel取数据也不会被阻塞，除非channel空了。
 
 16. #### 怎么查看Goroutine的数量
 
-在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过GOMAXPROCS可以查看Goroutine的数量。
+在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过`GOMAXPROCS`可以查看Goroutine的数量。
 
 17. ####  Go中的锁有哪些
 
@@ -1358,7 +1357,6 @@ Channel是异步进行的, channel存在3种状态：
 * active，正常的channel，可读或者可写
 * closed，已关闭，千万不要误认为关闭channel后，channel的值是nil
 
-
 20. #### Goroutine和线程的区别
 
 从调度上看，goroutine的调度开销远远小于线程调度开销。
@@ -1621,7 +1619,6 @@ func f() (r int) {
 f4: 这里将发生 panic。将方法传给 deferExec，实际上在传的过程中对方法求了值。而此时的 t 任然为 nil。
 
 因此, defer确实是在return之前调用的。但表现形式上却可能不像。根本原因是 `return xxx` 语句并不是一条原子指令，defer被插入到了赋值 与 ret之间，因此可能有机会改变最终的返回值。
-
 
 defer关键字的实现跟go关键字很类似，不同的是它调用的是`runtime.deferproc`而不是`runtime.newproc`。
 
@@ -1982,7 +1979,6 @@ if newcap+newcap < cap {
     }
 }
 ```
-
 27. #### Go中的map如何实现顺序读取
 
 Go中map如果要实现顺序读取的话,可以先把map中的key,通过sort包排序.
@@ -2001,8 +1997,8 @@ func main() {
     var m = map[string]int{
         "hello":         0,
         "morning":       1,
-        "my":            2,
-        "girl":   		3,
+        "keke":          2,
+        "jame":   		 3,
     }
     var keys []string
     for k := range m {
@@ -2091,10 +2087,10 @@ func incCounter(index int) {
 
 5. 尽管能够符合分配到栈的场景，但是其大小不能够在在编译时候确定的情况，也会分配到堆上.
 
-有效的避免上述的五种逃逸的情况,可以避免内存逃逸.
+有效的避免上述的五种逃逸的情况,就可以避免内存逃逸.
 
 30. #### Go值接收者和指针接收者的区别
-<<<<<<< HEAD
+
 
 Go中的方法能给用户自定义的类型添加新的行为。它和函数的区别在于方法有一个接收者，给一个函数添加一个接收者，那么它就变成了方法。接收者可以是值接收者，也可以是指针接收者。
 
@@ -2228,103 +2224,8 @@ spans区域存放mspan（是一些arena分割的页组合起来的内存管理�
 33. #### 堆内存管理怎么分配的
 
 通常在Golang中,当我们谈论内存管理的时候，主要是指堆内存的管理，因为栈的内存管理不需要程序去操心。
-=======
 
-
-Go中的方法能给用户自定义的类型添加新的行为。它和函数的区别在于方法有一个接收者，给一个函数添加一个接收者，那么它就变成了方法。接收者可以是值接收者，也可以是指针接收者。
-
-在调用方法的时候，值类型既可以调用值接收者的方法，也可以调用指针接收者的方法；指针类型既可以调用指针接收者的方法，也可以调用值接收者的方法。
-
-也就是说，不管方法的接收者是什么类型，该类型的值和指针都可以调用，不必严格符合接收者的类型。
-
-```go
-package main
-
-import "fmt"
-
-type Person struct {
-    age int
-}
-
-func (p Person) Elegance() int {
-    return p.age
-}
-
-func (p *Person) GetAge() {
-    p.age += 1
-}
-
-func main() {
-    // p1 是值类型
-    p := Person{age: 18}
-
-    // 值类型 调用接收者也是值类型的方法
-    fmt.Println(p.howOld())
-
-    // 值类型 调用接收者是指针类型的方法
-    p.GetAge()
-    fmt.Println(p.GetAge())
-
-    // ----------------------
-
-    // p2 是指针类型
-    p2 := &Person{age: 100}
-
-    // 指针类型 调用接收者是值类型的方法
-    fmt.Println(p2.GetAge())
-
-    // 指针类型 调用接收者也是指针类型的方法
-    p2.GetAge()
-    fmt.Println(p2.GetAge())
-}
-```
-运行
-```go
-18
-19
-100
-101
-```
-
-| 函数和方法                  |值接收者	              | 指针接收者                    |
-| --------------------------| ----------------------| --------------------------- |
-|值类型调用者                 | 方法会使用调用者的一个副本，类似于“传值”	   | 使用值的引用来调用方法，上例中，p1.GetAge() 实际上是 (&p1).GetAge()|
-| 指针类型调用者              | 指针被解引用为值，上例中，p2.GetAge()实际上是 (*p1).GetAge()|实际上也是“传值”，方法里的操作会影响到调用者，类似于指针传参，拷贝了一份指针 |
-
-如果实现了接收者是值类型的方法，会隐含地也实现了接收者是指针类型的方法。
-
-如果方法的接收者是值类型，无论调用者是对象还是对象指针，修改的都是对象的副本，不影响调用者；如果方法的接收者是指针类型，则调用者修改的是指针指向的对象本身。
-
-通常我们使用指针作为方法的接收者的理由：
-
-* 使用指针方法能够修改接收者指向的值。
-
-* 可以避免在每次调用方法时复制该值，在值的类型为大型结构体时，这样做会更加高效。
-
-因而呢,我们是使用值接收者还是指针接收者，不是由该方法是否修改了调用者（也就是接收者）来决定，而是应该基于该类型的本质。
-
-如果类型具备“原始的本质”，也就是说它的成员都是由 Go 语言里内置的原始类型，如字符串，整型值等，那就定义值接收者类型的方法。像内置的引用类型，如 slice，map，interface，channel，这些类型比较特殊，声明他们的时候，实际上是创建了一个 header， 对于他们也是直接定义值接收者类型的方法。这样，调用函数时，是直接 copy 了这些类型的 header，而 header 本身就是为复制设计的。
-
-如果类型具备非原始的本质，不能被安全地复制，这种类型总是应该被共享，那就定义指针接收者的方法。比如 go 源码里的文件结构体（struct File）就不应该被复制，应该只有一份实体。
-
-接口值的零值是指动态类型和动态值都为 nil。当仅且当这两部分的值都为 nil 的情况下，这个接口值就才会被认为 接口值 == nil。
-
-31. #### Go的对象在内存中是怎样分配的
-
-Go中的内存分类并不像TCMalloc那样分成小、中、大对象，但是它的小对象里又细分了一个Tiny对象，Tiny对象指大小在1Byte到16Byte之间并且不包含指针的对象。
-
-小对象和大对象只用大小划定，无其他区分。
-
-大对象指大小大于32kb.小对象是在mcache中分配的，而大对象是直接从mheap分配的，从小对象的内存分配看起。
-
-Go的内存分配原则:
-
-Go在程序启动的时候，会先向操作系统申请一块内存（注意这时还只是一段虚拟的地址空间，并不会真正地分配内存），切成小块后自己进行管理。
->>>>>>> master
-
-申请到的内存块被分配了三个区域，在X64上分别是512MB，16GB，512GB大小。
 <p align="center">
-<<<<<<< HEAD
 <img width="300" align="center" src="../images/130.jpg" />
 </p>
 
@@ -2971,7 +2872,8 @@ func makechan(t *chantype, size int) *hchan {
 }
 ```
 Channel 中根据收发元素的类型和缓冲区的大小初始化 `runtime.hchan` 结构体和缓冲区：
-=======
+
+<p align="center">
 <img width="300" align="center" src="../images/134.jpg" />
 </p>
 
@@ -3100,6 +3002,7 @@ func main() {
 36. #### Go中new和make的区别
 
 在Go中,的值类型和引用类型:
+
 ```markdown
 值类型：int，float，bool，string，struct和array.
 变量直接存储值，分配栈区的内存空间，这些变量所占据的空间在函数被调用完后会自动释放。
@@ -3138,13 +3041,11 @@ func new(Type) *Type
 //	unbuffered.
 func make(t Type, size ...IntegerType) Type
 ```
->>>>>>> master
 
-* 如果当前 Channel 中不存在缓冲区，那么就只会为 `runtime.hchan` 分配一段内存空间；
-* 如果当前 Channel 中存储的类型不是指针类型，就会为当前的 Channel 和底层的数组分配一块连续的内存空间；
-* 在默认情况下会单独为 `runtime.hchan` 和缓冲区分配内存；
+* 如果当前 Channel 中不存在缓冲区，那么就只会为 `hchan` 分配一段内存空间.
+* 如果当前 Channel 中存储的类型不是指针类型，就会为当前的 Channel 和底层的数组分配一块连续的内存空间.
+* 在默认情况下会单独为 `hchan` 和缓冲区分配内存.
 
-<<<<<<< HEAD
 发送数据:
 
 当我们想要向 Channel 发送数据时，就需要使用 ch <- i 语句.
@@ -3275,19 +3176,17 @@ Go中Map是一个KV对集合。底层使用`hash table`，用链表来解决冲�
 在哈希函数的选择上，会在程序启动时，检测 cpu 是否支持 `aes`，如果支持，则使用`aes hash`，否则使用`memhash`。
 
 ```markdown
-hash 函数，有加密型和非加密型。加密型的一般用于加密数据、数字摘要等，典型代表就是 md5、sha1、sha256、aes256 这种； 非加密型的一般就是查找。
+hash函数,有加密型和非加密型。加密型的一般用于加密数据、数字摘要等，典型代表就是md5、sha1、sha256、aes256 这种,非加密型的一般就是查找。
 
-在 map 的应用场景中，用的是查找。
+在map的应用场景中，用的是查找。
 
-选择 hash 函数主要考察的是两点：性能、碰撞概率。
+选择hash函数主要考察的是两点：性能、碰撞概率。
 ```
 
 每个map的底层结构是hmap，是有若干个结构为bmap的bucket组成的数组。每个bucket底层都采用链表结构。
 
 ```go 
 type hmap struct {
-	// Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go.
-	// Make sure this stays in sync with the compiler's definition.
 	count     int    // 元素个数
 	flags     uint8  // 用来标记状态
 	B         uint8  // 扩容常量相关字段B是buckets数组的长度的对数 2^B
@@ -3310,7 +3209,7 @@ type mapextra struct {
 
 // A bucket for a Go map.
 type bmap struct {
-    tophash [bucketCnt]uint8        // tophash用于记录8个key哈希值的高8位，这样在寻找对应key的时候可以更快，不必每次都对key做全等判断
+    tophash [bucketCnt]uint8  // tophash用于记录8个key哈希值的高8位，这样在寻找对应key的时候可以更快，不必每次都对key做全等判断
 }
 
 //实际上编辑期间会动态生成一个新的结构体
@@ -3347,19 +3246,21 @@ for k, v := range hash {
 第一个需要知道哈希的键并且一次只能获取单个键对应的值，而第二个可以遍历哈希中的全部键值对，访问数据时也不需要预先知道哈希的键。
 
 在编译的类型检查期间，`hash[key]` 以及类似的操作都会被转换成哈希的 `OINDEXMAP` 操作，中间代码生成阶段会在 `cmd/compile/internal/gc.walkexpr` 函数中将这些 `OINDEXMAP` 操作转换成如下的代码：
+
 ```go
 v := hash[key] // => v     := *mapaccess1(maptype, hash, &key)
 v, ok := hash[key] // => v, ok := mapaccess2(maptype, hash, &key)
 ```
+
 这里根据赋值语句左侧接受参数的个数会决定使用的运行时方法：
     
 当接受一个参数时，会使用 `runtime.mapaccess1`，该函数仅会返回一个指向目标值的指针；
 当接受两个参数时，会使用 `runtime.mapaccess2`，除了返回目标值之外，它还会返回一个用于表示当前键对应的值是否存在的 bool 值：
 
-`runtime.mapaccess1` 会先通过哈希表设置的哈希函数、种子获取当前键对应的哈希，再通过 `runtime.bucketMask` 和 `runtime.add` 拿到该键值对所在的桶序号和哈希高位的 8 位数字。
+`mapaccess1` 会先通过哈希表设置的哈希函数、种子获取当前键对应的哈希，再通过 `runtime.bucketMask` 和 `runtime.add` 拿到该键值对所在的桶序号和哈希高位的 8 位数字。
 
 <p align="center">
-<img width="300" align="center" src="../images/141.jpg" />
+<img width="500" align="center" src="../images/141.jpg" />
 </p>
 
 如果在bucket中没有找到，此时如果overflow不为空，那么就沿着overflow继续查找，如果还是没有找到，那就从别的key槽位查找，直到遍历所有bucket。
@@ -3620,7 +3521,7 @@ func hashGrow(t *maptype, h *hmap) {
 这里会申请到了新的 buckets 空间，把相关的标志位都进行了处理,例如标志 nevacuate 被置为 0， 表示当前搬迁进度为 0。
 
 <p align="center">
-<img width="300" align="center" src="../images/140.jpg" />
+<img width="500" align="center" src="../images/140.jpg" />
 </p>
 
 在`hashGrow` 中还看不出来等量扩容和翻倍扩容的太多区别，等量扩容创建的新桶数量只是和旧桶一样，该函数中只是创建了新的桶，并没有对数据进行拷贝和转移。
@@ -3749,7 +3650,7 @@ func evacuate(t *maptype, h *hmap, oldbucket uintptr) {
 `evacuate` 会将一个旧桶中的数据分流到两个新桶，所以它会创建两个用于保存分配上下文的 `evacDst` 结构体，这两个结构体分别指向了一个新桶：
 
 <p align="center">
-<img width="300" align="center" src="../images/142.jpg" />
+<img width="500" align="center" src="../images/142.jpg" />
 </p>
 
 哈希表扩容目的:
@@ -3786,7 +3687,6 @@ buckets 编号就是桶编号，当两个不同的key落在同一个桶中，也
 
 如果想要删除哈希中的元素，就需要使用 Go 语言中的 delete 关键字，这个关键字的唯一作用就是将某一个键对应的元素从哈希表中删除，无论是该键对应的值是否存在，这个内建的函数都不会返回任何的结果。
 
-
 因此呢Go采用拉链法来解决哈希碰撞的问题实现了哈希表，它的访问、写入和删除等操作都在编译期间转换成了运行时的函数或者方法。
 
 哈希在每一个桶中存储键对应哈希的前 8 位，当对哈希进行操作时，这些 `tophash` 就成为可以帮助哈希快速遍历桶中元素的缓存。
@@ -3794,3 +3694,6 @@ buckets 编号就是桶编号，当两个不同的key落在同一个桶中，也
 哈希表的每个桶都只能存储 8 个键值对，一旦当前哈希的某个桶超出 8 个，新的键值对就会存储到哈希的溢出桶中。
 
 随着键值对数量的增加，溢出桶的数量和哈希的装载因子也会逐渐升高，超过一定范围就会触发扩容，扩容会将桶的数量翻倍，元素再分配的过程也是在调用写操作时增量进行的，不会造成性能的瞬时巨大损耗。
+
+
+
