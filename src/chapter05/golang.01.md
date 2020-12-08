@@ -458,10 +458,6 @@ Goroutine协程:
 
 groutine能拥有强大的并发实现是通过GPM调度模型实现.
 
-<p align="center">
-<img width="300" align="center" src="../images/59.jpg" />
-</p>
-
 Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
 
 * M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
@@ -584,9 +580,9 @@ time.Sleep(5*time.Second)
 
 1. channel的操作符号
 
-ch <- data 表示data被发送给channel ch；
+`ch <- data` 表示data被发送给`channel ch`；
 
-data <- ch 表示从channel ch取一个值，然后赋给data。
+`data <- ch` 表示从`channel ch`取一个值，然后赋给data。
 
 2. 阻塞式channel
 
@@ -613,21 +609,21 @@ for i:= 1; ; i++ {
 
 16. #### 怎么查看Goroutine的数量
 
-在Golang中,GOMAXPROCS中控制的是未被阻塞的所有Goroutine,可以被Multiplex到多少个线程上运行,通过`GOMAXPROCS`可以查看Goroutine的数量。
+在Golang中,`GOMAXPROCS`中控制的是未被阻塞的所有Goroutine,可以被 `Multiplex` 到多少个线程上运行,通过`GOMAXPROCS`可以查看Goroutine的数量。
 
 17. ####  Go中的锁有哪些
 
-Go中的三种锁包括:互斥锁,读写锁,sync.Map的安全的锁.
+Go中的三种锁包括:互斥锁,读写锁,`sync.Map`的安全的锁.
          
 * 互斥锁
 
 Go并发程序对共享资源进行访问控制的主要手段，由标准库代码包中sync中的Mutex结构体表示。
 
 ```go
-//Mutex 是互斥锁， 零值是解锁的互斥锁， 首次使用后不得复制互斥锁。
+// Mutex 是互斥锁， 零值是解锁的互斥锁， 首次使用后不得复制互斥锁。
 type Mutex struct {
-state int32
-sema  uint32
+    state int32
+    sema  uint32
 }
 ```         
        
@@ -672,30 +668,28 @@ sema  uint32
 fpackage main
 
 import (
-"fmt"
-"sync"
-"time"
+  "fmt"
+  "sync"
+  "time"
 )
 
 func main() {
-
-var mutex sync.Mutex
-fmt.Println("begin lock")
-mutex.Lock()
-fmt.Println("get locked")
-for i := 1; i <= 3; i++ {
-    go func(i int) {
-        fmt.Println("begin lock ", i)
-        mutex.Lock()
-        fmt.Println("get locked ", i)
-    }(i)
-}
-
-time.Sleep(time.Second)
-fmt.Println("Unlock the lock")
-mutex.Unlock()
-fmt.Println("get unlocked")
-time.Sleep(time.Second)
+	var mutex sync.Mutex
+	fmt.Println("begin lock")
+	mutex.Lock()
+	fmt.Println("get locked")
+	for i := 1; i <= 3; i++ {
+		go func(i int) {
+			fmt.Println("begin lock ", i)
+			mutex.Lock()
+			fmt.Println("get locked ", i)
+		}(i)
+	}
+	time.Sleep(time.Second)
+	fmt.Println("Unlock the lock")
+	mutex.Unlock()
+	fmt.Println("get unlocked")
+	time.Sleep(time.Second)
 }
 ```
 
@@ -722,26 +716,26 @@ get locked  3
 package main
 
 import (
-"fmt"
-"sync"
+  "fmt"
+  "sync"
 )
 
 func main() {
-defer func() {
-    fmt.Println("Try to recover the panic")
-    if p := recover(); p != nil {
-        fmt.Println("recover the panic : ", p)
-    }
-}()
-var mutex sync.Mutex
-fmt.Println("begin lock")
-mutex.Lock()
-fmt.Println("get locked")
-fmt.Println("unlock lock")
-mutex.Unlock()
-fmt.Println("lock is unlocked")
-fmt.Println("unlock lock again")
-mutex.Unlock()
+	defer func() {
+		fmt.Println("Try to recover the panic")
+		if p := recover(); p != nil {
+			fmt.Println("recover the panic : ", p)
+		}
+	}()
+	var mutex sync.Mutex
+	fmt.Println("begin lock")
+	mutex.Lock()
+	fmt.Println("get locked")
+	fmt.Println("unlock lock")
+	mutex.Unlock()
+	fmt.Println("lock is unlocked")
+	fmt.Println("unlock lock again")
+	mutex.Unlock()
 }
 ```
 
@@ -829,9 +823,9 @@ Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 R
 package main
 
 import (
-"fmt"
-"sync"
-"time"
+   "fmt"
+   "sync"
+   "time"
 )
 
 func main() {
