@@ -12,10 +12,10 @@ Golang面试问题汇总, 这里主要分为:
 |           2                 |     [无缓冲Chan的发送和接收是否同步](#无缓冲Chan的发送和接收是否同步)                                            |        
 |           3                 |     [Golang并发机制以及它所使用的CSP并发模型](#Golang并发机制以及它所使用的CSP并发模型)                            |        
 |           4                 |     [Golang中常用的并发模型](#Golang中常用的并发模型)                                                        |        
-|           5                 |     [JSON标准库对nil slice和空slice的处理是一致的吗](#JSON标准库对nil slice和空slice的处理是一致的吗)             |        
+|           5                 |     [Go中对nil的Slice和空Slice的处理是一致的吗](#Go中对nil的Slice和空Slice的处理是一致的吗)             |        
 |           6                 |     [协程和线程和进程的区别](#协程和线程和进程的区别)                                                           |        
 |           7                 |     [Golang的内存模型中为什么小对象多了会造成GC压力](#Golang的内存模型中为什么小对象多了会造成gc压力)                  |        
-|           8                 |     [Data Race问题怎么解决](#Data Race问题怎么解决)                                                          |        
+|           8                 |     [Go中数据竞争问题怎么解决](#Go中数据竞争问题怎么解决)                                                          |        
 |           9                 |     [什么是channel，为什么它可以做到线程安全](#什么是channel，为什么它可以做到线程安全)                              |        
 |           10                |     [Golang垃圾回收算法](#Golang垃圾回收算法)                                                                |        
 |           11                |     [GC的触发条件](#GC的触发条件)                                                                           |        
@@ -50,11 +50,6 @@ Golang面试问题汇总, 这里主要分为:
 |           40                |     [Go中的map的实现](#Go中的map的实现)                                                                      |        
 
 
-
-
-
-
-
 * Mysql基础
 
 * Redis基础
@@ -73,6 +68,7 @@ Golang面试问题汇总, 这里主要分为:
 
 * 协议
 
+## Golang基础模块
 
 1. #### Golang中除了加Mutex锁以外还有哪些方式安全读写共享变量
 
@@ -288,9 +284,9 @@ Context 对象是线程安全的，你可以把一个 Context 对象传递给任
 
 典型的场景是：父操作为子操作操作启动 goroutine，子操作也就不能取消父操作。
 
-5. #### JSON标准库对nil slice和空slice的处理是一致的吗　
+5. #### Go中对nil的Slice和空Slice的处理是一致的吗
 
-首先JSON 标准库对 `nil slice` 和 空 `slice` 的处理是不一致.
+首先Go的JSON 标准库对 `nil slice` 和 空 `slice` 的处理是不一致.
 
 通常错误的用法，会报数组越界的错误，因为只是声明了slice，却没有给实例化的对象。
 
@@ -330,7 +326,7 @@ slice := []int{}
 通常小对象过多会导致GC三色法消耗过多的GPU。优化思路是，减少对象分配.
 
 
-8. #### Data Race问题怎么解决
+8. #### Go中数据竞争问题怎么解决
 
 Data Race问题可以使用互斥锁sync.Mutex, 或者也可以通过CAS无锁并发解决.
 
