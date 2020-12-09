@@ -1351,6 +1351,18 @@ Channel是异步进行的, channel存在3种状态：
 * active，正常的channel，可读或者可写
 * closed，已关闭，千万不要误认为关闭channel后，channel的值是nil
 
+下面我们对channel的三种操作解析:
+
+1. 零值（nil）通道；
+2. 非零值但已关闭的通道；
+3. 非零值并且尚未关闭的通道。
+
+|操作	|一个零值nil通道	|一个非零值但已关闭的通道 |一个非零值且尚未关闭的通道 |
+|关闭	|产生恐慌         | 产生恐慌	         |成功关闭(C)             |
+|发送数据	|永久阻塞	        | 产生恐慌	         |阻塞或者成功发送(B)       |
+|接收数据	|永久阻塞   	    | 永不阻塞 	         |阻塞或者成功接收(A)       |
+
+
 20. #### Goroutine和线程的区别
 
 从调度上看，goroutine的调度开销远远小于线程调度开销。
@@ -1458,6 +1470,7 @@ func increase(d int) (ret int) {
 }
 ```
 运行输出:
+
 ```go
 2
 ```
@@ -1486,6 +1499,7 @@ func main() {
 
 ```
 运行输出:
+
 ```go
 5
 5
@@ -1629,7 +1643,6 @@ call runtime.deferreturn，
 add xx SP
 return
 ```
-
 goroutine的控制结构中，有一张表记录defer，调用`runtime.deferproc`时会将需要defer的表达式记录在表中，而在调用`runtime.deferreturn`的时候，则会依次从defer表中出栈并执行。
 
 23. #### Go的select可以用于什么
