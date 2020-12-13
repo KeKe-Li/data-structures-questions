@@ -2493,7 +2493,6 @@ type Mutex struct {
 	state int32   // 互斥锁上锁状态枚举值如下所示
 	sema  uint32  // 信号量，向处于Gwaitting的G发送信号
 }
-
 const (
 	mutexLocked = 1 << iota // 值为1，表示在state中由低向高第1位，意义：锁是否可用,0可用，1不可用,锁定中
 	mutexWoken   // 值为2，表示在state中由低向高第2位，意义：mutex是否被唤醒
@@ -5883,10 +5882,10 @@ LVS的基本工作原理:
 3. IPVS是工作在INPUT链上的，当用户请求到达INPUT时，IPVS会将用户请求和自己已定义好的集群服务进行比对，如果用户请求的就是定义的集群服务，那么此时IPVS会强行修改数据包里的目标IP地址及端口，并将新的数据包发往POSTROUTING链.
 4. POSTROUTING链接收数据包后发现目标IP地址刚好是自己的后端服务器，那么此时通过选路，将数据包最终发送给后端的服务器.
 
-LVS的由2部分程序组成，包括 ipvs 和 ipvsadm。
+LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 
-* ipvs(ip virtual server)：一段代码工作在内核空间，叫ipvs，是真正生效实现调度的代码。
-* ipvsadm：另外一段是工作在用户空间，叫ipvsadm，负责为ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
+* Ipvs(ip virtual server)：一段代码工作在内核空间，叫Ipvs，是真正生效实现调度的代码。
+* Ipvsadm：另外一段是工作在用户空间，叫Ipvsadm，负责为Ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
 
 
 #### Golang面试参考
