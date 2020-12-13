@@ -2,7 +2,7 @@
 
 通常我们去面试肯定会有些不错的Golang的面试题目的，所以总结下，让其他Golang开发者也可以查看到，同时也用来检测自己的能力和提醒自己的不足之处,欢迎大家补充和提交新的面试题目.
 
-Golang面试问题汇总, 这里主要分为:
+Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linux,以及Algorithm和Structrues.
 
 ### Golang基础
  
