@@ -5444,6 +5444,336 @@ func isValid(root *TreeNode, min, max int) bool {
 
 3. #### 排序算法
 
+排序算法又分为稳定性算法和不稳定性算法：
+
+* 稳定的排序算法：冒泡排序、插入排序、归并排序和基数排序。
+
+* 不是稳定的排序算法：选择排序、快速排序、希尔排序、堆排序。
+
+* 冒泡排序
+
+```go 
+func main() {
+	var arr = []int{9,10,11,5,3,4,27,2,1,3,20}
+	//升序
+	bubbleAscendingSort(arr)
+	//降序
+	bubbleDescendingSort(arr)
+}
+
+//升序
+func bubbleAscendingSort(arr []int) {
+	for i :=0; i < len(arr)-1; i++ {
+		for j := i+1; j< len(arr); j++ {
+			if (arr[i] > arr[j]) {
+				arr[i],arr[j] = arr[j],arr[i]
+			}
+		}
+	}
+	
+	fmt.Println("bubbleAscendingSort:",arr)
+}
+
+//降序
+func bubbleDescendingSort(arr []int) {
+	for i :=0; i < len(arr)-1; i++ {
+		for j := i+1; j< len(arr); j++ {
+			if (arr[i] < arr[j]) {
+				arr[i],arr[j] = arr[j],arr[i]
+			}
+		}
+	}
+	
+	fmt.Println("bubbleDescendingSort:",arr)
+}
+```
+运行结果:
+```go
+bubbleAscendingSort: [1 2 3 3 4 5 9 10 11 20 27]
+
+bubbleDescendingSort: [27 20 11 10 9 5 4 3 3 2 1]
+```
+
+* 选择排序
+
+```go 
+func main() {
+	var arr = []int{19,28,17,5,13,4,6,7,9,3,10}
+	//升序
+	selectAscendingSort(arr)
+	//降序
+	selectDescendingSort(arr)
+}
+
+//升序
+func selectAscendingSort(arr []int) {
+	l := len(arr)
+	m := len(arr) - 1
+	for i := 0; i < m; i++ {
+		k := i
+		for j := i+1; j < l; j++ {
+			if arr[k] > arr[j] {
+				k = j
+			}
+		}
+		if k != i {
+			arr[k],arr[i] = arr[i],arr[k]
+		}
+	}
+	
+	fmt.Println("selectAscendingSort:",arr)
+}
+
+//降序
+func selectDescendingSort(arr []int) {
+	l := len(arr)
+	m := len(arr) - 1
+	for i := 0; i < m; i++ {
+		k := i
+		for j := i+1; j < l; j++ {
+			if arr[k] < arr[j] {
+				k = j
+			}
+		}
+		if k != i {
+			arr[k],arr[i] = arr[i],arr[k]
+		}
+	}
+	
+	fmt.Println("selectDescendingSort:",arr)
+}
+```
+
+运行结果:
+
+```go
+selectDescendingSort: [3 4 5 6 7 9 10 13 17 19 28]
+
+selectAscendingSort: [28 19 17 13 10 9 7 6 5 4 3]
+```
+
+* 插入排序
+
+```go
+
+func main() {
+	var arr = []int{19,13,27,15,3,4,26,12,1,0}
+	insertSort(arr)
+	fmt.Println("insertSort:",arr)
+}
+
+func insertSort(arr []int) {
+	n := len(arr)
+	if n < 2 {
+		return
+	}
+	for i := 1; i < n; i++ {
+		for j := i; j >0 && arr[j] < arr[j-1]; j-- {
+			arr[j], arr[j-1] = arr[j-1], arr[j]
+		}
+	}
+}
+```
+运行结果:
+```go
+insertSort: [0 1 3 4 12 13 15 19 26 27]
+```
+
+
+* 希尔排序
+
+```go
+func main() {
+	var arr = []int{19,8,27,15,3,17,6,2,1,0}
+	shellSort(arr)
+	fmt.Println("shellSort:",arr)
+}
+func shellSort(arr []int) {
+	n := len(arr)
+	h := 1
+	
+	//寻找合适的间隔h
+	for h < n/3 {
+		h = 3*h +1
+	}
+	
+	for h >= 1 {
+		for i := h; i < n; i++ {
+			for j := i; j >= h && arr[j] < arr[j-1]; j -= h {
+				arr[j], arr[j-1] = arr[j-1], arr[j]
+			}
+		}
+		h /= 3
+	}
+}
+```
+运行结果:
+```go
+shellSort: [0 1 2 3 6 8 15 17 19 27]
+```
+
+* 归并排序
+
+```go
+func main() {
+	array := []int{55, 94, 87, 12, 4, 32, 11,8, 39, 42, 64, 53, 70, 12, 9}
+	fmt.Println("before MergeSort",array)
+	array = MergeSort(array)
+	fmt.Println("after MergeSort:",array)
+}
+
+func MergeSort(array []int) []int{
+	n := len(array)
+	if n < 2 {
+		return array
+	}
+	key := n / 2
+	left := MergeSort(array[0:key])
+	right := MergeSort(array[key:])
+	return merge(left, right)
+}
+
+func merge(left []int, right []int) []int{
+	tmp := make([]int, 0)
+	i, j := 0,0
+	for  i < len(left) && j < len(right) {
+		if left[i] < right[j]{
+			tmp = append(tmp, left[i])
+			i ++
+		}else{
+			tmp = append(tmp, right[j])
+			j ++
+		}
+	}
+	tmp = append(tmp, left[i:]...)
+	tmp = append(tmp, right[j:]...)
+	return tmp
+}
+```
+运行结果:
+```go
+before MergeSort [55 94 87 12 4 32 11 8 39 42 64 53 70 12 9]
+after MergeSort: [4 8 9 11 12 12 32 39 42 53 55 64 70 87 94]
+```
+
+* 快速排序
+
+```go
+
+func main() {
+	var arr = []int{19,8,16,15,23,34,6,3,1,0,2,9,7}
+	quickAscendingSort(arr, 0, len(arr)-1)
+	fmt.Println("quickAscendingSort:",arr)
+
+	quickDescendingSort(arr, 0, len(arr)-1)
+	fmt.Println("quickDescendingSort:",arr)
+}
+
+//升序
+func quickAscendingSort(arr []int, start, end int) {
+	if (start < end) {
+		i, j := start, end
+		key := arr[(start + end)/2]
+		for i <= j {
+			for arr[i] < key {
+				i++
+			}
+			for arr[j] > key {
+				j--
+			}
+			if i <= j {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+				j--
+			}
+		}
+
+		if start < j {
+			quickAscendingSort(arr, start, j)
+		}
+		if end > i {
+			quickAscendingSort(arr, i, end)
+		}
+	}
+}
+
+//降序
+func quickDescendingSort(arr []int, start, end int) {
+	if (start < end) {
+		i, j := start, end
+		key := arr[(start + end)/2]
+		for i <= j {
+			for arr[i] > key {
+				i++
+			}
+			for arr[j] < key {
+				j--
+			}
+			if i <= j {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+				j--
+			}
+		}
+
+		if start < j {
+			quickDescendingSort(arr, start, j)
+		}
+		if end > i {
+			quickDescendingSort(arr, i, end)
+		}
+	}
+}
+```
+运行结果:
+```go
+quickAscendingSort: [0 1 2 3 6 7 8 9 15 16 19 23 34]
+quickDescendingSort: [34 23 19 16 15 9 8 7 6 3 2 1 0]
+```
+
+* 堆排序
+```go
+func main()  {
+	array := []int{52,16,37,2,3,32,12,27,19,42,29,13,37,12,9}
+	HeapSort(array)
+	fmt.Println("HeapSort:",array)
+}
+
+func HeapSort(array []int) {
+	m := len(array)
+	s := m/2
+	for i := s; i > -1; i-- {
+		heap(array, i, m-1)
+	}
+	for i := m-1; i > 0; i-- {
+		array[i], array[0] = array[0], array[i]
+		heap(array, 0, i-1)
+	}
+}
+
+func heap(array []int, i, end int){
+	l := 2*i+1
+	if l > end {
+		return
+	}
+	n := l
+	r := 2*i+2
+	if r <= end && array[r]>array[l]{
+		n = r
+	}
+	if array[i] > array[n]{
+		return
+	}
+	array[n], array[i] = array[i], array[n]
+	heap(array, n, end)
+}
+```
+运行结果:
+```go
+HeapSort: [2 3 9 12 12 13 16 19 27 29 32 37 37 42 52]
+```
+
+
 
 4. #### 如何通过递归反转单链表
 
