@@ -82,6 +82,7 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           21                |     [为什么索引的key长度不能太长](#为什么索引的key长度不能太长)                                                     |   
 |           22                |     [Mysql的数据如何恢复到任意时间点](#Mysql的数据如何恢复到任意时间点)                                              |   
 |           23                |     [Mysql为什么加了索引可以加快查询](#Mysql为什么加了索引可以加快查询)                                              |   
+|           24                |     [Explain命令有什么用](#Explain命令有什么用)                                                                |   
 
 ### Redis基础
 |           题号               |            题目                                                                                        |
@@ -118,7 +119,7 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           14                |     [Http1和Http2和Grpc之间的区别是什么](#Http1和Http2和Grpc之间的区别是什么)                                    |
 |           15                |     [Tcp中的拆包和粘包是怎么回事](#Tcp中的拆包和粘包是怎么回事)                                                    |
 |           16                |     [TFO的原理是什么](#TFO的原理是什么)                                                                       |
-|           16                |     [TIME_WAIT的作用](#TIME_WAIT的作用)                                                                    |
+|           17                |     [TIME_WAIT的作用](#TIME_WAIT的作用)                                                                    |
 
 ### Linux基础
 |           题号               |            题目                                                                                         |
@@ -159,6 +160,7 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           8                 |     [Git的merge跟rebase的区别](#Git的merge跟rebase的区别)                                                   |
 |           9                 |     [如何对一个20GB的文件进行排序](#如何对一个20GB的文件进行排序)                                                 |
 |           10                |     [LVS原理是什么](#LVS原理是什么)                                                                         |
+|           11                |     [为什么需要消息队列](#为什么需要消息队列)                                                                   |
 
 
 ## Golang基础模块信息
@@ -4422,6 +4424,145 @@ key 太长会导致一个页当中能够存放的 key 的数目变少，间接�
 
 劣势：索引本身也是表，因此会占用存储空间，一般来说，索引表占用的空间的数据表的1.5倍；索引表的维护和创建需要时间成本，这个成本随着数据量增大而增大；构建索引会降低数据表的修改操作（删除，添加，修改）的效率，因为在修改数据表的同时还需要修改索引表.
 
+24. #### Explain命令有什么用
+
+在开发的过程中,我们有时会用慢查询去记录一些执行时间比较久的Sql语句，找出这些Sql语句并不意味着完事了，这个时候我们就需要用到explain这个命令来查看一个这些Sql语句的执行计划，查看该Sql语句有没有使用上了索引，有没有做全表扫描，这些都可以通过explain命令来查看。
+所以我们深入了解Mysql的基于开销的优化器，还可以获得很多可能被优化器考虑到的访问策略的细节，以及当运行SQL语句时哪种策略预计会被优化器采用。
+
+```bash 
+> explain select * from server;
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+| id | select_type | table   | type | possible_keys | key  | key_len | ref  | rows | Extra |
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+|  1 | SIMPLE      | server  | ALL  | NULL          | NULL | NULL    | NULL |    1 | NULL  |
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+1 row in set (0.03 sec)
+```
+expain出来的信息有10列，分别是`id、select_type、table、type、possible_keys、key、key_len、ref、rows、Extra`.
+
+```markdown
+id:select选择标识符.
+select_type:表示查询的类型.
+table:输出结果集的表.
+partitions:匹配的分区.
+type:表示表的连接类型.
+possible_keys:表示查询时，可能使用的索引.
+key:表示实际使用的索引.
+key_len:索引字段的长度.
+ref:列与索引的比较.
+rows:扫描出的行数(估算的行数).
+filtered:按表条件过滤的行百分比.
+Extra:执行情况的描述和说明.
+```
+
+* id
+
+id是Sql执行的顺序的标识,Sql从大到小的执行:
+
+1. id相同时，执行顺序由上至下.
+
+2. 如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行.
+
+3. id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行.
+
+* select_type 查询的类型
+
+示查询中每个select子句的类型:
+
+1. SIMPLE(简单SELECT,不使用UNION或子查询等)
+
+2. PRIMARY(查询中若包含任何复杂的子部分,最外层的select被标记为PRIMARY)
+
+3. UNION(UNION中的第二个或后面的SELECT语句)
+
+4. DEPENDENT UNION(UNION中的第二个或后面的SELECT语句，取决于外面的查询)
+
+5. UNION RESULT(UNION的结果)
+
+6. SUBQUERY(子查询中的第一个SELECT)
+
+7. DEPENDENT SUBQUERY(子查询中的第一个SELECT，取决于外面的查询)
+
+8. DERIVED(派生表的SELECT, FROM子句的子查询)
+
+9. UNCACHEABLE SUBQUERY(一个子查询的结果不能被缓存，必须重新评估外链接的第一行)
+
+* table
+
+table显示这一行的数据是关于哪张表的，有时不是真实的表名字,看到的是derivedx.
+```bash 
+> explain select * from (select * from ( select * from t1 where id=2602) a) b;
++----+-------------+------------+--------+-------------------+---------+---------+------+------+-------+
+| id | select_type | table      | type   | possible_keys     | key     | key_len | ref  | rows | Extra |
++----+-------------+------------+--------+-------------------+---------+---------+------+------+-------+
+|  1 | PRIMARY     | <derived2> | system | NULL              | NULL    | NULL    | NULL |    1 |       |
+|  2 | DERIVED     | <derived3> | system | NULL              | NULL    | NULL    | NULL |    1 |       |
+|  3 | DERIVED     | t1         | const  | PRIMARY,idx_t1_id | PRIMARY | 4       |      |    1 |       |
++----+-------------+------------+--------+-------------------+---------+---------+------+------+-------+
+```
+
+* type 表的连接类型
+
+type表示Mysql在表中找到所需行的方式，又称“访问类型”。
+
+常用的类型有： ALL, index,  range, ref, eq_ref, const, system, NULL（从左到右，性能从差到好）.
+
+1. ALL：Full Table Scan， Mysql将遍历全表以找到匹配的行.
+
+2. index: Full Index Scan，index与ALL区别为index类型只遍历索引树.
+
+3. range:只检索给定范围的行，使用一个索引来选择行.
+
+4. ref: 表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值.
+
+5. eq_ref: 类似ref，区别就在使用的索引是唯一索引，对于每个索引键值，表中只有一条记录匹配，简单来说，就是多表连接中使用primary key或者 unique key作为关联条件.
+
+6. const、system: 当Mysql对查询某部分进行优化，并转换为一个常量时，使用这些类型访问。如将主键置于where列表中，Mysql就能将该查询转换为一个常量,system是const类型的特例，当查询的表只有一行的情况下，使用system.
+
+7. NULL: Mysql在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成。
+
+* possible_keys
+
+possible_keys指出Mysql能使用哪个索引在表中找到记录，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询使用.
+
+该列完全独立于`EXPLAIN`输出所示的表的次序。这意味着在`possible_keys`中的某些键实际上不能按生成的表次序使用。
+如果该列是NULL，则没有相关的索引。在这种情况下，可以通过检查WHERE子句看是否它引用某些列或适合索引的列来提高你的查询性能。如果是这样，创造一个适当的索引并且再次用EXPLAIN检查查询.
+
+* Key
+
+key列显示MySql实际决定使用的键（索引）.
+
+如果没有选择索引，键是NULL。要想强制Mysql使用或忽视`possible_keys`列中的索引，在查询中使用`FORCE INDEX、USE INDEX`或者`IGNORE INDEX`。
+
+* key_len
+  
+key_len表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度（key_len显示的值为索引字段的最大可能长度，并非实际使用长度，即key_len是根据表定义计算而得，不是通过表内检索出的）不损失精确性的情况下，长度越短越好 .
+
+* ref
+  
+ref表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值.
+
+* rows 
+
+rows表示Mysql根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行数.
+
+* Extra执行情况的描述和说明
+  
+该列包含Mysql解决查询的详细信息,有以下几种情况：
+
+1. Using where:列数据是从仅仅使用了索引中的信息而没有读取实际的行动的表返回的，这发生在对表的全部的请求列都是同一个索引的部分的时候，表示mysql服务器将在存储引擎检索行后再进行过滤.
+
+2. Using temporary：表示Mysql需要使用临时表来存储结果集，常见于排序和分组查询.
+
+3. Using filesort：Mysql中无法利用索引完成的排序操作称为“文件排序”
+
+4. Using join buffer：改值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进能。
+
+5. Impossible where：这个值强调了where语句会导致没有符合条件的行。
+
+6. Select tables optimized away：这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行.
+
+
 ### Redis基础知识
 
 1. #### Redis的数据结构及使用场景
@@ -5942,9 +6083,6 @@ before radixSort: [12 3 8 5 9 11 23 36 20 28 21]
 after radixSort: [3 5 8 9 11 12 20 21 23 28 36]
 ```
 
-
-
-
 4. #### 如何通过递归反转单链表
 
 链表是一种物理存储单元上非连续、非顺序的存储结构，数据元素的逻辑顺序是通过链表中的指针链接次序实现的。链表由一系列结点（链表中每一个元素称为结点）组成，结点可以在运行时动态生成。
@@ -6386,6 +6524,10 @@ LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 
 * Ipvs(ip virtual server)：一段代码工作在内核空间，叫Ipvs，是真正生效实现调度的代码。
 * Ipvsadm：另外一段是工作在用户空间，叫Ipvsadm，负责为Ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)
+
+11. #### 为什么需要消息队列
+
+解耦，异步处理，削峰/限流
 
 
 #### Golang面试参考
