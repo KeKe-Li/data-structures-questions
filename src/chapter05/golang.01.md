@@ -5773,6 +5773,176 @@ func heap(array []int, i, end int){
 HeapSort: [2 3 9 12 12 13 16 19 27 29 32 37 37 42 52]
 ```
 
+* 桶排序
+
+```go
+
+func main()  {
+	array := []int{31,16,37,2,13,32,10,27,7,42,29,18,28,12,9,}
+	BucketSort(array)
+	fmt.Println("BucketSort:",array)
+}
+
+func sortInBucket(bucket []int) {//此处实现插入排序方式，其实可以用任意其他排序方式
+	length := len(bucket)
+	if length == 1 {return}
+
+	for i := 1; i < length; i++ {
+		backup := bucket[i]
+		j := i -1;
+		//将选出的被排数比较后插入左边有序区
+		for  j >= 0 && backup < bucket[j] {//注意j >= 0必须在前边，否则会数组越界
+			bucket[j+1] = bucket[j]//移动有序数组
+			j -- //反向移动下标
+		}
+		bucket[j + 1] = backup //插队插入移动后的空位
+	}
+}
+//获取数组最大值
+func getMaxInArr(arr []int) int{
+	max := arr[0]
+	for i := 1; i < len(arr); i++ {
+		if arr[i] > max{ max = arr[i]}
+	}
+	return max
+}
+
+//桶排序
+func BucketSort(arr []int) []int {
+	//桶数
+	num := len(arr)
+	//k（数组最大值）
+	max := getMaxInArr(arr)
+	//二维切片
+	buckets := make([][]int, num)
+
+	//分配入桶
+	index := 0
+	for i := 0; i < num; i++ {
+		index = arr[i] * (num-1) /max//分配桶index = value * (n-1) /k
+
+		buckets[index] = append(buckets[index], arr[i])
+	}
+	//桶内排序
+	tmpPos := 0
+	for i := 0; i < num; i++ {
+		bucketLen := len(buckets[i])
+		if bucketLen > 0{
+			sortInBucket(buckets[i])
+
+			copy(arr[tmpPos:], buckets[i])
+
+			tmpPos += bucketLen
+		}
+	}
+
+	return arr
+
+```
+运行结果：
+```go
+BucketSort: [2 7 9 10 12 13 16 18 27 28 29 31 32 37 42]
+```
+
+* 计数排序
+
+```go
+func main()  {
+	array := []int{69,16,48,2,3,32,10,27,17,42,29,8,28,12,9,}
+	countingSort(array,array[0])
+	fmt.Println("BucketSort:",array)
+}
+
+func countingSort(arr []int, maxValue int) []int {
+	bucketLen := maxValue + 1
+	bucket := make([]int, bucketLen) // 初始为0的数组
+
+	sortedIndex := 0
+	length := len(arr)
+
+	for i := 0; i < length; i++ {
+		bucket[arr[i]] += 1
+	}
+
+	for j := 0; j < bucketLen; j++ {
+		for bucket[j] > 0 {
+			arr[sortedIndex] = j
+			sortedIndex += 1
+			bucket[j] -= 1
+		}
+	}
+
+	return arr
+}
+```
+运行结果:
+```go
+countingSort: [2 3 8 9 10 12 16 17 27 28 29 32 42 48 69]
+```
+
+* 基数排序
+
+```go
+
+func main() {
+	array := []int{12, 3, 8, 5, 9, 11, 23, 36,20,28,21}
+	fmt.Println("before radixSort:",array)
+
+	radixSort(array)
+	fmt.Println("after radixSort:",array)
+}
+
+//获取数组的最大值
+func maxValue(arr []int) (ret int) {
+	ret = 1 
+	var key int = 10
+	for i := 0; i < len(arr); i++ {
+		for arr[i] >= key {
+			key = key * 10
+			ret++
+		}
+	}
+	return
+}
+
+func radixSort(arr []int) {
+	key := maxValue(arr)
+	tmp := make([]int, len(arr), len(arr))
+	count := new([10]int)
+	radix := 1
+	var i, j, k int
+	for i = 0; i < key; i++ { //进行key次排序
+		for j = 0; j < 10; j++ {
+			count[j] = 0
+		}
+		for j = 0; j < len(arr); j++ {
+			k = (arr[j] / radix) % 10
+			count[k]++
+		}
+
+		for j = 1; j < 10; j++ { //将tmp中的为准依次分配给每个桶
+			count[j] = count[j-1] + count[j]
+		}
+		for j = len(arr) - 1; j >= 0; j-- {
+			k = (arr[j] / radix) % 10
+			tmp[count[k]-1] = arr[j]
+			count[k]--
+		}
+		for j = 0; j <len(arr); j++ {
+			arr[j] = tmp[j]
+		}
+		radix = radix * 10
+	}
+}
+```
+运行结果:
+```go
+before radixSort: [12 3 8 5 9 11 23 36 20 28 21]
+
+after radixSort: [3 5 8 9 11 12 20 21 23 28 36]
+```
+
+
 
 
 4. #### 如何通过递归反转单链表
