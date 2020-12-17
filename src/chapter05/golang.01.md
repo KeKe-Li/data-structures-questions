@@ -157,7 +157,7 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           4                 |     [分布式锁实现](#分布式锁实现)                                                                           |
 |           5                 |     [负载均衡原理是什么](#负载均衡原理是什么)                                                                 |
 |           6                 |     [互斥锁和读写锁和死锁问题是怎么解决](#互斥锁和读写锁和死锁问题是怎么解决)                                        |
-|           7                 |     [Etcd的Raft一致性算法原理](#Etcd的Raft一致性算法原理)                                                     |
+|           7                 |     [Etcd中的Raft一致性算法原理](#Etcd中的Raft一致性算法原理)                                                     |
 |           8                 |     [Git的merge跟rebase的区别](#Git的merge跟rebase的区别)                                                   |
 |           9                 |     [如何对一个20GB的文件进行排序](#如何对一个20GB的文件进行排序)                                                 |
 |           10                |     [LVS原理是什么](#LVS原理是什么)                                                                         |
@@ -6493,7 +6493,66 @@ f. 撤消进程
 
 可以直接撤消死锁进程或撤消代价最小的进程，直至有足够的资源可用，死锁状态.消除为止.所谓代价是指优先级、运行代价、进程的重要性和价值等。
 
-7. #### Etcd的Raft一致性算法原理
+7. #### Etcd中的Raft一致性算法原理
+
+Etcd中的Raft一致性算法原理：
+
+Raft将系统中的角色分为领导者（Leader）、跟从者（Follower）和候选人（Candidate）.
+1. Leader：接受客户端请求，并向Follower同步请求日志，当日志同步到大多数节点上后告诉Follower提交日志。
+2. Follower：接受并持久化Leader同步的日志，在Leader告之日志可以提交之后，提交日志。
+3. Candidate：Leader选举过程中的临时角色。
+
+<p align="center">
+<img width="300" align="center" src="../images/146.jpg" />
+</p>
+
+Raft要求系统在任意时刻最多只有一个Leader，正常工作期间只有Leader和Followers。
+
+Raft算法角色状态转换如下：
+
+<p align="center">
+<img width="500" align="center" src="../images/147.jpg" />
+</p>
+
+Follower只响应其他服务器的请求。如果Follower超时没有收到Leader的消息，它会成为一个Candidate并且开始一次Leader选举。收到大多数服务器投票的Candidate会成为新的Leader。Leader在宕机之前会一直保持Leader的状态。
+
+Raft算法将时间分为一个个的任期（term），每一个term的开始都是Leader选举。在成功选举Leader之后，Leader会在整个term内管理整个集群。如果Leader选举失败，该term就会因为没有Leader而结束。
+
+Leader选举:
+Raft 使用心跳（heartbeat）触发Leader选举。当服务器启动时，初始化为Follower。Leader向所有Followers周期性发送heartbeat。如果Follower在选举超时时间内没有收到Leader的heartbeat，就会等待一段随机的时间后发起一次Leader选举。
+
+Follower将其当前term加一然后转换为Candidate。它首先给自己投票并且给集群中的其他服务器发送 RequestVote RPC （RPC细节参见八、Raft算法总结）。结果有以下三种情况：
+1.赢得了多数的选票，成功选举为Leader；
+2.收到了Leader的消息，表示有其它服务器已经抢先当选了Leader；
+3.没有服务器赢得多数的选票，Leader选举失败，等待选举时.
+
+<p align="center">
+<img width="500" align="center" src="../images/148.jpg" />
+</p>
+
+Raft日志同步保证如下两点：
+
+1. 如果不同日志中的两个条目有着相同的索引和任期号，则它们所存储的命令是相同的。
+2. 如果不同日志中的两个条目有着相同的索引和任期号，则它们之前的所有条目都是完全一样的。
+
+Leader通过强制Followers复制它的日志来处理日志的不一致，Followers上的不一致的日志会被Leader的日志覆盖。
+Leader为了使Followers的日志同自己的一致，Leader需要找到Followers同它的日志一致的地方，然后覆盖Followers在该位置之后的条目。
+Leader会从后往前试，每次AppendEntries失败后尝试前一个日志条目，直到成功找到每个Follower的日志一致位点，然后向后逐条覆盖Followers在该位置之后的条目。
+
+Raft增加了如下两条限制以保证安全性：
+1. 拥有最新的已提交的log entry的Follower才有资格成为Leader。
+这个保证是在RequestVote RPC中做的，Candidate在发送RequestVote RPC时，要带上自己的最后一条日志的term和log index，其他节点收到消息时，如果发现自己的日志比请求中携带的更新，则拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term更大，则term大的更新，如果term一样大，则log index更大的更新。
+
+2. Leader只能推进commit index来提交当前term的已经复制到大多数服务器上的日志，旧term日志的提交要等到提交当前term的日志来间接提交（log index 小于 commit index的日志被间接提交）。
+
+日志压缩:
+
+在实际的系统中，不能让日志无限增长，否则系统重启时需要花很长的时间进行回放，从而影响可用性。Raft采用对整个系统进行snapshot来解决，snapshot之前的日志都可以丢弃。
+
+每个副本独立的对自己的系统状态进行snapshot，并且只能对已经提交的日志记录进行snapshot。
+
+做snapshot既不要做的太频繁，否则消耗磁盘带宽， 也不要做的太不频繁，否则一旦节点重启需要回放大量日志，影响可用性。推荐当日志达到某个固定的大小做一次snapshot。
+做一次snapshot可能耗时过长，会影响正常日志同步。可以通过使用copy-on-write技术避免snapshot过程影响正常日志同步.
 
 8. #### Git的merge跟rebase的区别
 在使用 git 进行版本管理的项目中，当完成一个特性的开发并将其合并到 master 分支时，我们有两种方式：`git merge` 和 `git rebase`。
