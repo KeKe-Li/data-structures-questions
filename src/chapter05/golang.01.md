@@ -541,11 +541,10 @@ Golang gc 优化的核心就是尽量使得 STW(Stop The World) 的时间越来�
 
 Go中对 GC 的触发时机存在两种形式：
 
-* 主动触发(手动触发)，通过调用`runtime.GC` 来触发`GC`，此调用阻塞式地等待当前`GC`运行完毕。
+* 主动触发(手动触发)，通过调用`runtime.GC` 来触发`GC`，此调用阻塞式地等待当前`GC`运行完毕.
 * 被动触发，分为两种方式：
-  a. 使用系统监控，当超过两分钟没有产生任何`GC`时，强制触发 `GC`。
-  b. 使用步调（Pacing）算法，其核心思想是控制内存增长的比例,当前内存分配达到一定比例则触发.。
-
+  a. 使用系统监控，当超过两分钟没有产生任何`GC`时，强制触发 `GC`.
+  b. 使用步调（Pacing）算法，其核心思想是控制内存增长的比例,当前内存分配达到一定比例则触发.
 
 12. #### Go的GPM如何调度
 
@@ -560,10 +559,10 @@ groutine能拥有强大的并发实现是通过GPM调度模型实现.
 
 Go的调度器内部有四个重要的结构：M，P，S，Sched，如上图所示（Sched未给出）.
 
-* M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息
-* G: 代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
-* P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine
-* Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等。
+* M: M代表内核级线程，一个M就是一个线程，goroutine就是跑在M之上的；M是一个很大的结构，里面维护小对象内存cache（mcache）、当前执行的goroutine、随机数发生器等等非常多的信息.
+* G: 代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度.
+* P: P全称是Processor，逻辑处理器，它的主要用途就是用来执行goroutine的，所以它也维护了一个goroutine队列，里面存储了所有需要它来执行的goroutine.
+* Sched：代表调度器，它维护有存储M和G的队列以及调度器的一些状态信息等.
  
 Go中的GPM调度:
 
