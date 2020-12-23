@@ -77,12 +77,12 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           16                |     [InnoDB的关键特性](#InnoDB的关键特性)                                                                     |   
 |           17                |     [Mysql如何保证一致性和持久性](#Mysql如何保证一致性和持久性)                                                    |          
 |           18                |     [为什么选择B+树作为索引结构](#为什么选择B+树作为索引结构)                                                       |   
-|           19                |     [InnoDB的行锁模式](#InnoDB的行锁模式)                                                                     |   
+|           19                |     [InnoDB的行锁模式](#InnoDB的行锁模式)                                                                      |   
 |           20                |     [哈希(hash)比树(tree)更快，索引结构为什么要设计成树型](#哈希(hash)比树(tree)更快，索引结构为什么要设计成树型)         |   
 |           21                |     [为什么索引的key长度不能太长](#为什么索引的key长度不能太长)                                                     |   
 |           22                |     [Mysql的数据如何恢复到任意时间点](#Mysql的数据如何恢复到任意时间点)                                              |   
 |           23                |     [Mysql为什么加了索引可以加快查询](#Mysql为什么加了索引可以加快查询)                                              |   
-|           24                |     [Explain命令有什么用](#Explain命令有什么用)                                                                |   
+|           24                |     [Explain命令有什么用](#Explain命令有什么用)                                                                 |   
 
 ### Redis基础
 |           题号               |            题目                                                                                        |
@@ -95,10 +95,10 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           6                 |     [如何解决Redis缓存雪崩问题](#如何解决Redis缓存雪崩问题)                                                    |
 |           7                 |     [如何解决Redis缓存穿透问题](#如何解决Redis缓存穿透问题)                                                    |
 |           8                 |     [Redis并发竞争key如何解决](#Redis并发竞争key如何解决)                                                     |
-|           9                 |     [Redis的主从模式和哨兵模式和集群模式区别](#Redis的主从模式和哨兵模式和集群模式区别)                              |
+|           9                 |     [Redis的主从模式和哨兵模式和集群模式区别](#Redis的主从模式和哨兵模式和集群模式区别)                             |
 |           10                |     [Redis事物的了解CheckAndSet操作实现乐观锁](#Redis事物的了解CheckAndSet操作实现乐观锁)                        |
 |           11                |     [Redis有序集合zset底层怎么实现的](#Redis有序集合zset底层怎么实现的)                                         |
-|           12                |     [跳表的查询过程是怎么样的，查询和插入的时间复杂度](#跳表的查询过程是怎么样的，查询和插入的时间复杂度)                 |
+|           12                |     [跳表的查询过程是怎么样的，查询和插入的时间复杂度](#跳表的查询过程是怎么样的，查询和插入的时间复杂度)                |
 
 ### 网络协议基础
 |           题号               |            题目                                                                                         |
@@ -116,9 +116,9 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           11                |     [Unicode和ASCII以及Utf8的区别](#Unicode和ASCII以及Utf8的区别)                                            |
 |           12                |     [Cookie与Session异同](#Cookie与Session异同)                                                            |
 |           13                |     [Client如何实现长连接](#Client如何实现长连接)                                                             |
-|           14                |     [Http1和Http2和Grpc之间的区别是什么](#Http1和Http2和Grpc之间的区别是什么)                                    |
-|           15                |     [Tcp中的拆包和粘包是怎么回事](#Tcp中的拆包和粘包是怎么回事)                                                    |
-|           16                |     [TFO的原理是什么](#TFO的原理是什么)                                                                       |
+|           14                |     [Http1和Http2和Grpc之间的区别是什么](#Http1和Http2和Grpc之间的区别是什么)                                   |
+|           15                |     [Tcp中的拆包和粘包是怎么回事](#Tcp中的拆包和粘包是怎么回事)                                                  |
+|           16                |     [TFO的原理是什么](#TFO的原理是什么)                                                                      |
 |           17                |     [TIME_WAIT的作用](#TIME_WAIT的作用)                                                                    |
 
 ### Linux基础
@@ -140,8 +140,8 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 ### Algorithm和Structrues
 |           题号               |            题目                                                                                         |
 |-----------------------------|------------------------------------------------------------------------------------------------------- |
-|           1                 |     [哪些排序算法是稳定的](#哪些排序算法是稳定的)                                                              |
-|           2                 |     [给定一个二叉树,判断其是否是一个有效的二叉搜索树](#给定一个二叉树,判断其是否是一个有效的二叉搜索树)                  |
+|           1                 |     [哪些排序算法是稳定的](#哪些排序算法是稳定的)                                                             |
+|           2                 |     [给定一个二叉树,判断其是否是一个有效的二叉搜索树](#给定一个二叉树,判断其是否是一个有效的二叉搜索树)                |
 |           3                 |     [排序算法](#排序算法)                                                                                 |
 |           4                 |     [如何通过递归反转单链表](#如何通过递归反转单链表)                                                          |
 |           5                 |     [链表和数组相比有什么优缺点](#链表和数组相比有什么优缺点)                                                    |
@@ -160,12 +160,12 @@ Golang面试问题汇总, 这里主要分为Golang,Mysql,Redis,网络协议,Linu
 |           7                 |     [Etcd中的Raft一致性算法原理](#Etcd中的Raft一致性算法原理)                                                  |
 |           8                 |     [Git的merge跟rebase的区别](#Git的merge跟rebase的区别)                                                   |
 |           9                 |     [如何对一个20GB的文件进行排序](#如何对一个20GB的文件进行排序)                                                 |
-|           10                |     [LVS原理是什么](#LVS原理是什么)                                                                         |
+|           10                |     [LVS原理是什么](#LVS原理是什么)                                                                          |
 |           11                |     [为什么需要消息队列](#为什么需要消息队列)                                                                   |
 |           12                |     [高并发系统的设计与实现](#高并发系统的设计与实现)                                                             |
 |           13                |     [Kafka的文件存储机制](#Kafka的文件存储机制)                                                                |
 |           14                |     [Kafka如何保证可靠性](#Kafka如何保证可靠性)                                                                |
-|           15                |     [Kafka是如何实现高吞吐率的](#Kafka是如何实现高吞吐率的)                                                       |
+|           15                |     [Kafka是如何实现高吞吐率的](#Kafka是如何实现高吞吐率的)                                                      |
 
 
 ## Golang基础模块信息
@@ -662,13 +662,13 @@ go elegance()
 
 ```go
 func main() {
-for i:=1;i<5;i++ {
+ for i:=1;i<5;i++ {
     go func(i int) {
         fmt.Println(i)
     }(i)
-}
-// 停歇5s，保证打印全部结束
-time.Sleep(5*time.Second)
+ }
+ // 停歇5s，保证打印全部结束
+ time.Sleep(5*time.Second)
 }
 ```
 在分析goroutine执行的随机性和并发性，启动了5个goroutine，再加上main函数的主goroutine，总共有6个goroutines。由于goroutine类似于”守护线程“，异步执行的,如果主goroutine不等待片刻，可能程序就没有输出打印了。
@@ -690,15 +690,15 @@ channel默认是没有缓冲区的，也就是说，通信是阻塞的。send操
 应用示例:
 ```go
 func main() {
-ch1 := make(chan int)
-go pump(ch1) // pump hangs
-fmt.Println(<-ch1) // prints only 1
+ ch1 := make(chan int)
+ go pump(ch1) // pump hangs
+ fmt.Println(<-ch1) // prints only 1
 }
 
 func pump(ch chan int) {
-for i:= 1; ; i++ {
+ for i:= 1; ; i++ {
     ch <- i
-}
+ }
 }
 ```
 
@@ -949,11 +949,11 @@ for i := 0; i < 5; i++ {
     }(i)
 }
 
-time.Sleep(time.Millisecond * 1000)
-fmt.Println("try to lock for writing")
+ time.Sleep(time.Millisecond * 1000)
+ fmt.Println("try to lock for writing")
 
-rwm.Lock()
-fmt.Println("locked for writing")
+ rwm.Lock()
+ fmt.Println("locked for writing")
 }
 ```
 
