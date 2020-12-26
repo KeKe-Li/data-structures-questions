@@ -460,7 +460,9 @@ Go的设计思想就是, 不要通过共享内存来通信，而是通过通信�
 
 10. #### Golang垃圾回收算法
 
-首先我们先来了解下垃圾回收.什么是垃圾回收？
+首先我们先来了解下垃圾回收.
+
+什么是垃圾回收？
 
 内存管理是程序员开发应用的一大难题。传统的系统级编程语言（主要指C/C++）中，程序开发者必须对内存小心的进行管理操作，控制内存的申请及释放。因为稍有不慎，就可能产生内存泄露问题，这种问题不易发现并且难以定位，一直成为困扰程序开发者的噩梦。
 
@@ -516,7 +518,6 @@ golang 的垃圾回收是基于标记清扫算法，这种算法需要进行 STW
 
 golang 在此基础上进行了改进，通过三色标记清扫法与写屏障来减少 STW 的时间.
 
-
 gc的过程一共分为四个阶段： 
 
 1. 栈扫描（开始时STW） 所有对象最开始都是白色.
@@ -536,7 +537,6 @@ Golang gc 优化的核心就是尽量使得 STW(Stop The World) 的时间越来�
 清扫开始前，标记为黑色的对象引用了一个新申请的对象，它肯定是白色的，而黑色对象不会被再次扫描，那么这个白色对象无法被扫描变成灰色、黑色，它就会最终被清扫，而实际它不应该被清扫. 
 
 这就需要用到屏障技术，golang 采用了写屏障，作用就是为了避免这类误清扫问题. 写屏障即在内存写操作前，维护一个约束，从而确保清扫开始前，黑色的对象不能引用白色对象.
-
 
 11. #### GC的触发条件
 
@@ -812,6 +812,7 @@ get locked  3
 互斥锁锁定操作的逆操作并不会导致协程阻塞，但是有可能导致引发一个无法恢复的运行时的panic，比如对一个未锁定的互斥锁进行解锁时就会发生panic。避免这种情况的最有效方式就是使用defer。
 
 我们知道如果遇到panic，可以使用recover方法进行恢复，但是如果对重复解锁互斥锁引发的panic却是无用的（Go 1.8及以后）。
+
 ```go
 package main
 
@@ -1055,7 +1056,9 @@ type Map struct {
  misses int
 }
 ```
+
 read的数据结构是：
+
 ```go
 type readOnly struct {
  m  map[interface{}]*entry
@@ -1064,6 +1067,7 @@ type readOnly struct {
 }
 ```
 entry的数据结构：
+
 ```go
 type entry struct {
  //可见value是个指针类型，虽然read和dirty存在冗余情况（amended=false），但是由于是指针类型，存储的空间应该不是问题
@@ -1072,6 +1076,7 @@ type entry struct {
 ```
 
 Delete 方法:
+
 ```go
 func (m *Map) Delete(key interface{}) {
  read, _ := m.read.Load().(readOnly)
@@ -1108,6 +1113,7 @@ func (e *entry) delete() (hadValue bool) {
 ```
 
 Store 方法:
+
 ```go
 func (m *Map) Store(key, value interface{}) {
  // 如果m.read存在这个key，并且没有被标记删除，则尝试更新。
@@ -1745,6 +1751,7 @@ add xx SP
 return
 ```
 如果其中包含了defer语句，则汇编代码是：
+
 ```go 
 call runtime.deferreturn，
 add xx SP
@@ -1760,7 +1767,6 @@ select的源码在 (runtime/select.go)[https://github.com/golang/go/blob/master/
 
 * pollorder保存的是scase的序号，乱序是为了之后执行时的随机性。
 * lockorder保存了所有case中channel的地址，这里按照地址大小堆排了一下lockorder对应的这片连续内存。对chan排序是为了去重，保证之后对所有channel上锁时不会重复上锁。
-
 
 goroutine作为Golang并发的核心，我们不仅要关注它们的创建和管理，当然还要关注如何合理的退出这些协程，不（合理）退出不然可能会造成阻塞、panic、程序行为异常、数据结果不正确等问题。goroutine在退出方面，不像线程和进程，不能通过某种手段强制关闭它们，只能等待goroutine主动退出。
 
@@ -1878,7 +1884,6 @@ func worker(stopCh <-chan struct{}) {
 * ok可以处理多个读通道关闭，需要关闭当前使用for-select的协程。
 * 显式关闭通道stopCh可以处理主动通知协程退出的场景。
 
-
 24. #### Context包的用途是什么
 
 在 Go http包的Server中，每一个请求在都有一个对应的 goroutine 去处理。请求处理函数通常会启动额外的 goroutine 用来访问后端服务，比如数据库和RPC服务。用来处理一个请求的 goroutine 通常需要访问一些与请求特定的数据，比如终端用户的身份认证信息、验证相关的token、请求的截止时间。 当一个请求被取消或超时时，所有用来处理该请求的 goroutine 都应该迅速退出，然后系统才能释放这些 goroutine 占用的资源。
@@ -1935,6 +1940,7 @@ func Background() Context
 WithCancel 和 WithTimeout 函数 会返回继承的 Context 对象， 这些对象可以比它们的父 Context 更早地取消。
 
 当请求处理函数返回时，与该请求关联的 Context 会被取消。 当使用多个副本发送请求时，可以使用 WithCancel取消多余的请求。 WithTimeout 在设置对后端服务器请求截止时间时非常有用。 下面是这三个函数的声明：
+
 ```go
 // WithCancel returns a copy of parent whose Done channel is closed as soon as
 // parent.Done is closed or cancel is called.
@@ -2398,7 +2404,6 @@ defer延迟函数调用的函数参数的值在defer定义时候就确定了，�
 
 通常内存泄漏，指的是能够预期的能很快被释放的内存由于附着在了长期存活的内存上、或生命期意外地被延长，导致预计能够立即回收的内存而长时间得不到回收。
 
-
 在 Go 中，由于 goroutine 的存在，因此,内存泄漏除了附着在长期对象上之外，还存在多种不同的形式。
 
 * 预期能被快速释放的内存因被根对象引用而没有得到迅速释放.
@@ -2552,7 +2557,6 @@ func (m *Mutex) Lock() {
 	m.lockSlow()
 }
 ```
-
 如果互斥锁的状态不是 0 时就会调用 `sync.Mutex.lockSlow` 尝试通过自旋（Spinnig）等方式等待锁的释放，
 
 这个方法是一个非常大 for 循环,它获取锁的过程：
