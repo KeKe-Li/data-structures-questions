@@ -732,7 +732,7 @@ type Mutex struct {
 }
 ```         
        
- sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
+sync.Mutex包中的类型只有两个公开的指针方法Lock和Unlock。
           
  ```go
  // Locker表示可以锁定和解锁的对象。
