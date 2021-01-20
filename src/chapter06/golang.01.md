@@ -448,7 +448,7 @@ void reader(){
 2. 哲学家进餐问题
 
 <p align="center">
-<img width="500" align="center" src="../images/29.jpg" />
+<img width="300" align="center" src="../images/29.jpg" />
 </p>
 
 五个哲学家围着一张圆桌，每个哲学家面前放着食物。哲学家的生活有两种交替活动：吃饭以及思考。当一个哲学家吃饭时，需要先拿起自己左右两边的两根筷子，并且一次只能拿起一根筷子。
