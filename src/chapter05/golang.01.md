@@ -181,6 +181,7 @@ Golang中Goroutine 可以通过 Channel 进行安全读写共享变量,还可以
 ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需要同步.
 ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步. 
 ```
+
 * channel无缓冲时，发送阻塞直到数据被接收，接收阻塞直到读到数据。
 * channel有缓冲时，当缓冲满时发送阻塞，当缓冲空时接收阻塞。
 
@@ -211,11 +212,11 @@ Golang内部有三个对象： P对象(processor) 代表上下文（或者可以
 <img width="300" align="center" src="../images/59.jpg" />
 </p>
 
-G（Goroutine） ：我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息.
+G（Goroutine）: 我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
 
-M（Machine） ：对Os内核级线程的封装，数量对应真实的CPU数（真正干活的对象）.
+M（Machine）: 对Os内核级线程的封装，数量对应真实的CPU数（真正干活的对象）。
 
-P（Processor） ：逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过GOMAXPROCS()来设置，默认为核心数.
+P（Processor）: 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过GOMAXPROCS()来设置，默认为核心数。
 
 在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。
 
@@ -227,7 +228,7 @@ P（Processor） ：逻辑处理器,即为G和M的调度对象，用来调度G�
 <img width="300" align="center" src="../images/60.jpg" />
 </p>
 
-当M0返回时，它会尝试从其他线程中“偷”一个上下文过来，如果没有偷到，会把Goroutine放到Global runqueue中去，然后把自己放入线程缓存中。
+当M0返回时，它会尝试从其他线程中“偷”一个上下文过来，如果没有偷到，会把Goroutine放到`Global runqueue`中去，然后把自己放入线程缓存中。
 上下文会定时检查Global runqueue。
 
 Golang是为并发而生的语言，Go语言是为数不多的在语言层面实现并发的语言；也正是Go语言的并发特性，吸引了全球无数的开发者。
@@ -274,7 +275,9 @@ func main() {
 
 * 通过sync包中的WaitGroup实现并发控制
 
-Goroutine是异步执行的，有的时候为了防止在结束main函数的时候结束掉Goroutine，所以需要同步等待，这个时候就需要用 WaitGroup了，在 sync 包中，提供了 WaitGroup ，它会等待它收集的所有 goroutine 任务全部完成。在WaitGroup里主要有三个方法:
+Goroutine是异步执行的，有的时候为了防止在结束main函数的时候结束掉Goroutine，所以需要同步等待，这个时候就需要用 WaitGroup了，在 sync 包中，提供了 WaitGroup,它会等待它收集的所有 goroutine 任务全部完成。
+
+在WaitGroup里主要有三个方法:
 
 * Add, 可以添加或减少 goroutine的数量.
 * Done, 相当于Add(-1).
@@ -299,7 +302,8 @@ func main(){
     wg.Wait()
 }
 ```
-在Golang官网中对于WaitGroup介绍是`A WaitGroup must not be copied after first use`,在 WaitGroup 第一次使用后，不能被拷贝
+
+在Golang官网中对于WaitGroup介绍是`A WaitGroup must not be copied after first use`,在 WaitGroup 第一次使用后，不能被拷贝。
 
 应用示例:
 
@@ -343,6 +347,7 @@ exit status 2
 * 在Go 1.7 以后引进的强大的Context上下文，实现并发控制.
 
 通常,在一些简单场景下使用 channel 和 WaitGroup 已经足够了，但是当面临一些复杂多变的网络并发场景下 channel 和 WaitGroup 显得有些力不从心了。
+
 比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine，比如数据库和RPC服务。
 
 所以我们需要一种可以跟踪 goroutine 的方案，才可以达到控制他们的目的，这就是Go语言为我们提供的 Context，称之为上下文非常贴切，它就是goroutine 的上下文。
@@ -378,7 +383,7 @@ type Context interface {
 }
 ```
 
-Context 对象是线程安全的，你可以把一个 Context 对象传递给任意个数的 gorotuine，对它执行 取消 操作时，所有 goroutine 都会接收到取消信号。
+Context 对象是线程安全的，你可以把一个 Context 对象传递给任意个数的 gorotuine，对它执行取消操作时，所有 goroutine 都会接收到取消信号。
 
 一个 Context 不能拥有 Cancel 方法，同时我们也只能 Done channel 接收数据。其中的原因是一致的：接收取消信号的函数和发送信号的函数通常不是一个。
 
@@ -411,6 +416,7 @@ slice := []int{}
 * 进程
 
 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动,进程是系统进行资源分配和调度的一个独立单位。
+
 每个进程都有自己的独立内存空间，不同进程通过进程间通信来通信。由于进程比较重量，占据独立的内存，所以上下文进程间的切换开销（栈、寄存器、虚拟内存、文件句柄等）比较大，但相对比较稳定安全。
 
 * 线程
