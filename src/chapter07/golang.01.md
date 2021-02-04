@@ -26,6 +26,7 @@
 
 ```markdown
 How do I know whether a variable is allocated on the heap or the stack?
+
 From a correctness standpoint, you don't need to know. Each variable in Go exists as long as there are references to it. The storage location chosen by the implementation is irrelevant to the semantics of the language.
 
 The storage location does have an effect on writing efficient programs. When possible, the Go compilers will allocate variables that are local to a function in that function's stack frame. However, if the compiler cannot prove that the variable is not referenced after the function returns, then the compiler must allocate the variable on the garbage-collected heap to avoid dangling pointer errors. Also, if a local variable is very large, it might make more sense to store it on the heap rather than the stack.
@@ -182,7 +183,7 @@ func main() {
 }
 ```
 
-返回值&ret是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用.
+返回值`&ret`是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用.
 
 ```bash
 # command-line-arguments
@@ -195,7 +196,7 @@ func main() {
 golang只有在function内的对象可能被外部访问时，才会把该对象分配在堆上.
 
 * 在g()方法中，ret对象的引用被返回到了方法外，因此会发生逃逸；而p对象只在g()内被引用，不会发生逃逸.
-* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在main()中的，不会发生逃逸.
+* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在`main()`中的，不会发生逃逸.
 
 ```go
 package main
