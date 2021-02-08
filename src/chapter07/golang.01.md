@@ -2,21 +2,21 @@
 
 在理解Go的堆栈分配前,我们先理解下什么是堆栈？在计算机中堆栈的概念分为：数据结构的堆栈和内存分配中堆栈。
 
-数据结构的堆栈：
+数据结构的堆栈:
 
-堆：堆可以被看成是一棵树，如：堆排序。在队列中，调度程序反复提取队列中第一个作业并运行，因为实际情况中某些时间较短的任务将等待很长时间才能结束，或者某些不短小，但具有重要性的作业，同样应当具有优先权。堆即为解决此类问题设计的一种数据结构。
+堆: 堆可以被看成是一棵树，如：堆排序。在队列中，调度程序反复提取队列中第一个作业并运行，因为实际情况中某些时间较短的任务将等待很长时间才能结束，或者某些不短小，但具有重要性的作业，同样应当具有优先权。堆即为解决此类问题设计的一种数据结构。
 
-栈：一种先进后出的数据结构。
+栈: 一种先进后出的数据结构。
 
 在内存分配中的堆和栈:
 
-栈（操作系统）：由操作系统自动分配释放 ，存放函数的参数值，局部变量的值等。其操作方式类似于数据结构中的栈。
+栈(操作系统): 由操作系统自动分配释放,存放函数的参数值，局部变量的值等。其操作方式类似于数据结构中的栈。
 
-堆（操作系统）： 一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收，分配方式倒是类似于链表。
+堆(操作系统): 一般由程序员分配释放,若程序员不释放，程序结束时可能由OS回收，分配方式倒是类似于链表。
 
 #### 堆栈缓存方式
 
-栈使用的是一级缓存， 他们通常都是被调用时处于存储空间中，调用完毕立即释放。
+栈使用的是一级缓存, 他们通常都是被调用时处于存储空间中，调用完毕立即释放。
 
 堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定（并不是一旦成为孤儿对象就能被回收）。所以调用这些对象的速度要相对来得低一些。
 
@@ -26,6 +26,7 @@
 
 ```markdown
 How do I know whether a variable is allocated on the heap or the stack?
+
 From a correctness standpoint, you don't need to know. Each variable in Go exists as long as there are references to it. The storage location chosen by the implementation is irrelevant to the semantics of the language.
 
 The storage location does have an effect on writing efficient programs. When possible, the Go compilers will allocate variables that are local to a function in that function's stack frame. However, if the compiler cannot prove that the variable is not referenced after the function returns, then the compiler must allocate the variable on the garbage-collected heap to avoid dangling pointer errors. Also, if a local variable is very large, it might make more sense to store it on the heap rather than the stack.
@@ -35,7 +36,9 @@ In the current compilers, if a variable has its address taken, that variable is 
 
 从上面可以了解到, 您不需要知道。Go中的每个变量都存在，只要有对它的引用即可。实现选择的存储位置与语言的语义无关。
 
-存储位置确实会影响编写高效的程序。如果可能，Go编译器将为该函数的堆栈帧中的函数分配本地变量。但是，如果编译器在函数返回后无法证明变量未被引用，则编译器必须在垃圾收集堆上分配变量以避免悬空指针错误。此外，如果局部变量非常大，将它存储在堆而不是堆栈上可能更有意义。
+存储位置确实会影响编写高效的程序。如果可能，Go编译器将为该函数的堆栈帧中的函数分配本地变量。
+
+但是，如果编译器在函数返回后无法证明变量未被引用，则编译器必须在垃圾收集堆上分配变量以避免悬空指针错误。此外，如果局部变量非常大，将它存储在堆而不是堆栈上可能更有意义。
 
 在当前的编译器中，如果变量具有其地址，则该变量是堆上分配的候选变量。但是，基础的逃逸分析可以将那些生存不超过函数返回值的变量识别出来，并且因此可以分配在栈上。
 
@@ -112,7 +115,7 @@ func main() {
 * Golang在编译时的逃逸分析可以减少gc的压力，不逃逸的对象分配在栈上，当函数返回时就回收了资源，不需要gc标记清除。
 * 如果你定义的对象的方法上有同步锁，但在运行时，却只有一个线程在访问，此时逃逸分析后的机器码，会去掉同步锁运行，提高效率。
 
-还是上面的那段程序代码，我们可以执行`go build -gcflags '-m -l' test_stack.go`来进行逃逸分析，输出结果如下
+还是上面的那段程序代码，我们可以执行 `go build -gcflags '-m -l' test_stack.go`来进行逃逸分析，输出结果如下
 
 ```bash
 # command-line-arguments
@@ -182,7 +185,7 @@ func main() {
 }
 ```
 
-返回值&ret是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用.
+返回值`&ret`是按址传递，传递的是指针对象，发生了逃逸，将对象存放在堆上以便外部调用.
 
 ```bash
 # command-line-arguments
@@ -195,7 +198,7 @@ func main() {
 golang只有在function内的对象可能被外部访问时，才会把该对象分配在堆上.
 
 * 在g()方法中，ret对象的引用被返回到了方法外，因此会发生逃逸；而p对象只在g()内被引用，不会发生逃逸.
-* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在main()中的，不会发生逃逸.
+* 在main()方法中，c对象虽然被g()方法引用了，但是由于引用的对象c没有在g()方法中发生逃逸，因此对象c的生命周期还是在`main()`中的，不会发生逃逸.
 
 ```go
 package main
@@ -227,9 +230,9 @@ func main() {
 ./test_stack.go:14:10: new(int) escapes to heap
 ```
 * 可以看到，ret和2.2中一样，存在外部引用，发生了逃逸.
-* 由于ret.Data是一个指针对象，p赋值给ret.Data后，也伴随p发生了逃逸.
+* 由于`ret.Data`是一个指针对象，p赋值给`ret.Data`后，也伴随p发生了逃逸.
 * main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸.
-* 当然，如果定义ret.Data为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
+* 当然，如果定义`ret.Data`为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
 
 #### 开发建议大对象按址传递，小对象按值传递
 
@@ -246,7 +249,6 @@ func r() *Result{
 	return &ret
 }
 ```
-
 只有返回ret对象的引用时才会把对象分配在堆上，我们不必要在一开始的时候就显式地把ret定义为指针.
 
 ```go
