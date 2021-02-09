@@ -2329,7 +2329,7 @@ bitmap区域标识arena区域哪些地址保存了对象，并且用4bit标志�
 
 此外我们还可以看到bitmap的高地址部分指向arena区域的低地址部分，这里bitmap的地址是由高地址向低地址增长的。
 
-spans区域存放mspan（是一些arena分割的页组合起来的内存管理基本单元，后文会再讲）的指针，每个指针对应一页，所以spans区域的大小就是`512GB/8KB*8B=512MB`。
+spans区域存放mspan（是一些arena分割的页组合起来的内存管理基本单元，后文会再讲）的指针，每个指针对应一页，所以spans区域的大小就是 `512GB/8KB*8B=512MB`。
 
 除以8KB是计算arena区域的页数，而最后乘以8是计算spans区域所有指针的大小。创建mspan的时候，按页填充对应的spans区域，在回收object时，根据地址很容易就能找到它所属的mspan。
 
@@ -2664,6 +2664,7 @@ func (m *Mutex) Unlock() {
 `sync.Mutex.unlockSlow` 方法首先会校验锁状态的合法性, 如果当前互斥锁已经被解锁过了就会直接抛出异常 `sync: unlock of unlocked mutex` 中止当前程序。
 
 在正常情况下会根据当前互斥锁的状态，分别处理正常模式和饥饿模式下的互斥锁.
+
 ```go 
 func (m *Mutex) unlockSlow(new int32) {
 	if (new+mutexLocked)&mutexLocked == 0 {
@@ -2738,6 +2739,7 @@ type RWMutex struct {
 我们从写锁开始分析:
 
 当我们想要获取写锁时，需要调用 `sync.RWMutex.Lock` 方法:
+
 ```go
 func (rw *RWMutex) Lock() {
 	if race.Enabled {
@@ -6636,7 +6638,7 @@ LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 
 11. #### 为什么需要消息队列
 
-解耦，异步处理，削峰/限流
+解耦，异步处理，削峰/限流.
 
 #### Golang面试参考
 
