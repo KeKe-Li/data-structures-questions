@@ -2,7 +2,7 @@
 
 通常我们去面试肯定会有些不错的Golang的面试题目的，所以总结下，让其他Golang开发者也可以查看到，同时也用来检测自己的能力和提醒自己的不足之处,欢迎大家补充和提交新的面试题目.
 
-Golang面试问题汇总, 这里主要分为 Golang, Mysql , Redis , Network protocol(网络协议), Linux,以及 Algorithm 和 Structrues.
+Golang面试问题汇总, 这里主要分为 Golang, Mysql , Redis , Network Protocol(网络协议), Linux,以及 Algorithm 和 Structrues.
 
 ### Golang基础
  
@@ -195,9 +195,9 @@ Golang中channel 是被单独创建并且可以在进程之间传递，它的通
 
 Goroutine 是Golang实际并发执行的实体，它底层是使用协程(coroutine)实现并发，coroutine是一种运行在用户态的用户线程，类似于 greenthread，go底层选择使用coroutine的出发点是因为，它具有以下特点：
 
-* 用户空间 避免了内核态和用户态的切换导致的成本。
-* 可以由语言和框架层进行调度。
-* 更小的栈空间允许创建大量的实例。
+* 用户空间 避免了内核态和用户态的切换导致的成本.
+* 可以由语言和框架层进行调度.
+* 更小的栈空间允许创建大量的实例.
 
 Golang中的Goroutine的特性:
 
