@@ -1222,6 +1222,7 @@ func (e *entry) storeLocked(i *interface{}) {
 Load方法:
 
 Load方法是一个加载方法，查找key。
+
 ```go
 func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
  //因read只读，线程安全，先查看是否满足条件
