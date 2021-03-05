@@ -1080,6 +1080,7 @@ type readOnly struct {
   amended bool 
 }
 ```
+
 entry的数据结构：
 
 ```go
@@ -1135,6 +1136,7 @@ func (m *Map) Store(key, value interface{}) {
  if e, ok := read.m[key]; ok && e.tryStore(&value) {
      return
  }
+ 
  // 如果read不存在或者已经被标记删除
  m.mu.Lock()
  read, _ = m.read.Load().(readOnly)
