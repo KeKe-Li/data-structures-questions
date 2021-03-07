@@ -929,7 +929,7 @@ func (rw *RWMutex) Unlock()
 func (rw *RWMutex) RLocker() Locker
 ```
 
-Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而 RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。
+Unlock方法会试图唤醒所有想进行读锁定而被阻塞的协程，而RUnlock方法只会在已无任何读锁定的情况下，试图唤醒一个因欲进行写锁定而被阻塞的协程。
 
 若对一个未被写锁定的读写锁进行写解锁，就会引发一个不可恢复的panic，同理对一个未被读锁定的读写锁进行读写锁也会如此。
 
@@ -1199,6 +1199,7 @@ func (e *entry) tryStore(i *interface{}) bool {
  if p == expunged {
      return false
  }
+ 
  for {
      if atomic.CompareAndSwapPointer(&e.p, p, unsafe.Pointer(i)) {
          return true
