@@ -92,14 +92,14 @@
 
 Linux 的系统调用主要有以下这些：
 
-| Task     | Commands                    |
-| -------- | --------------------------- |
-| 进程控制 | fork(); exit(); wait();     |
-| 进程通信 | pipe(); shmget(); mmap();   |
-| 文件操作 | open(); read(); write();    |
-| 设备操作 | ioctl(); read(); write();   |
-| 信息维护 | getpid(); alarm(); sleep(); |
-| 安全     | chmod(); umask(); chown();  |
+| Task     | Commands                   |
+| -------- | ---------------------------|
+| 进程控制  | fork(); exit(); wait();     |
+| 进程通信  | pipe(); shmget(); mmap();   |
+| 文件操作  | open(); read(); write();    |
+| 设备操作  | ioctl(); read(); write();   |
+| 信息维护  | getpid(); alarm(); sleep(); |
+| 安全     | chmod(); umask(); chown();   |
 
 #### 大内核和微内核
 
@@ -307,6 +307,7 @@ QQ 和浏览器是两个进程，浏览器进程里面有很多线程，例如 H
 互斥：多个进程在同一时刻只有一个进程能进入临界区。
 
 * 信号量
+* 
 ```markdown
 P 和 V 是来源于两个荷兰语词汇，P() ---prolaag （荷兰语，尝试减少的意思），V() ---verhoog（荷兰语，增加的意思）
 ```
