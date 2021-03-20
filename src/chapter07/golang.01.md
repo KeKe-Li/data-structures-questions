@@ -229,7 +229,7 @@ func main() {
 ./test_stack.go:7:17: leaking param: p to result ~r1 level=-1
 ./test_stack.go:14:10: new(int) escapes to heap
 ```
-* 可以看到，ret和2.2中一样，存在外部引用，发生了逃逸.
+* 可以看到,ret和2.2中一样，存在外部引用，发生了逃逸.
 * 由于`ret.Data`是一个指针对象，p赋值给`ret.Data`后，也伴随p发生了逃逸.
 * main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸.
 * 当然，如果定义`ret.Data`为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
@@ -249,14 +249,14 @@ func r() *Result{
 	return &ret
 }
 ```
-只有返回ret对象的引用时才会把对象分配在堆上，我们不必要在一开始的时候就显式地把ret定义为指针.
+
+只有返回ret对象的引用时才会把对象分配在堆上，我们不必要在一开始的时候就显式地把ret定义为指针,因为这样会对阅读代码也会容易产生误导.
 
 ```go
 ret = &Result{}
 ...
 return ret
 ```
-对阅读代码也会容易产生误导.
 
 #### 参考链接
 
