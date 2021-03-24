@@ -53,6 +53,7 @@ Golang面试问题汇总, 这里主要分为 Golang, Mysql , Redis , Network Pro
  |           43                |     [Go函数返回局部变量的指针是否安全](#Go函数返回局部变量的指针是否安全)                                           |        
  |           44                |     [Go中两个Nil可能不相等吗](#Go中两个Nil可能不相等吗)                                                         |        
  |           45                |     [Goroutine和KernelThread之间是什么关系](#Goroutine和KernelThread之间是什么关系)                            |        
+ |           46                |     [为何GPM调度要有P](#为何GPM调度要有P)                                                                    |        
  
  
  ### Mysql基础
@@ -3965,6 +3966,83 @@ b. go协程占用内存少
 执行go协程只需要极少的栈内存（大概是4～5KB），默认情况下，线程栈的大小为1MB。goroutine就是一段代码，一个函数入口，以及在堆上为其分配的一个堆栈。所以它非常廉价，我们可以很轻松的创建上万个goroutine，但它们并不是被操作系统所调度执行。
 
 因此协程和线程一样共享堆，不共享栈，协程由用户态下面的轻量级线程。
+
+
+46. #### 为何GPM调度要有P
+
+我们先看下go1.0源码当时是c实现的go的调度：
+```go
+static void
+schedule(G *gp)
+{
+ ...
+ schedlock();
+ if(gp != nil) {
+  ...
+  switch(gp->status){
+  case Grunnable:
+  case Gdead:
+   // Shouldn't have been running!
+   runtime·throw("bad gp->status in sched");
+  case Grunning:
+   gp->status = Grunnable;
+   gput(gp);
+   break;
+  }
+
+ gp = nextgandunlock();
+ gp->readyonstop = 0;
+ gp->status = Grunning;
+ m->curg = gp;
+ gp->m = m;
+ ...
+ runtime·gogo(&gp->sched, 0);
+}
+```
+这里调度的作用:
+
+* 调用 `schedlock` 方法来获取全局锁。
+* 获取全局锁成功后，将当前 Goroutine 状态从 Running（正在被调度） 状态修改为 Runnable（可以被调度）状态。
+* 调用 `gput` 方法来保存当前 Goroutine 的运行状态等信息，以便于后续的使用。
+* 调用 `nextgandunlock` 方法来寻找下一个可运行 Goroutine，并且释放全局锁给其他调度使用。
+* 获取到下一个待运行的 Goroutine 后，将其运行状态修改为 Running。
+* 调用 `runtime·gogo` 方法，将刚刚所获取到的下一个待执行的 Goroutine 运行起来，进入下一轮调度。
+
+GM 模型的缺点：
+
+Go1.0 的 GM 模型的 Goroutine 调度器限制了用 Go 编写的并发程序的可扩展性，尤其是高吞吐量服务器和并行计算程序。
+
+GM调度存在的问题：
+
+* 存在单一的全局 mutex（Sched.Lock）和集中状态管理：
+ mutex 需要保护所有与 goroutine 相关的操作（创建、完成、重排等），导致锁竞争严重。
+
+* Goroutine 传递的问题：
+  goroutine（G）交接（G.nextg）：工作者线程（M's）之间会经常交接可运行的 goroutine。 而且可能会导致延迟增加和额外的开销。每个 M 必须能够执行任何可运行的 G，特别是刚刚创建 G 的 M。
+
+* 每个 M 都需要做内存缓存（M.mcache）：
+
+会导致资源消耗过大（每个 mcache 可以吸纳到 2M 的内存缓存和其他缓存），数据局部性差。
+
+* 频繁的线程阻塞/解阻塞：
+在存在 syscalls 的情况下，线程经常被阻塞和解阻塞。这增加了很多额外的性能开销。
+
+为了解决 GM 模型的以上诸多问题，在 `Go1.1` 时，`Dmitry Vyukov` 在 GM 模型的基础上，新增了一个 P（Processor）组件。并且实现了 Work Stealing 算法来解决一些新产生的问题。
+
+加了 P 之后会带来什么改变呢？
+
+* 每个 P 有自己的本地队列，大幅度的减轻了对全局队列的直接依赖，所带来的效果就是锁竞争的减少。而 GM 模型的性能开销大头就是锁竞争。
+* 每个 P 相对的平衡上，在 GMP 模型中也实现了 `Work Stealing` 算法，如果 P 的本地队列为空，则会从全局队列或其他 P 的本地队列中窃取可运行的 G 来运行，减少空转，提高了资源利用率。
+
+为什么要有P呢？
+
+一般来讲，M 的数量都会多于 P。像在 Go 中，M 的数量默认是 10000，P 的默认数量的 CPU 核数。另外由于 M 的属性，也就是如果存在系统阻塞调用，阻塞了 M，又不够用的情况下，M 会不断增加。
+
+M 不断增加的话，如果本地队列挂载在 M 上，那就意味着本地队列也会随之增加。这显然是不合理的，因为本地队列的管理会变得复杂，且 Work Stealing 性能会大幅度下降。
+
+M 被系统调用阻塞后，我们是期望把他既有未执行的任务分配给其他继续运行的，而不是一阻塞就导致全部停止。
+
+因此使用 M 是不合理的，那么引入新的组件 P，把本地队列关联到 P 上，就能很好的解决这个问题。
 
 ### Mysql基础知识
 
