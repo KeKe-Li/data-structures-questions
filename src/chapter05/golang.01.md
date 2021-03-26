@@ -55,7 +55,6 @@ Golang面试问题汇总, 这里主要分为 Golang, Mysql , Redis , Network Pro
  |           45                |     [Goroutine和KernelThread之间是什么关系](#Goroutine和KernelThread之间是什么关系)                            |        
  |           46                |     [为何GPM调度要有P](#为何GPM调度要有P)                                                                    |        
  
- 
  ### Mysql基础
 
 |           题号               |            题目                                                                                         |
@@ -252,7 +251,7 @@ Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通
 
 4. #### Golang中常用的并发模型
 
-Golang 中常用的并发模型有三种:
+Golang中常用的并发模型有三种:
 
 * 通过channel通知实现并发控制
 
