@@ -1301,6 +1301,7 @@ func main(){
 }
 ```
 运行:
+
 ```go
 > go run goroutine.go 
 the ch value send 0xc00009c000
@@ -1344,6 +1345,7 @@ the ch value receive 0xc00009c000
 the result i 14
 the ch value receive 0xc00009c000
 ```
+
 ```
 > go run goroutine.go 
 the ch value send 0xc00007e000
@@ -1487,7 +1489,6 @@ Channel是异步进行的, channel存在3种状态：
 1. 零值（nil）通道；
 2. 非零值但已关闭的通道；
 3. 非零值并且尚未关闭的通道。
-
 
 |  操作	  | 一个零值nil通道 | 一个非零值但已关闭的通道  |  一个非零值且尚未关闭的通道  |
 |-----------|---------------|----------------------|--------------------------|
