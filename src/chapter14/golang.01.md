@@ -37,42 +37,43 @@ func main() {
 
 ```bash
 > GOOS=linux GOARCH=amd64 go tool compile -S main.go
-0x0000 00000 (main.go:4)        TEXT    "".add(SB), NOSPLIT|ABIInternal, $0-16
-0x0000 00000 (main.go:4)        FUNCDATA        $0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
-0x0000 00000 (main.go:4)        FUNCDATA        $1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
-0x0000 00000 (main.go:5)        MOVL    "".b+12(SP), AX
-0x0004 00004 (main.go:5)        MOVL    "".a+8(SP), CX
-0x0008 00008 (main.go:5)        ADDL    CX, AX
-0x000a 00010 (main.go:5)        MOVL    AX, "".~r2+16(SP)
-0x000e 00014 (main.go:5)        MOVB    $1, "".~r3+20(SP)
-0x0013 00019 (main.go:5)        RET
+"".add STEXT nosplit size=20 args=0x10 locals=0x0 funcid=0x0
+  0x0000 00000 (main.go:4)        TEXT    "".add(SB), NOSPLIT|ABIInternal, $0-16
+  0x0000 00000 (main.go:4)        FUNCDATA        $0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+  0x0000 00000 (main.go:4)        FUNCDATA        $1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+  0x0000 00000 (main.go:5)        MOVL    "".b+12(SP), AX
+  0x0004 00004 (main.go:5)        MOVL    "".a+8(SP), CX
+  0x0008 00008 (main.go:5)        ADDL    CX, AX
+  0x000a 00010 (main.go:5)        MOVL    AX, "".~r2+16(SP)
+  0x000e 00014 (main.go:5)        MOVB    $1, "".~r3+20(SP)
+  0x0013 00019 (main.go:5)        RET
 
-
-0x0000 00000 (main.go:8)        TEXT    "".main(SB), ABIInternal, $24-0
-0x0000 00000 (main.go:8)        MOVQ    (TLS), CX
-0x0009 00009 (main.go:8)        CMPQ    SP, 16(CX)
-0x000d 00013 (main.go:8)        PCDATA  $0, $-2
-0x000d 00013 (main.go:8)        JLS     58
-0x000f 00015 (main.go:8)        PCDATA  $0, $-1
-0x000f 00015 (main.go:8)        SUBQ    $24, SP
-0x0013 00019 (main.go:8)        MOVQ    BP, 16(SP)
-0x0018 00024 (main.go:8)        LEAQ    16(SP), BP
-0x001d 00029 (main.go:8)        FUNCDATA        $0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
-0x001d 00029 (main.go:8)        FUNCDATA        $1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
-0x001d 00029 (main.go:9)        MOVQ    $42949672965, AX
-0x0027 00039 (main.go:9)        MOVQ    AX, (SP)
-0x002b 00043 (main.go:9)        PCDATA  $1, $0
-0x002b 00043 (main.go:9)        CALL    "".add(SB)
-0x0030 00048 (main.go:10)       MOVQ    16(SP), BP
-0x0035 00053 (main.go:10)       ADDQ    $24, SP
-0x0039 00057 (main.go:10)       RET
-0x003a 00058 (main.go:10)       NOP
-0x003a 00058 (main.go:8)        PCDATA  $1, $-1
-0x003a 00058 (main.go:8)        PCDATA  $0, $-2
-0x003a 00058 (main.go:8)        CALL    runtime.morestack_noctxt(SB)
-0x003f 00063 (main.go:8)        PCDATA  $0, $-1
-0x003f 00063 (main.go:8)        NOP
-0x0040 00064 (main.go:8)        JMP     0
+"".main STEXT size=66 args=0x0 locals=0x18 funcid=0x0
+  0x0000 00000 (main.go:8)        TEXT    "".main(SB), ABIInternal, $24-0
+  0x0000 00000 (main.go:8)        MOVQ    (TLS), CX
+  0x0009 00009 (main.go:8)        CMPQ    SP, 16(CX)
+  0x000d 00013 (main.go:8)        PCDATA  $0, $-2
+  0x000d 00013 (main.go:8)        JLS     58
+  0x000f 00015 (main.go:8)        PCDATA  $0, $-1
+  0x000f 00015 (main.go:8)        SUBQ    $24, SP
+  0x0013 00019 (main.go:8)        MOVQ    BP, 16(SP)
+  0x0018 00024 (main.go:8)        LEAQ    16(SP), BP
+  0x001d 00029 (main.go:8)        FUNCDATA        $0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+  0x001d 00029 (main.go:8)        FUNCDATA        $1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+  0x001d 00029 (main.go:9)        MOVQ    $42949672965, AX
+  0x0027 00039 (main.go:9)        MOVQ    AX, (SP)
+  0x002b 00043 (main.go:9)        PCDATA  $1, $0
+  0x002b 00043 (main.go:9)        CALL    "".add(SB)
+  0x0030 00048 (main.go:10)       MOVQ    16(SP), BP
+  0x0035 00053 (main.go:10)       ADDQ    $24, SP
+  0x0039 00057 (main.go:10)       RET
+  0x003a 00058 (main.go:10)       NOP
+  0x003a 00058 (main.go:8)        PCDATA  $1, $-1
+  0x003a 00058 (main.go:8)        PCDATA  $0, $-2
+  0x003a 00058 (main.go:8)        CALL    runtime.morestack_noctxt(SB)
+  0x003f 00063 (main.go:8)        PCDATA  $0, $-1
+  0x003f 00063 (main.go:8)        NOP
+  0x0040 00064 (main.go:8)        JMP     0
 
 ```
 这里的add：
