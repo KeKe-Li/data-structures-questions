@@ -339,6 +339,7 @@ main.main()
         /home/keke/go/Test/wait.go:17 +0xab
 exit status 2
 ```
+
 它提示所有的 `goroutine` 都已经睡眠了，出现了死锁。这是因为 wg 给拷贝传递到了 goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。
 
 因此 Wait 就会死锁。
@@ -349,7 +350,7 @@ exit status 2
 
 * 在Go 1.7 以后引进的强大的Context上下文，实现并发控制.
 
-通常,在一些简单场景下使用 channel 和 WaitGroup 已经足够了，但是当面临一些复杂多变的网络并发场景下 channel 和 WaitGroup 显得有些力不从心了。
+通常,在一些简单场景下使用 channel 和 WaitGroup 已经足够了，但是当面临一些复杂多变的网络并发场景下 `channel` 和 `WaitGroup` 显得有些力不从心了。
 
 比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine，比如数据库和RPC服务。
 
@@ -431,6 +432,7 @@ slice := []int{}
 * 协程
 
 协程是一种用户态的轻量级线程，协程的调度完全由用户控制。协程拥有自己的寄存器上下文和栈。
+
 协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈，直接操作栈则基本没有内核切换的开销，可以不加锁的访问全局变量，所以上下文的切换非常快。
 
 7. #### Golang的内存模型中为什么小对象多了会造成GC压力
