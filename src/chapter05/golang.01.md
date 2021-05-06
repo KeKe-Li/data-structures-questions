@@ -6648,7 +6648,9 @@ Leader选举:
 
 Raft 使用心跳（heartbeat）触发Leader选举。当服务器启动时，初始化为Follower。Leader向所有Followers周期性发送heartbeat。如果Follower在选举超时时间内没有收到Leader的heartbeat，就会等待一段随机的时间后发起一次Leader选举。
 
-Follower将其当前term加一然后转换为Candidate。它首先给自己投票并且给集群中的其他服务器发送 RequestVote RPC （RPC细节参见八、Raft算法总结）。结果有以下三种情况：
+Follower将其当前term加一然后转换为Candidate。它首先给自己投票并且给集群中的其他服务器发送 RequestVote RPC （RPC细节参见八、Raft算法总结）。
+
+结果有以下三种情况：
 1.赢得了多数的选票，成功选举为Leader；
 2.收到了Leader的消息，表示有其它服务器已经抢先当选了Leader；
 3.没有服务器赢得多数的选票，Leader选举失败，等待选举时.
@@ -6758,6 +6760,14 @@ LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 11. #### 为什么需要消息队列
 
 解耦，异步处理，削峰/限流.
+
+12. #### 高并发系统的设计与实现
+
+13. #### Kafka的文件存储机制
+
+14. #### Kafka如何保证可靠性
+
+15. #### Kafka是如何实现高吞吐率的
 
 #### Golang面试参考
 
