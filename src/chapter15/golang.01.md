@@ -232,11 +232,11 @@ func (e *Escape) augmentParamHole(k EscHole, call, where *Node) EscHole {
 
 #### 开放编码
 
-Golang 1.14 版本继续加入了开发编码（open coded），该机制会将延迟调用直接插入函数返回之前，省去了运行时的 `deferproc` 或 `deferprocStack` 操作，在运行时的 deferreturn 也不会进行尾递归调用，而是直接在一个循环中遍历所有延迟函数执行。
+Golang 1.14 版本继续加入了开发编码（open coded），该机制会将延迟调用直接插入函数返回之前，省去了运行时的 `deferproc` 或 `deferprocStack` 操作，在运行时的 `deferreturn` 也不会进行尾递归调用，而是直接在一个循环中遍历所有延迟函数执行。
 
 这种机制使得 defer 的开销几乎可以忽略，唯一的运行时成本就是存储参与延迟调用的相关信息，不过使用这个机制还需要三个条件：
 
-1. 没有禁用编译器优化，即没有设置 -gcflags "-N".
+1. 没有禁用编译器优化，即没有设置 `-gcflags "-N"`.
 2. 函数内 defer 的数量不超过 8 个，且返回语句与延迟语句个数的乘积不超过 15.
 3. defer 不是在循环语句中。
 
