@@ -6765,6 +6765,36 @@ LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 
 13. #### Kafka的文件存储机制
 
+Kafka是最初由Linkedin公司开发，是一个分布式、分区的、多副本的、多订阅者，基于zookeeper协调的分布式日志系统(也可以当做MQ系统)，常见可以用于web/nginx日志、访问日志，消息服务等。
+
+一个商业化消息队列的性能好坏，其文件存储机制设计是衡量一个消息队列服务技术水平和最关键指标之一。
+
+Kafka部分名词解释如下：
+
+* Broker：消息中间件处理结点，一个Kafka节点就是一个broker，多个broker可以组成一个Kafka集群。
+* Topic：一类消息，例如page view日志、click日志等都可以以topic的形式存在，Kafka集群能够同时负责多个topic的分发。
+* Partition：topic物理上的分组，一个topic可以分为多个partition，每个partition是一个有序的队列。
+* Segment：partition物理上由多个segment组成，下面2.2和2.3有详细说明。
+* offset：每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续的序列号叫做offset,用于partition唯一标识一条消息.
+
+Kafka运行时很少有大量读磁盘的操作，主要是定期批量写磁盘操作，因此操作磁盘很高效。这跟Kafka文件存储中读写message的设计是息息相关的。Kafka中读写message有如下特点:
+
+写message：
+
+* 消息从堆转入page cache(即物理内存)。
+* 由异步线程刷盘,消息从page cache刷入磁盘。
+
+读message：
+
+* 消息直接从page cache转入socket发送出去。
+* 当从page cache没有找到相应数据时，此时会产生磁盘IO,从磁 盘Load消息到page cache,然后直接从socket发出去。
+
+Kafka高效文件存储设计特点
+
+Kafka把topic中一个parition大文件分成多个小文件段，通过多个小文件段，就容易定期清除或删除已经消费完文件，减少磁盘占用。
+通过索引信息可以快速定位message和确定response的最大大小。 通过index元数据全部映射到memory，可以避免segment file的IO磁盘操作。
+通过索引文件稀疏存储，可以大幅降低index文件元数据占用空间大小。
+
 14. #### Kafka如何保证可靠性
 
 15. #### Kafka是如何实现高吞吐率的
