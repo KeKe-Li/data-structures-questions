@@ -6769,7 +6769,7 @@ Kafka是最初由Linkedin公司开发，是一个分布式、分区的、多副�
 
 一个商业化消息队列的性能好坏，其文件存储机制设计是衡量一个消息队列服务技术水平和最关键指标之一。
 
-Kafka部分名词解释如下：
+Kafka中的名词解释如下：
 
 * Broker：消息中间件处理结点，一个Kafka节点就是一个broker，多个broker可以组成一个Kafka集群。
 * Topic：一类消息，例如page view日志、click日志等都可以以topic的形式存在，Kafka集群能够同时负责多个topic的分发。
@@ -6789,11 +6789,10 @@ Kafka运行时很少有大量读磁盘的操作，主要是定期批量写磁盘
 * 消息直接从page cache转入socket发送出去。
 * 当从page cache没有找到相应数据时，此时会产生磁盘IO,从磁 盘Load消息到page cache,然后直接从socket发出去。
 
-Kafka高效文件存储设计特点
+Kafka高效文件存储设计特点：
 
 Kafka把topic中一个parition大文件分成多个小文件段，通过多个小文件段，就容易定期清除或删除已经消费完文件，减少磁盘占用。
-通过索引信息可以快速定位message和确定response的最大大小。 通过index元数据全部映射到memory，可以避免segment file的IO磁盘操作。
-通过索引文件稀疏存储，可以大幅降低index文件元数据占用空间大小。
+通过索引信息可以快速定位message和确定response的最大大小。 通过index元数据全部映射到memory，可以避免segment file的IO磁盘操作。 通过索引文件稀疏存储，可以大幅降低index文件元数据占用空间大小。
 
 14. #### Kafka如何保证可靠性
 
