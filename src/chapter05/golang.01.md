@@ -53,7 +53,7 @@ Golang面试问题汇总, 这里主要分为 Golang, Mysql , Redis , Network Pro
  |           43                |     [Go函数返回局部变量的指针是否安全](#Go函数返回局部变量的指针是否安全)                                           |        
  |           44                |     [Go中两个Nil可能不相等吗](#Go中两个Nil可能不相等吗)                                                         |        
  |           45                |     [Goroutine和KernelThread之间是什么关系](#Goroutine和KernelThread之间是什么关系)                            |        
- |           46                |     [为何GPM调度要有P](#为何GPM调度要有P)                                                                    |        
+ |           46                |     [为何GPM调度要有P](#为何GPM调度要有P)                                                                     |        
  
  ### Mysql基础
 
@@ -6796,6 +6796,7 @@ Kafka把topic中一个parition大文件分成多个小文件段，通过多个�
 通过索引信息可以快速定位message和确定response的最大大小。 通过index元数据全部映射到memory，可以避免segment file的IO磁盘操作。 通过索引文件稀疏存储，可以大幅降低index文件元数据占用空间大小。
 
 14. #### Kafka如何保证可靠性
+
 
 15. #### Kafka是如何实现高吞吐率的
 
