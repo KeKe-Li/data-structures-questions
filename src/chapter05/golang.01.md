@@ -183,8 +183,11 @@ ch := make(chan int)    无缓冲的channel由于没有缓冲发送和接收需�
 ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步. 
 ```
 
-* channel无缓冲时，发送阻塞直到数据被接收，接收阻塞直到读到数据。
-* channel有缓冲时，当缓冲满时发送阻塞，当缓冲空时接收阻塞。
+* channel无缓冲时,无缓冲chan应该是指在接收前没有能力保存任何值得通道。
+
+这种类型的通道要求发送goroutine和接收goroutine同时准备好，才能完成发送和接收操作。如果两个goroutine没有同时准备好，通道会导致先执行发送或接收操作的goroutine阻塞等待。
+
+* channel有缓冲时,当缓冲满时发送阻塞，当缓冲空时接收阻塞。
 
 3. #### Golang并发机制以及它所使用的CSP并发模型．
 
