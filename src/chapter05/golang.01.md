@@ -604,8 +604,7 @@ Go中的GPM调度:
 <img width="300" align="center" src="../images/60.jpg" />
 </p>
 
-当MO返回时，它必须尝试取得一个P来运行goroutine，一般情况下，它会从其他的OS线程那里拿一个P过来，
-如果没有拿到的话，它就把goroutine放在一个`global runqueue`里，然后自己睡眠（放入线程缓存里）。所有的P也会周期性的检查`global runqueue`并运行其中的goroutine，否则`global runqueue`上的goroutine永远无法执行。
+当MO返回时，它必须尝试取得一个P来运行goroutine，一般情况下，它会从其他的OS线程那里拿一个P过来，如果没有拿到的话，它就把goroutine放在一个`global runqueue`里，然后自己睡眠（放入线程缓存里）。所有的P也会周期性的检查`global runqueue`并运行其中的goroutine，否则`global runqueue`上的goroutine永远无法执行。
  
 另一种情况是P所分配的任务G很快就执行完了（分配不均），这就导致了这个处理器P处于空闲的状态，但是此时其他的P还有任务，此时如果global runqueue没有任务G了，那么这个P就会从其他的P里偷取一些G来执行。
 
