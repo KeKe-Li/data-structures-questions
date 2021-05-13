@@ -1035,9 +1035,11 @@ func main() {
 
  //LoadOrStore方法，获取或者保存
  //参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
+
  if vv,ok:=sm.LoadOrStore(1,"c");ok{
      fmt.Println(vv)
  }
+ 
  if vv,ok:=sm.LoadOrStore(2,"c");!ok{
      fmt.Println(vv)
  }
