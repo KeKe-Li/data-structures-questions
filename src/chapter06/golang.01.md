@@ -99,7 +99,7 @@ Linux 的系统调用主要有以下这些：
 | 文件操作  | open(); read(); write();    |
 | 设备操作  | ioctl(); read(); write();   |
 | 信息维护  | getpid(); alarm(); sleep(); |
-| 安全     | chmod(); umask(); chown();   |
+| 安全     | chmod(); umask(); chown();  |
 
 #### 大内核和微内核
 
