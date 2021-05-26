@@ -148,9 +148,9 @@ TCP协议能够确保数据不会遗失。它的缺点是过程复杂、实现�
 
 我们通常会听到socker编程，但是socket编程具体指什么，可能不是所有人都很清楚，下面我们了解下什么是socket编程。
 
-Socket是`BSD UNIX`的进程通信机制，通常也称作”套接字”，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为`TCP/IP`网络的API，它定义了许多函数或例程，开发人员可以用它们来开发TCP/IP网络上的应用程序。
+Socket是`BSD UNIX`的进程通信机制，通常也称作"套接字"，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为`TCP/IP`网络的API，它定义了许多函数或例程，开发人员可以用它们来开发TCP/IP网络上的应用程序。
 
-电脑上运行的应用程序通常通过”套接字”向网络发出请求或者应答网络请求。
+电脑上运行的应用程序通常通过"套接字"向网络发出请求或者应答网络请求。
 
 Socket是应用层与TCP/IP协议族通信的中间软件抽象层。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP/IP协议族隐藏在Socket后面，对用户来说只需要调用Socket规定的相关函数，让Socket去组织符合指定的协议数据然后进行通信。
 
@@ -198,14 +198,24 @@ TCP/IP(Transmission Control Protocol/Internet Protocol) 即传输控制协议/�
 
 #### 计算机字节序和网络字节序
 
-字节序 就是多字节数据类型 (int, float 等)在内存中的存储顺序。可分为大端序，低地址端存放高位字节；小端序与之相反，低地址端存放低位字节。
+字节序，也就是字节的顺序，指的是多字节的数据类型(int, float 等)在内存中的存放顺序。
+
+在几乎所有的机器上，多字节对象都被存储为连续的字节序列。例如：如果C/C++中的一个int型变量 a 的起始地址是`&a = 0x100`，那么 a 的四个字节将被存储在存储器的`0x100`, `0x101`, `0x102`, `0x103`位置。
+
+根据整数 a 在连续的 4 byte 内存中的存储顺序，字节序被分为大端序（Big Endian） 与 小端序（Little Endian）两类。 然后就牵涉出两大CPU派系：
+
+* Motorola 6800，PowerPC 970，SPARC（除V9外）等处理器采用 `Big Endian`方式存储数据；
+
+* x86系列，VAX，PDP-11等处理器采用`Little Endian`方式存储数据。
 
 <p align="center">
 <img width="300" align="center" src="../images/171.jpg" />
 </p>
 
+* `Big Endian` 大端是指低地址端存放高位字节。
+* `Little Endian` 小端是指低地址端存放低位字节。
 
-在计算机内部，小端序被广泛应用于现代性`CPU`内部存储数据；而在其他场景譬如网络传输和文件存储使用大端序。
+在计算机内部，小端序被广泛应用于现代性`CPU`内部存储数据；而在文件存储和网络传输一般采用 `Big Endian`大端。当两台采用不同字节序的主机通信时，在发送数据之前都必须经过字节序的转换成为网络字节序后再进行传输.
 
 使用小端序时不移动字节就能改变 number 占内存的大小而不需内存地址起始位。比如我想把四字节的 int32 类型的整型转变为八字节的 int64 整型，只需在小端序末端加零即可。
 
@@ -240,3 +250,150 @@ Go 中有多种类型的整型， int8, int16, int32 和 int64 ，分别使用 1
 再来一个大点的数字举例，1732 二进制使用`11011000100`表示，实际上只需使用 11 位的空间存储，除了标识位每个字节只能保存 7 位，所以数字 1732 需要两个字节存储。第一个字节使用 1 表示所在字节后面还有字节，第二个字节使用 0 表示所在字节后面没有字节，最终结果为：10001101 01000100
 
 二进制协议 (Binary protocol) 高效地在底层处理数据通信，字节序决定字节输出的顺序、通过可变长度编码压缩数据存储空间。
+
+各自的优势:
+
+* `Big Endian` 大端符号位的判定固定为第一个字节，容易判断正负。
+* `Little Endian` 小端长度为1，2，4字节的数，排列方式都是一样的，数据类型转换非常方便。
+
+
+#### TCP黏包
+
+TCP数据在发送和接收时会形成粘包，也就是没有按照预期的大小得到数据，数据包不完整。这个问题的产生并不是因为设计、代码。
+
+封包在发送时，为了提高发送效率，无论是开发者使用的网络库，还是操作系统底层都会对封包进行拼包，将小包凑成大包，在TCP层可以节约包头的大小损耗，I/O层的调用损耗也可以有所降低。
+
+在接收TCP封包时，接收缓冲区的大小与发送过来的TCP传输单元大小不等，这时候会造成两种情况：
+
+* 接收的数据大于等于接收缓冲区大小时，此时需要将数据复制到用户缓忡，接着读取后面的封包。
+* 接收的数据小于接收缓冲区大小时，此时需要继续等待后续的 TCP 封包。
+
+那么为什么会出现粘包？
+
+主要原因就是tcp数据传递模式是流模式，在保持长连接的时候可以进行多次的收和发。
+
+"粘包"可发生在发送端也可发生在接收端：
+
+由Nagle算法造成的发送端的粘包：Nagle算法是一种改善网络传输效率的算法。简单来说就是当我们提交一段数据给TCP发送时，TCP并不立刻发送此段数据，而是等待一小段时间看看在等待期间是否还有要发送的数据，若有则会一次把这两段数据发送出去。
+接收端接收不及时造成的接收端粘包：TCP会把接收到的数据存在自己的缓冲区中，然后通知应用层取数据。当应用层由于某些原因不能及时的把TCP的数据取出来，就会造成TCP缓冲区中存放了几段数据。
+
+解决办法：
+
+出现"粘包"的关键在于接收方不确定将要传输的数据包的大小，因此我们可以对数据包进行封包和拆包的操作。
+
+封包：封包就是给一段数据加上包头，这样一来数据包就分为包头和包体两部分内容了(过滤非法包时封包会加入"包尾"内容)。包头部分的长度是固定的，并且它存储了包体的长度，根据包头长度固定以及包头中含有包体长度的变量就能正确的拆分出一个完整的数据包。
+
+我们可以自己定义一个协议，比如数据包的前4个字节为包头，里面存储的是发送的数据的长度。
+
+
+```go
+// socker 
+package proto
+
+import (
+	"bufio"
+	"bytes"
+	"encoding/binary"
+)
+
+// Encode 将消息编码
+func Encode(message string) ([]byte, error) {
+	// 读取消息的长度，转换成int32类型（占4个字节）
+	var length = int32(len(message))
+	var pkg = new(bytes.Buffer)
+	// 写入消息头
+	err := binary.Write(pkg, binary.LittleEndian, length)
+	if err != nil {
+		return nil, err
+	}
+	// 写入消息实体
+	err = binary.Write(pkg, binary.LittleEndian, []byte(message))
+	if err != nil {
+		return nil, err
+	}
+	return pkg.Bytes(), nil
+}
+
+// Decode 解码消息
+func Decode(reader *bufio.Reader) (string, error) {
+	// 读取消息的长度
+	lengthByte, _ := reader.Peek(4) // 读取前4个字节的数据
+	lengthBuff := bytes.NewBuffer(lengthByte)
+	var length int32
+	err := binary.Read(lengthBuff, binary.LittleEndian, &length)
+	if err != nil {
+		return "", err
+	}
+	// Buffered返回缓冲中现有的可读取的字节数。
+	if int32(reader.Buffered()) < length+4 {
+		return "", err
+	}
+
+	// 读取真正的消息数据
+	pack := make([]byte, int(4+length))
+	_, err = reader.Read(pack)
+	if err != nil {
+		return "", err
+	}
+	return string(pack[4:]), nil
+}
+```
+
+接下来在服务端和客户端分别使用上面定义的Decode和Encode函数处理数据。
+
+```go
+// server端
+func process(conn net.Conn) {
+	defer conn.Close()
+	reader := bufio.NewReader(conn)
+	for {
+		msg, err := proto.Decode(reader)
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			fmt.Println("decode msg failed, err:", err)
+			return
+		}
+		fmt.Println("收到client发来的数据：", msg)
+	}
+}
+
+func main() {
+	listen, err := net.Listen("tcp", "127.0.0.1:10890")
+	if err != nil {
+		fmt.Println("listen failed, err:", err)
+		return
+	}
+	defer listen.Close()
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			fmt.Println("accept failed, err:", err)
+			continue
+		}
+		go process(conn)
+	}
+}
+```
+
+```go
+// client 端
+func main() {
+	conn, err := net.Dial("tcp", "127.0.0.1:30000")
+	if err != nil {
+		fmt.Println("dial failed, err", err)
+		return
+	}
+	defer conn.Close()
+	for i := 0; i < 20; i++ {
+		msg := `Hello, Hello. How are you?`
+		data, err := proto.Encode(msg)
+		if err != nil {
+			fmt.Println("encode msg failed, err:", err)
+			return
+		}
+		conn.Write(data)
+	}
+}
+```
