@@ -249,13 +249,13 @@ fmt.Println(bytes.Equal([]byte("Golang Best"), []byte("Golang Best")))  // true
 
 固定长度编码 `Fixed-length encoding`
 
-Go 中有多种类型的整型， int8, int16, int32 和 int64 ，分别使用 1, 2, 4, 8 个字节表示，我们称之为固定长度类型 (fixed-length types)。
-
-处理字节流和内存中的字节切片方式不一样，编码 (Encoding) 和解码 (decoding) 二进制数据过程也不一样。
+Go中有多种类型的整型， int8, int16, int32 和 int64 ，分别使用 1, 2, 4, 8 个字节表示，我们称之为固定长度类型 (fixed-length types)。 处理字节流和内存中的字节切片方式不一样，编码 (Encoding) 和解码 (decoding) 二进制数据过程也不一样。
 
 可变长度编码理想情况下值小的数字占用的空间比值大的数字少，有多种实现方案，Go Binary 实现方式和 `protocol buffer encoding` 一致，具体原理如下：
 
-每个字节的首位存放一个标识位，用以表明是否还有跟多字节要读取及剩下的七位是否真正存储数据。标识位分别为 0 和 1
+每个字节的首位存放一个标识位，用以表明是否还有跟多字节要读取及剩下的七位是否真正存储数据。
+
+标识位分别为 `0` 和 `1`:
 
 * 1 表示还要继续读取该字节后面的字节.
 * 0 表示停止读取该字节后面的字节.
