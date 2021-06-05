@@ -209,7 +209,7 @@ Golang中的Goroutine的特性:
 
 Golang内部有三个对象: P对象(processor) 代表上下文（或者可以认为是cpu），M(work thread)代表工作线程，G对象（goroutine）.
 
-正常情况下一个cpu对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。
+正常情况下一个CPU对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。
 所有有时候线程对象会比处理器对象多很多.
 
 我们用如下图分别表示P、M、G:

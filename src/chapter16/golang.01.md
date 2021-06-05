@@ -150,7 +150,7 @@ Socket是`BSD UNIX`的进程通信机制，通常也称作"套接字"，用于�
 Socket是应用层与TCP/IP协议族通信的中间软件抽象层。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP/IP协议族隐藏在Socket后面，对用户来说只需要调用Socket规定的相关函数，让Socket去组织符合指定的协议数据然后进行通信。
 
 <p align="center">
-<img width="300" align="center" src="../images/170.jpg" />
+<img width="500" align="center" src="../images/170.jpg" />
 </p>
 
 原始的TCP socket开发中，偏向于底层，基本利用系统调用和操作系统交互。
