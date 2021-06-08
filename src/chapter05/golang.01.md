@@ -220,9 +220,9 @@ Golang内部有三个对象: P对象(processor) 代表上下文（或者可以�
 
 G（Goroutine）: 我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
 
-M（Machine）: 对Os内核级线程的封装，数量对应真实的CPU数（真正干活的对象）。
+M（Machine）: 对OS内核级线程的封装，数量对应真实的CPU数(真正干活的对象).
 
-P（Processor）: 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过GOMAXPROCS()来设置，默认为核心数。
+P（Processor）: 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过 `GOMAXPROCS()`来设置，默认为核心数。
 
 在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。
 
@@ -281,7 +281,7 @@ func main() {
 
 * 通过sync包中的WaitGroup实现并发控制
 
-Goroutine是异步执行的，有的时候为了防止在结束main函数的时候结束掉Goroutine，所以需要同步等待，这个时候就需要用 WaitGroup了，在 sync 包中，提供了 WaitGroup,它会等待它收集的所有 goroutine 任务全部完成。
+Goroutine是异步执行的，有的时候为了防止在结束main函数的时候结束掉Goroutine，所以需要同步等待，这个时候就需要用 WaitGroup了，在Sync包中，提供了 WaitGroup,它会等待它收集的所有 goroutine 任务全部完成。
 
 在WaitGroup里主要有三个方法:
 
