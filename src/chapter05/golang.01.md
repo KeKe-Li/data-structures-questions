@@ -6771,6 +6771,11 @@ LVS的由2部分程序组成，包括 Ipvs 和 Ipvsadm。
 
 13. #### Kafka的文件存储机制
 
+<p align="center">
+<img width="500" align="center" src="../images/175.jpg" />
+</p>
+
+
 Kafka是最初由Linkedin公司开发，是一个分布式、分区的、多副本的、多订阅者，基于zookeeper协调的分布式日志系统(也可以当做MQ系统)，常见可以用于web/nginx日志、访问日志，消息服务等。
 
 一个商业化消息队列的性能好坏，其文件存储机制设计是衡量一个消息队列服务技术水平和最关键指标之一。
@@ -6829,6 +6834,37 @@ Kafka官方给出了测试数据(Raid-5，7200rpm)：
 
 在操作系统内部，整个过程为：
 
+<p align="center">
+<img width="300" align="center" src="../images/172.jpg" />
+</p>
+
+
+在Linux kernel2.2 之后出现了一种叫做"零拷贝(zero-copy)"系统调用机制，就是跳过“用户缓冲区”的拷贝，建立一个磁盘空间和内存的直接映射，数据不再复制到“用户态缓冲区”，系统上下文切换减少为2次，可以提升一倍的性能。
+
+<p align="center">
+<img width="300" align="center" src="../images/173.jpg" />
+</p>
+
+* 文件分段
+
+kafka的队列topic被分为了多个区partition，每个partition又分为多个段segment，所以一个队列中的消息实际上是保存在N多个片段文件中。
+
+
+<p align="center">
+<img width="300" align="center" src="../images/174.jpg" />
+</p>
+
+通过分段的方式，每次文件操作都是对一个小文件的操作，非常轻便，同时也增加了并行处理能力。
+
+* 批量发送
+
+
+Kafka允许进行批量发送消息，先将消息缓存在内存中，然后一次请求批量发送出去，比如可以指定缓存的消息达到某个量的时候就发出去，或者缓存了固定的时间后就发送出去，如100条消息就发送，或者每5秒发送一次，这种策略将大大减少服务端的I/O次数。
+
+
+* 数据压缩
+
+Kafka还支持对消息集合进行压缩，Producer可以通过GZIP或Snappy格式对消息集合进行压缩，压缩的好处就是减少传输的数据量，减轻对网络传输的压力。Producer压缩之后，在Consumer需进行解压，虽然增加了CPU的工作，但在对大数据处理上，瓶颈在网络上而不是CPU，所以这个成本很值得。
 
 #### Golang面试参考
 
