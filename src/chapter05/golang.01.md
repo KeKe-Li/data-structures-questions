@@ -356,7 +356,7 @@ exit status 2
 
 通常,在一些简单场景下使用 channel 和 WaitGroup 已经足够了，但是当面临一些复杂多变的网络并发场景下 `channel` 和 `WaitGroup` 显得有些力不从心了。
 
-比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine，比如数据库和RPC服务。
+比如一个网络请求 Request，每个Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine，比如数据库和RPC服务。
 
 所以我们需要一种可以跟踪 goroutine 的方案，才可以达到控制他们的目的，这就是Go语言为我们提供的 Context，称之为上下文非常贴切，它就是goroutine 的上下文。
 
@@ -6784,7 +6784,7 @@ Kafka是最初由Linkedin公司开发，是一个分布式、分区的、多副�
 Kafka中的名词解释如下：
 
 * Broker：消息中间件处理结点，一个Kafka节点就是一个broker，多个broker可以组成一个Kafka集群。
-* Topic：一类消息，例如page view日志、click日志等都可以以topic的形式存在，Kafka集群能够同时负责多个topic的分发。
+* Topic：一类消息，例如`page view`日志、click日志等都可以以topic的形式存在，Kafka集群能够同时负责多个topic的分发。
 * Partition：topic物理上的分组，一个topic可以分为多个partition，每个partition是一个有序的队列。
 * Segment：partition物理上由多个segment组成，下面2.2和2.3有详细说明。
 * offset：每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续的序列号叫做offset,用于partition唯一标识一条消息.
@@ -6793,7 +6793,7 @@ Kafka运行时很少有大量读磁盘的操作，主要是定期批量写磁盘
 
 写message：
 
-* 消息从堆转入page cache(即物理内存)。
+* 消息从堆转入`page cache`(即物理内存)。
 * 由异步线程刷盘,消息从page cache刷入磁盘。
 
 读message：
