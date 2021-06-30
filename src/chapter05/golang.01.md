@@ -6602,7 +6602,7 @@ Lease 功能和 Prefix功能，能解决上面的死锁问题。
 
 a. 预防死锁
 
-可以把资源一次性分配：（破坏请求和保持条件）.
+可以把资源一次性分配:(破坏请求和保持条件).
 
 然后剥夺资源：即当某进程新的资源未满足时，释放已占有的资源（破坏不可剥夺条件）.
 
@@ -6661,6 +6661,7 @@ Raft 使用心跳（heartbeat）触发Leader选举。当服务器启动时，初
 Follower将其当前term加一然后转换为Candidate。它首先给自己投票并且给集群中的其他服务器发送 RequestVote RPC （RPC细节参见八、Raft算法总结）。
 
 结果有以下三种情况:
+
 1.赢得了多数的选票，成功选举为Leader；
 2.收到了Leader的消息，表示有其它服务器已经抢先当选了Leader；
 3.没有服务器赢得多数的选票，Leader选举失败，等待选举时.
@@ -6674,13 +6675,13 @@ Raft日志同步保证如下两点：
 1. 如果不同日志中的两个条目有着相同的索引和任期号，则它们所存储的命令是相同的。
 2. 如果不同日志中的两个条目有着相同的索引和任期号，则它们之前的所有条目都是完全一样的。
 
-Leader通过强制Followers复制它的日志来处理日志的不一致，Followers上的不一致的日志会被Leader的日志覆盖。
-Leader为了使Followers的日志同自己的一致，Leader需要找到Followers同它的日志一致的地方，然后覆盖Followers在该位置之后的条目。
+Leader通过强制Followers复制它的日志来处理日志的不一致，Followers上的不一致的日志会被Leader的日志覆盖。Leader为了使Followers的日志同自己的一致，Leader需要找到Followers同它的日志一致的地方，然后覆盖Followers在该位置之后的条目。
+
 Leader会从后往前试，每次AppendEntries失败后尝试前一个日志条目，直到成功找到每个Follower的日志一致位点，然后向后逐条覆盖Followers在该位置之后的条目。
 
 Raft增加了如下两条限制以保证安全性：
 1. 拥有最新的已提交的log entry的Follower才有资格成为Leader。
-   这个保证是在RequestVote RPC中做的，Candidate在发送RequestVote RPC时，要带上自己的最后一条日志的term和log index，其他节点收到消息时，如果发现自己的日志比请求中携带的更新，则拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term更大，则term大的更新，如果term一样大，则log index更大的更新。
+这个保证是在RequestVote RPC中做的，Candidate在发送RequestVote RPC时，要带上自己的最后一条日志的term和log index，其他节点收到消息时，如果发现自己的日志比请求中携带的更新，则拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term更大，则term大的更新，如果term一样大，则log index更大的更新。
 
 2. Leader只能推进commit index来提交当前term的已经复制到大多数服务器上的日志，旧term日志的提交要等到提交当前term的日志来间接提交（log index 小于 commit index的日志被间接提交）。
 
