@@ -3244,7 +3244,6 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 * 如果 Channel 存在缓冲区并且其中还有空闲的容量，我们就会直接将数据直接存储到当前缓冲区 sendx 所在的位置上；
 * 如果不满足上面的两种情况，就会创建一个 `runtime.sudog` 结构并将其加入 Channel 的 `sendq` 队列中，当前 Goroutine 也会陷入阻塞等待其他的协程从 Channel 接收数据；
 
-
 发送数据的过程中可能包含几个会触发 Goroutine 调度的时机：
 
 1. 发送数据时发现 Channel 上存在等待接收数据的 Goroutine，立刻设置处理器的 `runnext` 属性，但是并不会立刻触发调度.
@@ -3803,7 +3802,6 @@ func evacuate(t *maptype, h *hmap, oldbucket uintptr) {
 
 只使用哈希函数是不能定位到具体某一个桶的，哈希函数只会返回很长的哈希,我们还需一些方法将哈希映射到具体的桶上。
 
-
 那么如何定位key呢?
 
 key 经过哈希计算后得到哈希值，共64个 bit 位（64位机，32位机就不讨论了，现在主流都是64位机），计算它到底要落在哪个桶时，只会用到最后 B 个 bit 位。
@@ -4031,7 +4029,7 @@ GM调度存在的问题：
 
 * 每个 M 都需要做内存缓存（M.mcache）：
 
-会导致资源消耗过大（每个 mcache 可以吸纳到 2M 的内存缓存和其他缓存），数据局部性差。
+这样会导致资源消耗过大（每个 mcache 可以吸纳到 2M 的内存缓存和其他缓存），数据局部性差。
 
 * 频繁的线程阻塞/解阻塞：
 
