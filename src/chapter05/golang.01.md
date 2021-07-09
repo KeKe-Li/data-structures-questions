@@ -2410,8 +2410,8 @@ spans区域存放mspan（是一些arena分割的页组合起来的内存管理�
 ```
 运行:
 ```go
-the value of a1: 1
-the value of a1: 2
+the value of a2: 2
+the value of a1:1
 ```
 第一种情况：
 ```go
