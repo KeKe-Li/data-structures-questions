@@ -1721,7 +1721,6 @@ defer表达式可能会在设置函数返回值之后，在返回到调用函数
 调用defer函数
 空的return
 ```
-
 f1: 比较简单，参考结论2，将 0 赋给 result，defer 延迟函数修改 result，最后返回给调用函数。正确答案是 1。
 
 f1可以修改成长这样的:
@@ -1791,7 +1790,9 @@ goroutine的控制结构中，有一张表记录defer，调用`runtime.deferproc
 
 23. #### Go的select可以用于什么
 
-Golang 的 select 机制可以理解为是在语言层面实现了和 select, poll, epoll 相似的功能：监听多个描述符的读/写等事件，一旦某个描述符就绪（一般是读或者写事件发生了），就能够将发生的事件通知给关心的应用程序去处理该事件。 golang 的 select 机制是，监听多个channel，每一个 case 是一个事件，可以是读事件也可以是写事件，随机选择一个执行，可以设置default，它的作用是：当监听的多个事件都阻塞住会执行default的逻辑。
+Golang 的 select 机制可以理解为是在语言层面实现了和select, poll, epoll 相似的功能：监听多个描述符的读/写等事件，一旦某个描述符就绪（一般是读或者写事件发生了），就能够将发生的事件通知给关心的应用程序去处理该事件。 golang 的 select 机制是，监听多个channel，每一个 case 是一个事件，可以是读事件也可以是写事件，随机选择一个执行，可以设置default.
+
+它的作用是：当监听的多个事件都阻塞住会执行default的逻辑。
 
 select的源码在 (runtime/select.go)[https://github.com/golang/go/blob/master/src/runtime/select.go] ，看的时候建议是重点关注 pollorder 和 lockorder.
 
