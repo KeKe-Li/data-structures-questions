@@ -212,7 +212,7 @@ Golang中的Goroutine的特性:
 Golang内部有三个对象: P对象(processor) 代表上下文（或者可以认为是cpu），M(work thread)代表工作线程，G对象（goroutine）.
 
 正常情况下一个CPU对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。
-所有有时候线程对象会比处理器对象多很多.
+所以有时候线程对象会比处理器对象多很多.
 
 我们用如下图分别表示P、M、G:
 
@@ -220,11 +220,11 @@ Golang内部有三个对象: P对象(processor) 代表上下文（或者可以�
 <img width="300" align="center" src="../images/59.jpg" />
 </p>
 
-G（Goroutine）:我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
+G（Goroutine）: 我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
 
-M（Machine）:对OS内核级线程的封装，数量对应真实的CPU数(真正干活的对象).
+M（Machine）: 对OS内核级线程的封装，数量对应真实的CPU数(真正干活的对象).
 
-P (Processor):逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过 `GOMAXPROCS()`来设置，默认为核心数。
+P (Processor): 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过 `GOMAXPROCS()`来设置，默认为核心数。
 
 在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。
 
@@ -1734,7 +1734,6 @@ func f() (result int) {
 }
 ```
 所以这个返回值是1。
-
 
 f2: defer 是在 t 赋值给 r 之后执行的，而 defer 延迟函数只改变了 t 的值，r 不变。正确答案 5。
 
