@@ -211,8 +211,7 @@ Golang中的Goroutine的特性:
 
 Golang内部有三个对象: P对象(processor) 代表上下文（或者可以认为是cpu），M(work thread)代表工作线程，G对象（goroutine）.
 
-正常情况下一个CPU对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。
-所以有时候线程对象会比处理器对象多很多.
+正常情况下一个CPU对象启一个工作线程对象，线程去检查并执行goroutine对象。碰到goroutine对象阻塞的时候，会启动一个新的工作线程，以充分利用cpu资源。所以有时候线程对象会比处理器对象多很多.
 
 我们用如下图分别表示P、M、G:
 
@@ -243,16 +242,11 @@ Golang是为并发而生的语言，Go语言是为数不多的在语言层面实
 
 Golang的CSP并发模型，是通过Goroutine和Channel来实现的。
 
-Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。
-Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通常Channel，是各个Goroutine之间通信的”管道“，有点类似于Linux中的管道。
+Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通常Channel，是各个Goroutine之间通信的”管道“，有点类似于Linux中的管道。
 
 通信机制channel也很方便，传数据用`channel <- data`，取数据用`<-channel`。
 
-在通信过程中，传数据`channel <- data`和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。
-
-而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。
-
-因此GPM的简要概括即为:事件循环,线程池,工作队列.
+在通信过程中，传数据`channel <- data`和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。因此GPM的简要概括即为:事件循环,线程池,工作队列.
 
 4. #### Golang中常用的并发模型
 
@@ -291,7 +285,7 @@ Goroutine是异步执行的，有的时候为了防止在结束main函数的时�
 * Done, 相当于Add(-1).
 * Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0.
 
-在主 goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个 goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回。
+在主goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回。
 
 ```go
 func main(){
@@ -465,6 +459,7 @@ $ go run -race mysrc.go  // 编译和运行程序
 $ go build -race mycmd   // 构建程序
 $ go install -race mypkg // 安装程序
 ```
+
 要想解决数据竞争的问题可以使用互斥锁`sync.Mutex`,解决数据竞争(Data race),也可以使用管道解决,使用管道的效率要比互斥锁高.
 
 9. #### 什么是channel，为什么它可以做到线程安全
