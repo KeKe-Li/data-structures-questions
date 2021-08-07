@@ -4192,7 +4192,6 @@ Mysql 中保存 4 字节长度的 UTF-8 字符，需要使用`utf8mb4` 字符集
 
 对于 CHAR 类型数据，`utf8mb4` 会多消耗一些空间，根据 Mysql 官方建议，使用 VARCHAR 替代 CHAR。
 
-
 7. #### Mysql中乐观锁和悲观锁区别
 
 * 悲观锁(Pessimistic Lock)
