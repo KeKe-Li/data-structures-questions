@@ -6039,6 +6039,7 @@ func quickDescendingSort(arr []int, start, end int) {
 	}
 }
 ```
+
 运行结果:
 ```go
 quickAscendingSort: [0 1 2 3 6 7 8 9 15 16 19 23 34]
