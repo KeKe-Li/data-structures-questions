@@ -6820,7 +6820,6 @@ Kafka官方给出了测试数据(Raid-5，7200rpm)：
 <img width="300" align="center" src="../images/172.jpg" />
 </p>
 
-
 在Linux kernel2.2 之后出现了一种叫做"零拷贝(zero-copy)"系统调用机制，就是跳过“用户缓冲区”的拷贝，建立一个磁盘空间和内存的直接映射，数据不再复制到“用户态缓冲区”，系统上下文切换减少为2次，可以提升一倍的性能。
 
 <p align="center">
