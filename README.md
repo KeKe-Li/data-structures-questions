@@ -27,6 +27,7 @@
 * [Golang的defer优化](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter15/golang.01.md)
 * [Golang中的TCP开发](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter16/golang.01.md)
 * [CPU上下文切换](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter17/golang.01.md)
+* [汇编](https://github.com/KeKe-Li/golang-interview-questions/blob/master/src/chapter18/golang.01.md)
 
 ### data-structures-questions
 
