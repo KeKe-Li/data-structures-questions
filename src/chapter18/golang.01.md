@@ -33,6 +33,19 @@
 寄存器不依靠地址区分数据，而依靠名称。每一个寄存器都有自己的名称，我们告诉 CPU 去具体的哪一个寄存器拿数据，这样的速度是最快的。有人比喻寄存器是 CPU 的零级缓存。
 
 
+寄存器的种类: 
 
+在早期的时候,x86 CPU 只有8个寄存器，而且每个都有不同的用途。但是现在的寄存器已经有100多个了，而且都变成通用寄存器，不特别指定用途了，但是早期寄存器的名字都被保存了下来。
+
+```markdown
+* EAX 的全称是Extended Accumulator X，即累加寄存器。A代表Accumulator.
+* EBX 的全称是Extended Base X，即基地址"(base)寄存器, 在内存寻址时存放基地址.
+* ECX 的全称是Extended Counting X，即计数寄存器。C代表counting.
+* EDX 的全称是Extended Data X，即总是被用来放整数除法产生的余数.
+* EDI 的全称是Extended Destination Indexing，即目的索引寄存器。D代表destnation，I代表Indexing.
+* ESI 的全称是Extended Source Indexing，即源索引寄存器。S代表Source，I代表Indexing.
+* EBP 的全称是Extended (Stack) Base Pointer	，即栈基指针寄存器。B代表Base.
+* ESP 的全称是Extended Stack Pointer，即栈指针寄存器。S代表Stack.
+```
 
 
