@@ -47,5 +47,22 @@
 * EBP 的全称是Extended (Stack) Base Pointer	，即栈基指针寄存器。B代表Base.
 * ESP 的全称是Extended Stack Pointer，即栈指针寄存器。S代表Stack.
 ```
+这里的这8个寄存器之中，前面七个都是通用的。ESP 寄存器有特定用途，保存当前 Stack 的地址.
 
+<p align="center">
+<img width="300" align="center" src="../images/178.jpg" />
+</p>
+
+通常我们常常看到 32位 CPU、64位 CPU 这样的名称，其实指的就是寄存器的大小。32 位 CPU 的寄存器大小就是4个字节。
+
+#### 内存模型：Heap
+
+寄存器只能存放很少量的数据，大多数时候，CPU 要指挥寄存器，直接跟内存交换数据。所以，除了寄存器，还必须了解内存怎么储存数据。
+
+程序运行的时候，操作系统会给它分配一段内存，用来储存程序和运行产生的数据。这段内存有起始地址和结束地址，比如从`0x1000`到`0x8000`，起始地址是较小的那个地址，结束地址是较大的那个地址。
+
+
+<p align="center">
+<img width="300" align="center" src="../images/180.jpg" />
+</p>
 
