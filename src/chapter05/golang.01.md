@@ -190,7 +190,6 @@ Golang中Goroutine 可以通过 Channel 进行安全读写共享变量,还可以
 ch := make(chan int)  无缓冲的channel由于没有缓冲发送和接收需要同步.
 ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步. 
 ```
-
 * channel无缓冲时,无缓冲chan是指在接收前没有能力保存任何值得通道。
 
 这种类型的通道要求发送goroutine和接收goroutine同时准备好，才能完成发送和接收操作。如果两个goroutine没有同时准备好，通道会导致先执行发送或接收操作的goroutine阻塞等待。
@@ -253,7 +252,7 @@ Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和�
 
 通信机制channel也很方便，传数据用`channel <- data`，取数据用`<-channel`。
 
-在通信过程中，传数据 `channel <- data` 和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。因此GPM的简要概括即为:事件循环,线程池,工作队列.
+在通信过程中，传数据 `channel <- data` 和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。因此GPM的简要概括即为:事件循环,线程池,工作队列。
 
 4. #### Golang中常用的并发模型
 
