@@ -190,7 +190,6 @@ Golang中Goroutine 可以通过 Channel 进行安全读写共享变量,还可以
 ch := make(chan int)  无缓冲的channel由于没有缓冲发送和接收需要同步.
 ch := make(chan int, 2) 有缓冲channel不要求发送和接收操作同步. 
 ```
-
 * channel无缓冲时,无缓冲chan是指在接收前没有能力保存任何值得通道。
 
 这种类型的通道要求发送goroutine和接收goroutine同时准备好，才能完成发送和接收操作。如果两个goroutine没有同时准备好，通道会导致先执行发送或接收操作的goroutine阻塞等待。
