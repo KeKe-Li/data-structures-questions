@@ -228,9 +228,9 @@ func main() {
 ./test_stack.go:14:10: new(int) escapes to heap
 ```
 * 可以看到,ret和2.2中一样，存在外部引用，发生了逃逸.
-* 由于`ret.Data`是一个指针对象，p赋值给`ret.Data`后，也伴随p发生了逃逸.
+* 由于 `ret.Data` 是一个指针对象，p赋值给`ret.Data`后，也伴随p发生了逃逸.
 * main()中的对象c，由于作为参数p传入g()后发生了逃逸，因此c也发生了逃逸.
-* 当然，如果定义`ret.Data`为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
+* 当然，如果定义 `ret.Data` 为int(instead of *int)的话，对象p也是不会逃逸的(执行了拷贝).
 
 #### 开发建议大对象按址传递，小对象按值传递
 
