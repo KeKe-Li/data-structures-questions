@@ -225,7 +225,6 @@ func (e *Escape) augmentParamHole(k EscHole, call, where *Node) EscHole {
 		where.Esc = EscNever
 		return e.later(k)
 	}
-
 	return e.heapHole().note(where, "call parameter")
 }
 ```
@@ -310,10 +309,9 @@ func walk(fn *Node) {
 		dumplist(s, Curfn.Func.Enter)
 	}
 }
-
 ```
 
-在使用open code的模式的时候,默认open coded最多支持8个defer，超过则取消。
+在使用`open code`的模式的时候,默认`open coded`最多支持8个defer，超过则取消。
                    
 ```go 
 const maxOpenDefers = 8
