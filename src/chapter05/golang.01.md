@@ -409,6 +409,7 @@ Context 对象是线程安全的，你可以把一个 Context 对象传递给任
 var slice []int
 slice[1] = 0
 ```
+
 此时slice的值是nil，这种情况可以用于需要返回slice的函数，当函数出现异常的时候，保证函数依然会有nil的返回值。
 
 `empty slice` 是指slice不为nil，但是slice没有值，slice的底层的空间是空的，此时的定义如下：
@@ -472,11 +473,9 @@ $ go install -race mypkg // 安装程序
 
 Channel是Go中的一个核心类型，可以把它看成一个管道，通过它并发核心单元就可以发送或者接收数据进行通讯(communication),Channel也可以理解是一个先进先出的队列，通过管道进行通信。
 
-Golang的Channel,发送一个数据到Channel和从Channel接收一个数据都是原子性的。
+Golang的Channel, 发送一个数据到Channel和从Channel接收一个数据都是原子性的。
 
-Go的设计思想就是, 不要通过共享内存来通信，而是通过通信来共享内存，前者就是传统的加锁，后者就是Channel。
-
-也就是说，设计Channel的主要目的就是在多任务间传递数据的，本身就是安全的。
+Go的设计思想就是, 不要通过共享内存来通信，而是通过通信来共享内存，前者就是传统的加锁，后者就是Channel。也就是说，设计Channel的主要目的就是在多任务间传递数据的，本身就是安全的。
 
 10. #### Golang垃圾回收算法
 
