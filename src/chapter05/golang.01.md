@@ -278,7 +278,6 @@ func main() {
     fmt.Println("finished")
 }
 ```
-
 当主 goroutine 运行到 `<-ch` 接受 channel 的值的时候，如果该  channel 中没有数据，就会一直阻塞等待，直到有值。 这样就可以简单实现并发控制
 
 * 通过sync包中的WaitGroup实现并发控制
@@ -291,7 +290,7 @@ Goroutine是异步执行的，有的时候为了防止在结束main函数的时�
 * Done, 相当于Add(-1).
 * Wait, 执行后会堵塞主线程，直到WaitGroup 里的值减至0.
 
-在主goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个goroutine 完成后 Done() 表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回。
+在主goroutine 中 Add(delta int) 索要等待goroutine 的数量。在每一个goroutine 完成后Done()表示这一个goroutine 已经完成，当所有的 goroutine 都完成后，在主 goroutine 中 WaitGroup 返回。
 
 ```go
 func main(){
