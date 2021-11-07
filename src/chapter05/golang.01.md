@@ -465,7 +465,6 @@ $ go run -race mysrc.go  // 编译和运行程序
 $ go build -race mycmd   // 构建程序
 $ go install -race mypkg // 安装程序
 ```
-
 要想解决数据竞争的问题可以使用互斥锁`sync.Mutex`,解决数据竞争(Data race),也可以使用管道解决,使用管道的效率要比互斥锁高.
 
 9. #### 什么是channel，为什么它可以做到线程安全
