@@ -132,7 +132,7 @@ Serverless 就是为了解决这些问题诞生的。 它可以把底层的硬�
 
 所以，一个应用如果是 Serverless 架构的，必须要实现自动弹性伸缩和按量付费，这也是 Serverless 的核心特点。
 
-狭义的 Serverless:
+* 狭义的 Serverless:
 
 广义的 Serverless 更多是指一种技术理念，狭义的 Serverless 则是现阶段主流的技术实现。之所以说是狭义的，是因为 Serverless 架构正在持续发展中，未来可能有更好的技术方案。
 
