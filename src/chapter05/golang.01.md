@@ -6809,9 +6809,9 @@ kafka的消息是不断追加到文件中的，这个特性使kafka可以充分�
 
 Kafka官方给出了测试数据(Raid-5，7200rpm)：
 
-顺序`I/O`: 600MB/s.
+* 顺序`I/O`: 600MB/s.
 
-随机`I/O`: 100KB/s.
+* 随机`I/O`: 100KB/s.
 
 * 零拷贝
 
@@ -6832,7 +6832,6 @@ Kafka官方给出了测试数据(Raid-5，7200rpm)：
 * 文件分段
 
 kafka的队列topic被分为了多个区partition，每个partition又分为多个段segment，所以一个队列中的消息实际上是保存在N多个片段文件中。
-
 
 <p align="center">
 <img width="300" align="center" src="../images/174.jpg" />
