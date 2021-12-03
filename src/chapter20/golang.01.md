@@ -5,6 +5,6 @@ QUIC 全称 quick udp internet connection，“快速 UDP 互联网连接”，�
 QUIC/HTTP3 分层模型及与 HTTP2 对比：
 
 <p align="center">
-<img width="300" align="center" src="../images/185.jpg" />
+<img width="700" align="center" src="../images/185.jpg" />
 </p>
 
