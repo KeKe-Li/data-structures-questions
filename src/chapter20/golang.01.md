@@ -8,3 +8,8 @@ QUIC/HTTP3 分层模型及与 HTTP2 对比：
 <img width="700" align="center" src="../images/185.jpg" />
 </p>
 
+#### QUIC 核心优势是什么？
+
+1. 0-RTT 建立连接
+
+QUIC 基于的 UDP 协议本身无需握手，并且它早于 TLS 1.3 协议，就实现了自己的 0-RTT 加密握手。下图分别代表了 1-RTT 握手（首次建连），成功的 0-RTT 握手，以及失败回退的握手。
