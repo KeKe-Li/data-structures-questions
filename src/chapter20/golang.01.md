@@ -1,6 +1,6 @@
 #### QUIC网络传输协议 
 
-QUIC 全称 quick udp internet connection，“快速 UDP 互联网连接”，（和英文 quick 谐音，简称“快”）是由 Google 提出的基于 UDP 进行可靠传输的协议。QUIC 在应用层实现了丢包恢复、拥塞控制、滑窗机制等保证数据传输的可靠性，同时对传输的数据具备前向安全的加密能力。HTTP3 则是 IETF(互联网工程任务组)基于 QUIC 协议基础进行设计的新一代 HTTP 协议。
+QUIC 全称 quick udp internet connection，“快速 UDP 互联网连接”,（和英文 quick 谐音，简称“快”）是由 Google 提出的基于 UDP 进行可靠传输的协议。QUIC 在应用层实现了丢包恢复、拥塞控制、滑窗机制等保证数据传输的可靠性，同时对传输的数据具备前向安全的加密能力。HTTP3 则是 IETF(互联网工程任务组)基于 QUIC 协议基础进行设计的新一代 HTTP 协议。
 
 QUIC/HTTP3 分层模型及与 HTTP2 对比：
 
@@ -53,7 +53,7 @@ QUIC 核心逻辑都在用户态，能灵活的修改连接参数、替换拥塞
 
 * QUIC 一直保持着高速发展，分为 gQUIC（Google QUIC）、iQUIC(IETF-QUIC)两大类，衍生的 QUIC 子版本有几十个。
 
-为了快速把 QUIC 协议落地，给业务提升网络性能，我们选择了开源的 Chromium cronet 网络协议栈作为基础。Chomium，作为占领全球浏览器绝对地位的 Chrome 的开源代码,有 Google 强大的研发团队支撑，其网络协议栈是一个相对独立的组件，被称为 Cronet。
+为了快速把 QUIC 协议落地，给业务提升网络性能，我们选择了开源的 Chromium `cronet` 网络协议栈作为基础。Chomium，作为占领全球浏览器绝对地位的 Chrome 的开源代码,有 Google 强大的研发团队支撑，其网络协议栈是一个相对独立的组件，被称为 Cronet。
 
 * 协议栈完整性：完善的 QUIC 协议栈，还包括 `HTTP2`,`WEBSOCKET`, `FTP`,`SOCKS` 协议；
 * QUIC 版本支持：支持 gQUIC 和 iQUIC，并且还在不断保持更新；
