@@ -33,7 +33,6 @@ The storage location does have an effect on writing efficient programs. When pos
 
 In the current compilers, if a variable has its address taken, that variable is a candidate for allocation on the heap. However, a basic escape analysis recognizes some cases when such variables will not live past the return from the function and can reside on the stack.
 ```
-
 从上面可以了解到, 您不需要知道。Go中的每个变量都存在，只要有对它的引用即可。实现选择的存储位置与语言的语义无关。
 
 存储位置确实会影响编写高效的程序。如果可能，Go编译器将为该函数的堆栈帧中的函数分配本地变量。
@@ -139,7 +138,9 @@ func main() {
 	_ = g(c)
 }
 ```
+
 逃逸分析的结果仍然不会改变:
+
 ```bash
 # command-line-arguments
 ./test_stack.go:3: g p does not escape
