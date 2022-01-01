@@ -206,7 +206,7 @@ Golang中 channel是被单独创建并且可以在进程之间传递，它的通
 
 Goroutine 是Golang实际并发执行的实体，它底层是使用协程(coroutine)实现并发，coroutine是一种运行在用户态的用户线程，类似于greenthread，go底层选择使用coroutine的出发点是因为，
 
-它具有以下特点：
+它具有以下特点:
 
 * 用户空间 避免了内核态和用户态的切换导致的成本.
 * 可以由语言和框架层进行调度.
@@ -224,11 +224,11 @@ Golang内部有三个对象: P对象(processor) 代表上下文（或者可以�
 <img width="300" align="center" src="../images/59.jpg" />
 </p>
 
-G（Goroutine）: 我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
+* G（Goroutine）: 我们所说的协程，为用户级的轻量级线程，每个Goroutine对象中的sched保存着其上下文信息。
 
-M（Machine）: 对OS内核级线程的封装，数量对应真实的CPU数(真正干活的对象).
+* M（Machine）: 对OS内核级线程的封装，数量对应真实的CPU数(真正干活的对象).
 
-P (Processor): 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过 `GOMAXPROCS()`来设置，默认为核心数。
+* P (Processor): 逻辑处理器,即为G和M的调度对象，用来调度G和M之间的关联关系，其数量可通过 `GOMAXPROCS()`来设置，默认为核心数。
 
 在单核情况下，所有Goroutine运行在同一个线程（M0）中，每一个线程维护一个上下文（P），任何时刻，一个上下文中只有一个Goroutine，其他Goroutine在runqueue中等待。
 
@@ -250,9 +250,9 @@ Golang的CSP并发模型，是通过Goroutine和Channel来实现的。
 
 Goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。Channel是Go语言中各个并发结构体(Goroutine)之前的通信机制。通常Channel，是各个Goroutine之间通信的”管道“，有点类似于Linux中的管道。
 
-通信机制channel也很方便，传数据用`channel <- data`，取数据用`<-channel`。
+通信机制channel也很方便，传数据用`channel <- data`，取数据用 `<-channel`。
 
-在通信过程中，传数据 `channel <- data` 和取数据`<-channel`必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。因此GPM的简要概括即为:事件循环,线程池,工作队列。
+在通信过程中，传数据 `channel <- data` 和取数据 `<-channel` 必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。而且不管是传还是取，肯定阻塞，直到另外的goroutine传或者取为止。因此GPM的简要概括即为:事件循环,线程池,工作队列。
 
 4. #### Golang中常用的并发模型
 
