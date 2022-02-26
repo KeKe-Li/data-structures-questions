@@ -1012,31 +1012,32 @@ locked for writing
 
 * sync.Map安全锁
 
-golang中的sync.Map是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
+golang中的`sync.Map`是并发安全的，其实也就是sync包中golang自定义的一个名叫Map的结构体。
 
 应用示例:
 
 ```go
 package main
+
 import (
  "sync"
  "fmt"
 )
 
 func main() {
- //开箱即用
+ // 开箱即用
  var sm sync.Map
 
- //store 方法,添加元素
+ // store 方法,添加元素
  sm.Store(1,"a")
 
- //Load 方法，获得value
+ // Load 方法，获得value
  if v,ok:=sm.Load(1);ok{
      fmt.Println(v)
  }
 
- //LoadOrStore方法，获取或者保存
- //参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
+ // LoadOrStore方法，获取或者保存
+ // 参数是一对key：value，如果该key存在且没有被标记删除则返回原先的value（不更新）和true；不存在则store，返回该value 和false
 
  if vv,ok:=sm.LoadOrStore(1,"c");ok{
      fmt.Println(vv)
@@ -1046,7 +1047,7 @@ func main() {
      fmt.Println(vv)
  }
 
- //遍历该map，参数是个函数，该函数参的两个参数是遍历获得的key和value，返回一个bool值，当返回false时，遍历立刻结束。
+ // 遍历该map，参数是个函数，该函数参的两个参数是遍历获得的key和value，返回一个bool值，当返回false时，遍历立刻结束。
  sm.Range(func(k,v interface{})bool{
      fmt.Print(k)
      fmt.Print(":")
@@ -1074,7 +1075,7 @@ type Map struct {
  mu Mutex
  // 存读的数据，因为是atomic.value类型，只读类型，所以它的读是并发安全的
  read atomic.Value // readOnly
- //包含最新的写入的数据，并且在写的时候，会把read 中未被删除的数据拷贝到该dirty中，因为是普通的map存在并发安全问题，需要用到上面的mu字段。
+ // 包含最新的写入的数据，并且在写的时候，会把read 中未被删除的数据拷贝到该dirty中，因为是普通的map存在并发安全问题，需要用到上面的mu字段。
  dirty map[interface{}]*entry
  // 从read读数据的时候，会将该字段+1，当等于len（dirty）的时候，会将dirty拷贝到read中（从而提升读的性能）。
  misses int
@@ -1106,20 +1107,20 @@ Delete 方法:
 func (m *Map) Delete(key interface{}) {
  read, _ := m.read.Load().(readOnly)
  e, ok := read.m[key]
- //如果read中没有，并且dirty中有新元素，那么就去dirty中去找
+ // 如果read中没有，并且dirty中有新元素，那么就去dirty中去找
  if !ok && read.amended {
      m.mu.Lock()
-     //这是双检查（上面的if判断和锁不是一个原子性操作）
+     // 这是双检查（上面的if判断和锁不是一个原子性操作）
      read, _ = m.read.Load().(readOnly)
      e, ok = read.m[key]
      if !ok && read.amended {
-         //直接删除
+         // 直接删除
          delete(m.dirty, key)
      }
      m.mu.Unlock()
  }
  if ok {
- //如果read中存在该key，则将该value 赋值nil（采用标记的方式删除！）
+ // 如果read中存在该key，则将该value 赋值nil（采用标记的方式删除！）
      e.delete()
  }
 }
@@ -1151,21 +1152,21 @@ func (m *Map) Store(key, value interface{}) {
  m.mu.Lock()
  read, _ = m.read.Load().(readOnly)
  if e, ok := read.m[key]; ok {
- //如果entry被标记expunge，则表明dirty没有key，可添加入dirty，并更新entry
+ // 如果entry被标记expunge，则表明dirty没有key，可添加入dirty，并更新entry
      if e.unexpungeLocked() { 
          //加入dirty中
          m.dirty[key] = e
      }
-     //更新value值
+     // 更新value值
      e.storeLocked(&value) 
-     //dirty 存在该key，更新
+     // dirty 存在该key，更新
  } else if e, ok := m.dirty[key]; ok { 
      e.storeLocked(&value)
-     //read 和dirty都没有，新添加一条
+     // read 和dirty都没有，新添加一条
  } else {
-  //dirty中没有新的数据，往dirty中增加第一个新键
+  // dirty中没有新的数据，往dirty中增加第一个新键
      if !read.amended { 
-         //将read中未删除的数据加入到dirty中
+         // 将read中未删除的数据加入到dirty中
          m.dirtyLocked() 
          m.read.Store(readOnly{m: read.m, amended: true})
      }
@@ -1174,23 +1175,23 @@ func (m *Map) Store(key, value interface{}) {
  m.mu.Unlock()
 }
 
-//将read中未删除的数据加入到dirty中
+// 将read中未删除的数据加入到dirty中
 func (m *Map) dirtyLocked() {
  if m.dirty != nil {
      return
  }
  read, _ := m.read.Load().(readOnly)
  m.dirty = make(map[interface{}]*entry, len(read.m))
- //read如果较大的话，可能影响性能
+ // read如果较大的话，可能影响性能
  for k, e := range read.m {
- //通过此次操作，dirty中的元素都是未被删除的，可见expunge的元素不在dirty中
+ // 通过此次操作，dirty中的元素都是未被删除的，可见expunge的元素不在dirty中
      if !e.tryExpungeLocked() {
          m.dirty[k] = e
      }
  }
 }
 
-//判断entry是否被标记删除，并且将标记为nil的entry更新标记为expunge
+// 判断entry是否被标记删除，并且将标记为nil的entry更新标记为expunge
 func (e *entry) tryExpungeLocked() (isExpunged bool) {
  p := atomic.LoadPointer(&e.p)
  for p == nil {
@@ -1203,7 +1204,7 @@ func (e *entry) tryExpungeLocked() (isExpunged bool) {
  return p == expunged
 }
 
-//对entry 尝试更新
+// 对entry 尝试更新
 func (e *entry) tryStore(i *interface{}) bool {
  p := atomic.LoadPointer(&e.p)
  if p == expunged {
@@ -1221,17 +1222,17 @@ func (e *entry) tryStore(i *interface{}) bool {
  }
 }
 
-//read里 将标记为expunge的更新为nil
+// read里 将标记为expunge的更新为nil
 func (e *entry) unexpungeLocked() (wasExpunged bool) {
  return atomic.CompareAndSwapPointer(&e.p, expunged, nil)
 }
 
-//更新entry
+// 更新entry
 func (e *entry) storeLocked(i *interface{}) {
  atomic.StorePointer(&e.p, unsafe.Pointer(i))
 }
 ```
-因此，每次操作先检查read，因为read 并发安全，性能好些；read不满足，则加锁检查dirty，一旦是新的键值，dirty会被read更新。
+因此,每次操作先检查read，因为read 并发安全，性能好些；read不满足，则加锁检查dirty，一旦是新的键值，dirty会被read更新。
 
 Load方法:
 
@@ -1239,10 +1240,10 @@ Load方法是一个加载方法，查找key。
 
 ```go
 func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
- //因read只读，线程安全，先查看是否满足条件
+ // 因read只读，线程安全，先查看是否满足条件
  read, _ := m.read.Load().(readOnly)
  e, ok := read.m[key]
- //如果read没有，并且dirty有新数据，那从dirty中查找，由于dirty是普通map，线程不安全，这个时候用到互斥锁了
+ // 如果read没有，并且dirty有新数据，那从dirty中查找，由于dirty是普通map，线程不安全，这个时候用到互斥锁了
  if !ok && read.amended {
      m.mu.Lock()
      // 双重检查
@@ -1262,13 +1263,13 @@ func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
  return e.load()
 }
 
-//dirty 提升至read 关键函数，当misses 经过多次因为load之后，大小等于len（dirty）时候，讲dirty替换到read里，以此达到性能提升。
+// dirty 提升至read 关键函数，当misses 经过多次因为load之后，大小等于len（dirty）时候，讲dirty替换到read里，以此达到性能提升。
 func (m *Map) missLocked() {
   misses++
   if m.misses < len(m.dirty) {
       return
   }
-  //原子操作，耗时很小
+  // 原子操作，耗时很小
   m.read.Store(readOnly{m: m.dirty})
   m.dirty = nil
   m.misses = 0
