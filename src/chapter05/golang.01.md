@@ -2513,6 +2513,7 @@ g0 其他的一些“职责”有：创建 `goroutine`、`deferproc` 函数里�
 锁是一种同步机制，用于在多任务环境中限制资源的访问，以满足互斥需求。
 
 go源码sync包中经常用于同步操作的方式:
+
 * 原子操作
 * 互斥锁
 * 读写锁
@@ -2568,6 +2569,7 @@ sync.Mutex 有两种模式,正常模式和饥饿模式。
 相比于饥饿模式，正常模式下的互斥锁能够提供更好地性能，饥饿模式的能避免 Goroutine 由于陷入等待无法获取锁而造成的高尾延时。
 
 互斥锁的加锁是靠 sync.Mutex.Lock 方法完成的, 当锁的状态是 0 时，将 `mutexLocked` 位置成 1：
+
 ```go
 // Lock locks m.
 // If the lock is already in use, the calling goroutine
