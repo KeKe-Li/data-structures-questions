@@ -256,7 +256,6 @@ ret = &Result{}
 ...
 return ret
 ```
-
 #### 参考链接
 
 * [Golang汇编快速指南](http://blog.rootk.com/post/golang-asm.html)
