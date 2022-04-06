@@ -3136,7 +3136,7 @@ Goroutine 作为一种逻辑上理解的轻量级线程，需要维护执行用�
 
 例如:
 
-```go
+```gow
 func main() {
 	for i := 0; i < 10000; i++ {
 		go func() {
