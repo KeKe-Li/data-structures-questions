@@ -38,6 +38,7 @@ func main() {
 
 ```bash
 > GOOS=linux GOARCH=amd64 go tool compile -S main.go
+
 "".add STEXT nosplit size=20 args=0x10 locals=0x0 funcid=0x0
   0x0000 00000 (main.go:4)        TEXT    "".add(SB), NOSPLIT|ABIInternal, $0-16
   0x0000 00000 (main.go:4)        FUNCDATA        $0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
