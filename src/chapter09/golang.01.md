@@ -177,9 +177,11 @@ func main() {
 从结果的 CALL runtime.newobject(SB) ，证明我们的对象在堆上进行分配了。
 
 但当使用默认参数，我们观察下结果：
+
 ```go
 > go build  -o patent main.go
 ```
+
 当我们跟上面一样分析test的分配情况时：
 ```go
 > go tool objdump -s "main\.patent" patent
