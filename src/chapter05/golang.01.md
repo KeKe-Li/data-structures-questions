@@ -916,7 +916,6 @@ type RWMutex struct {
      readerWait  int32  // number of departing readers
 }
 ```
-
 sync中的RWMutex有以下几种方法：
 
 ```go
