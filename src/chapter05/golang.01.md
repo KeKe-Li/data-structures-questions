@@ -156,9 +156,11 @@ Golang面试问题汇总, 这里主要分为 Golang, Mysql, Redis, Network Proto
 
 #### 云原生
 
-|           题号               |            题目                                                                                        |
-|-----------------------------|------------------------------------------------------------------------------------------------------- |
-|           1                 |     [prometheus架构中有哪些组件以及各个组件有什么用](#prometheus架构中有哪些组件以及各个组件有什么用)              |
+| 题号 | 题目                                                            |
+|----|---------------------------------------------------------------|
+| 1  | [prometheus架构中有哪些组件以及各个组件有什么用](#prometheus架构中有哪些组件以及各个组件有什么用) |
+| 2  | [k8s创建pod过程](#k8s创建pod过程)                                     |
+| 3  | [k8s创建deployment过程](#k8s创建deployment过程)                       |
 
 
 ### 其他基础
@@ -6369,6 +6371,37 @@ func main() {
 * 关系运算：大于、小于、等于、不等于等运算.
 * 数据传输：输入、输出、赋值等运算.
 
+
+#### 云原生
+
+1. #### prometheus架构中有哪些组件以及各个组件有什么用
+
+
+2. #### k8s创建pod过程
+
+* kubectl将创建 Pod 的请求发送给 Apiserver.
+* Apiserver 将 Pod 信息写入 etcd,etcd 将写入结果响应给 Apiserver,Apiserver 将创建结果响应给客户端 (此时 Pod 处于 Pending 状态).
+* Scheduler 通过 Apiserver 的 watch 接口，获取到未调度的 Pod 的通知，根据调度算法选择一个 node 节点，告诉 Apiserver 这个 Pod 应该运行在哪个节点.
+* Apiserver 将这个 Pod 和 node 的绑定信息更新到 etcd,etcd 将写入结果响应给 Apiserver.
+* Kubelet 通过 Apiserver 的 watch 接口，获取到当前节点有创建 Pod 的通知，Kubelet 调用 docker 创建容器，Kubelet 将 Pod 运行状态发送给 Apiserver.
+* Apiserver 将 Pod 状态信息更新到 etcd.
+
+3. #### k8s创建deployment过程
+
+<p align="center">
+<img width="300" align="center" src="../images/197.jpg" />
+</p>
+
+* kubectl 将创建 Deployment 的请求发送给 Apiserver.
+* Apiserver 将 Deployment 信息写入 etcd,etcd 将写入结果响应给 Apiserver,Apiserver 将创建结果响应给客户端 (此时未经过 ControllerManager,deployment 的 READY 状态为 0)
+* ControllerManager 通过 Apiserver 的 watch 接口，获取到新增的 Deployment 资源，Deployment controller 向 Apiserver 发送创建 RS 的请求，Apiserver 将 RS 信息写入 etcd.
+* ControllerManager 通过 Apiserver 的 watch 接口，获取到新增的 ReplicaSet 资源，ReplicaSet controller 向 Apiserver 发送创建 Pod 的请求，Apiserver 将 Pod 信息写入 etcd.
+* Scheduler 通过 Apiserver 的 watch 接口，获取到未调度的 Pod 的通知，根据调度算法选择一个 node 节点，告诉 Apiserver 这个 Pod 应该运行在哪个节点.
+* Apiserver 将这个 Pod 和 node 的绑定信息更新到 etcd,etcd 将写入结果响应给 Apiserver.
+* Kubelet 通过 Apiserver 的 watch 接口，获取到当前节点有创建 Pod 的通知，Kubelet 调用 docker 创建容器，Kubelet 将 Pod 运行状态发送给 Apiserver.
+* Apiserver 将 Pod 状态信息更新到 etcd.
+
+通过 Apiserver 的 watch 接口获取的信息，都是由 Apiserver 主动通知的。
 
 #### 其他基础
 
