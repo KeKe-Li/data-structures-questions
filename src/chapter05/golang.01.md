@@ -6707,9 +6707,9 @@ Follower将其当前term加一然后转换为Candidate。它首先给自己投�
 
 结果有以下三种情况:
 
-1.赢得了多数的选票，成功选举为Leader；
-2.收到了Leader的消息，表示有其它服务器已经抢先当选了Leader；
-3.没有服务器赢得多数的选票，Leader选举失败，等待选举时.
+1. 赢得了多数的选票，成功选举为Leader.
+2. 收到了Leader的消息，表示有其它服务器已经抢先当选了Leader.
+3. 没有服务器赢得多数的选票，Leader选举失败，等待选举时.
 
 <p align="center">
 <img width="500" align="center" src="../images/148.jpg" />
@@ -6746,7 +6746,8 @@ Raft增加了如下两条限制以保证安全性：
 通常，我们对`git merge` 使用的较多，而对于 `git rebase` 使用的较少，其实 `git rebase` 也是极其强大的一种方法。
 
 * git merge
-  `git merge` 的使用方法很简单，假如你想将分支 feature 合并到分支 master，那么只需执行如下两步即可：
+
+`git merge` 的使用方法很简单，假如你想将分支 feature 合并到分支 master，那么只需执行如下两步即可：
 
 将分支切换到 master 上去：`git checkout master` 将分支 feature 合并到当前分支（即 master 分支）上：`git merge feature`.
 
